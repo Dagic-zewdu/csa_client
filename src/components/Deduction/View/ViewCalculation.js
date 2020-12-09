@@ -12,6 +12,7 @@ import { StoreContext } from '../../contexts/contexts'
 const ViewCalculation=(props)=> {
   /**view calculation */
     const {deduction}=props
+    const {_id:id}=deduction
     const { allowances,deductions,employees,users, place,
         fieldEmployees,climatePlaces,config }=useContext(StoreContext)
 const {state:Allowances,loading,error}=allowances
@@ -26,6 +27,12 @@ const emp_id=deduction.creater
 const isOfficial=Calculation.isOfficial(emp_id) //check the deduction creater is official
 const salary=Calculation.Salary(emp_id)   //salary of the employee
 const isFieldEmployee=fieldEmployee.faCheck(emp_id)
+/**return an object of state.c_spending_days
+ * @param id -spending day id
+ * @param type-string 'breakfast','lunch','dinner','bed'
+    */
+   const findSpendingDay=(id,type)=>deduction.c_spending_days.find(d=>d.s_id === id && d.type === type)
+   
 
   const {breakfast:iBreakfast,lunch:iLunch,dinner:iDinner,bed:iBed}=deduction.c_initial_day
   return (
@@ -41,7 +48,7 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
            From- {Calculation.Name(emp_id)} <br/>
            Department -{Calculation.Department(emp_id)} <br/>
            Is Employee official?-{isOfficial?'yes':'No'} <br/>
-           Is Employe project allowance?-{isFieldEmployee?'yes':'no'}
+           Is Employe project allowance?-{isFieldEmployee?'yes':'no'} <br/>
            salary-{salary}
            </p>  
                 </p>   
@@ -122,14 +129,14 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       <p className="text-center">
           name : {Places.placeName(iBreakfast.place_id)} <br/>
           Region: {Places.placeName(iBreakfast.place_id)} <br/>
-          scale:{Calculation.scale(iBreakfast.place_id)}
+          scale:{Calculation.scale(emp_id,iBreakfast.place_id)}
       </p>
          }
         </td>
  <td>
      <p className="text-center">
-         general name: {climate.climateGenralName(iBreakfast.climate_id)}
-         name: {climate.climateName(iBreakfast.cliate_id)}
+         general name: {climate.climateGenralName(iBreakfast.climate_id)} <br/>
+         name: {climate.climateName(iBreakfast.climate_id)}  <br/>
          level: {climate.climateLevel(iBreakfast.climate_id)}
      </p>
  </td>
@@ -158,14 +165,14 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       <p className="text-center">
           name : {Places.placeName(iLunch.place_id)} <br/>
           Region: {Places.placeName(iLunch.place_id)} <br/>
-          scale:{Calculation.scale(iLunch.place_id)}
+          scale:{Calculation.scale(emp_id,iLunch.place_id)}
       </p>
          }
         </td>
  <td>
      <p className="text-center">
-         general name: {climate.climateGenralName(iLunch.climate_id)}
-         name: {climate.climateName(iLunch.cliate_id)}
+         general name: {climate.climateGenralName(iLunch.climate_id)} <br/>
+         name: {climate.climateName(iLunch.climate_id)} <br/>
          level: {climate.climateLevel(iLunch.climate_id)}
      </p>
  </td>
@@ -194,15 +201,15 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       <p className="text-center">
           name : {Places.placeName(iDinner.place_id)} <br/>
           Region: {Places.placeName(iDinner.place_id)} <br/>
-          scale:{Calculation.scale(iDinner.place_id)}
+          scale:{Calculation.scale(emp_id,iDinner.place_id)}
       </p>
          }
         </td>
  <td>
      <p className="text-center">
-         general name: {climate.climateGenralName(iDinner.climate_id)}
-         name: {climate.climateName(iDinner.cliate_id)}
-         level: {climate.climateLevel(iDinner.climate_id)}
+         general name: {climate.climateGenralName(iDinner.climate_id)} <br/>
+         name: {climate.climateName(iDinner.climate_id)}  <br/>
+         level: {climate.climateLevel(emp_id,iDinner.climate_id)} 
      </p>
  </td>
      <td>
@@ -230,14 +237,14 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       <p className="text-center">
           name : {Places.placeName(iBed.place_id)} <br/>
           Region: {Places.placeName(iBed.place_id)} <br/>
-          scale:{Calculation.scale(iBed.place_id)}
+          scale:{Calculation.scale(emp_id,iBed.place_id)}
       </p>
          }
         </td>
  <td>
      <p className="text-center">
-         general name: {climate.climateGenralName(iBed.climate_id)}
-         name: {climate.climateName(iBed.cliate_id)}
+         general name: {climate.climateGenralName(iBed.climate_id)} <br/>
+         name: {climate.climateName(iBed.climate_id)}  <br/>
          level: {climate.climateLevel(iBed.climate_id)}
      </p>
  </td>
@@ -254,6 +261,237 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
        </MDBTable>          
           </div>           
                 </div>
+             <div className="col-lg-12">
+             {
+          deduction.spending_days.length?
+          <div className="col-lg-12 my-2">
+          <div className="card">
+   <h4 className="text-center">
+     spending days
+     </h4>
+     <MDBTable hover striped bordered >
+       <MDBTableHead>
+<tr>
+  <th>
+    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info mx-2' />
+       Duration date
+  </th>
+  <th>
+    <FontAwesomeIcon icon={faCalendarCheck} className='fa-1x text-info mx-2' />
+       Duration days
+    </th>
+    <th>
+    <FontAwesomeIcon icon={faPaperPlane} className='fa-1x text-info mx-2' />
+       Allowance situation
+    </th>
+    <th>
+    <FontAwesomeIcon icon={faMap} className='fa-1x text-info mx-2' />
+       User Entered place
+    </th>
+    <th>
+    <FontAwesomeIcon icon={faMapMarked} className='fa-1x text-info mx-2' />
+       Place to calculate
+    </th>
+    <th>
+      <FontAwesomeIcon icon={faSun} className='fa-1x text-info mx-2'/>
+      Climate place
+    </th>
+    <th>
+    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info' />
+       Day allowance
+    </th>
+ 
+    <th>
+    <FontAwesomeIcon icon={faSun} className='fa-1x text-info' />
+       Climate Allowance
+    </th>
+</tr>
+       </MDBTableHead>
+       {
+        deduction.spending_days.map(d=>{
+          return(
+       <MDBTableBody>
+      
+         <tr key={d._id}>
+           <td rowSpan={4}>
+           {ToEthiopianDateSting(Calculation.sFromDate(id,d._id))}- to -
+           {ToEthiopianDateSting(Calculation.sUptoDate(id,d._id))}
+           </td>
+           <td rowSpan={4}>
+    <h5 className="font-weight-bold">
+    {findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').duration:0}
+    </h5>
+           </td>
+           <td>Breakfast</td>
+           <td>
+       { d.breakfast}
+             </td>
+             <td>
+      {
+        isFieldEmployee?
+      <p className="text-center">
+place {findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').project_allowance:''
+          } Addis Ababa
+      </p>:
+      <p className="text-center">
+name : {Places.placeName(findSpendingDay(d._id,'breakfast')?
+        findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
+Region: {Places.placeRegion(findSpendingDay(d._id,'breakfast')?
+          findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
+scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'breakfast')?
+          findSpendingDay(d._id,'breakfast').place_id:'')}
+      </p>
+      }    
+       
+             </td>
+             <td>
+             <p className="text-center">
+general name: {climate.climateGenralName(findSpendingDay(d._id,'breakfast')?
+            findSpendingDay(d._id,'breakfast').climate_place:'')} <br/>
+name: {climate.climateName(findSpendingDay(d._id,'breakfast')?
+       findSpendingDay(d._id,'breakfast').climate_place:'')}  <br/>
+level: {climate.climateLevel(findSpendingDay(d._id,'breakfast')?
+        findSpendingDay(d._id,'breakfast').climate_place:'')}
+     </p>           
+             </td>
+             <td>
+   {findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').scale:0}          
+             </td>
+             <td>
+{findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').c_scale:0}          
+             </td>
+           </tr>
+           <tr>
+             <td>Lunch</td>
+             <td>
+  {d.lunch}
+             </td>
+             <td>
+      {
+        isFieldEmployee?
+      <p className="text-center">
+place {findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').project_allowance:''
+          } Addis Ababa
+      </p>:
+      <p className="text-center">
+name : {Places.placeName(findSpendingDay(d._id,'lunch')?
+        findSpendingDay(d._id,'lunch').place_id:'')} <br/>
+Region: {Places.placeRegion(findSpendingDay(d._id,'lunch')?
+          findSpendingDay(d._id,'lunch').place_id:'')} <br/>
+scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'lunch')?
+          findSpendingDay(d._id,'lunch').place_id:'')}
+      </p>
+      }    
+       
+             </td>
+             <td>
+             <p className="text-center">
+general name: {climate.climateGenralName(findSpendingDay(d._id,'lunch')?
+            findSpendingDay(d._id,'lunch').climate_place:'')} <br/>
+name: {climate.climateName(findSpendingDay(d._id,'lunch')?
+       findSpendingDay(d._id,'lunch').climate_place:'')}  <br/>
+level: {climate.climateLevel(findSpendingDay(d._id,'lunch')?
+        findSpendingDay(d._id,'lunch').climate_place:'')}
+     </p>           
+             </td>
+             <td>
+   {findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').scale:0}          
+             </td>
+             <td>
+{findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').c_scale:0}          
+             </td>
+           </tr>
+           <tr>
+             <td>Dinner</td>
+             <td>
+  {d.dinner}
+             </td>
+             <td>
+      {
+        isFieldEmployee?
+      <p className="text-center">
+place {findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').project_allowance:''
+          } Addis Ababa
+      </p>:
+      <p className="text-center">
+name : {Places.placeName(findSpendingDay(d._id,'dinner')?
+        findSpendingDay(d._id,'dinner').place_id:'')} <br/>
+Region: {Places.placeRegion(findSpendingDay(d._id,'dinner')?
+          findSpendingDay(d._id,'dinner').place_id:'')} <br/>
+scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'dinner')?
+          findSpendingDay(d._id,'dinner').place_id:'')}
+      </p>
+      }    
+       
+             </td>
+             <td>
+             <p className="text-center">
+general name: {climate.climateGenralName(findSpendingDay(d._id,'dinner')?
+            findSpendingDay(d._id,'dinner').climate_place:'')} <br/>
+name: {climate.climateName(findSpendingDay(d._id,'dinner')?
+       findSpendingDay(d._id,'dinner').climate_place:'')}  <br/>
+level: {climate.climateLevel(findSpendingDay(d._id,'dinner')?
+        findSpendingDay(d._id,'dinner').climate_place:'')}
+     </p>           
+             </td>
+             <td>
+   {findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').scale:0}          
+             </td>
+             <td>
+{findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').c_scale:0}          
+             </td>
+           </tr>
+           <tr>
+             <td>Bed</td>
+             <td>
+  {d.bed}
+             </td>
+             <td>
+      {
+        isFieldEmployee?
+      <p className="text-center">
+place {findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').project_allowance:''
+          } Addis Ababa
+      </p>:
+      <p className="text-center">
+name : {Places.placeName(findSpendingDay(d._id,'bed')?
+        findSpendingDay(d._id,'bed').place_id:'')} <br/>
+Region: {Places.placeRegion(findSpendingDay(d._id,'bed')?
+          findSpendingDay(d._id,'bed').place_id:'')} <br/>
+scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'bed')?
+          findSpendingDay(d._id,'bed').place_id:'')}
+      </p>
+      }    
+       
+             </td>
+             <td>
+             <p className="text-center">
+general name: {climate.climateGenralName(findSpendingDay(d._id,'bed')?
+            findSpendingDay(d._id,'bed').climate_place:'')} <br/>
+name: {climate.climateName(findSpendingDay(d._id,'bed')?
+       findSpendingDay(d._id,'bed').climate_place:'')}  <br/>
+level: {climate.climateLevel(findSpendingDay(d._id,'bed')?
+        findSpendingDay(d._id,'bed').climate_place:'')}
+     </p>           
+             </td>
+             <td>
+   {findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').scale:0}          
+             </td>
+             <td>
+{findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').c_scale:0}          
+             </td>
+           </tr> 
+           </MDBTableBody>
+          )
+        })
+      }   
+     
+       </MDBTable>          
+          </div>
+        </div>:
+    <p></p>
+        }
+               </div>   
             </div>
         </div>
     )

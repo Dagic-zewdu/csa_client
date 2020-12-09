@@ -507,11 +507,22 @@ const errorHandle=(id,type)=>ERROR.find(e=>e._id===id && e.type===type)?true:fal
       place_id:d.place_id,
       climate_place:d.climate_place,
       project_allowance:d.project_allowance,
-      scale:Calculation.spendingBreakfast(id,d._id,findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0),
-      c_scale:Calculation.sBreakFastClimate(id,
-        findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).climate_place:'',d._id,
-        findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0
-        )
+      scale:d.type==='breakfast'?Calculation.spendingBreakfast(id,d._id,findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0):
+             d.type==='lunch'?Calculation.spendingLunch(id,d._id,findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0):
+             d.type==='dinner'?Calculation.spendingDinner(id,d._id,findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0):
+            d.type==='bed'?Calculation.spendingBed(id,d._id,findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0):0 ,
+            c_scale:d.type==='breakfast'?Calculation.sBreakFastClimate(id,
+              findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).climate_place:'',d._id,
+              findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0):
+            d.type==='lunch'?Calculation.sLunchClimate(id,
+              findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).climate_place:'',d._id,
+              findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0):
+             d.type==='dinner'?Calculation.sDinnerClimate(id,
+              findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).climate_place:'',d._id,
+              findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0):
+              d.type==='bed'?Calculation.sBedClimate(id,
+                findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).climate_place:'',d._id,
+                findSpendingDay(d._id,d.type)?findSpendingDay(d._id,d.type).scale:0):0 
       }
       )      
          }) 
@@ -565,7 +576,7 @@ return (
            From- {Calculation.Name(emp_id)} <br/>
            Department -{Calculation.Department(emp_id)} <br/>
            Is Employee official?-{isOfficial?'yes':'No'} <br/>
-           Is Employe project allowance?-{isFieldEmployee?'yes':'no'}
+           Is Employe project allowance?-{isFieldEmployee?'yes':'no'} <br/>
            salary-{salary}
            </p> 
            

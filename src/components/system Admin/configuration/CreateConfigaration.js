@@ -56,12 +56,8 @@ process:'',success:'',error:'breakfast,lunch,dinner and bed allowance should not
 
     }
     else{
-     //getting token from localStorage
-     let {token:Token,user_type:usertype}=localStorage
-     //decrypting token
-     const token=decryptToken(Token)
      /**encrypting requset for security */   
-        const encrypt=encryptObject({token,usertype,
+        const encrypt=encryptObject({
             dinner,bed,breakfast,lunch,climate_1,climate_2,climate_3})
                 const req=await axios.post(host+'/config',{data:encrypt})  
                  const res=decrptObject(req.data)
