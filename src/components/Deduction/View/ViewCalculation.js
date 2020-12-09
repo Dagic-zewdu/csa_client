@@ -35,6 +35,9 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
    
 
   const {breakfast:iBreakfast,lunch:iLunch,dinner:iDinner,bed:iBed}=deduction.c_initial_day
+  const {breakfast:rBreakfast,lunch:rLunch,dinner:rDinner}=deduction.c_return_day
+  const allowance=Calculation.findAllowance(deduction.allowance_id)
+const prePaid=allowance?allowance.totall_amount:0
   return (
         <div className="container">
             <div className="row">
@@ -128,16 +131,16 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       :
       <p className="text-center">
           name : {Places.placeName(iBreakfast.place_id)} <br/>
-          Region: {Places.placeName(iBreakfast.place_id)} <br/>
+          Region: {Places.placeRegion(iBreakfast.place_id)} <br/>
           scale:{Calculation.scale(emp_id,iBreakfast.place_id)}
       </p>
          }
         </td>
  <td>
      <p className="text-center">
-         general name: {climate.climateGenralName(iBreakfast.climate_id)} <br/>
-         name: {climate.climateName(iBreakfast.climate_id)}  <br/>
-         level: {climate.climateLevel(iBreakfast.climate_id)}
+         general name: {climate.climateGenralName(iBreakfast.climate_place)} <br/>
+         name: {climate.climateName(iBreakfast.climate_place)}  <br/>
+         level: {climate.climateLevel(iBreakfast.climate_place)}
      </p>
  </td>
      <td>
@@ -164,16 +167,16 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       :
       <p className="text-center">
           name : {Places.placeName(iLunch.place_id)} <br/>
-          Region: {Places.placeName(iLunch.place_id)} <br/>
+          Region: {Places.placeRegion(iLunch.place_id)} <br/>
           scale:{Calculation.scale(emp_id,iLunch.place_id)}
       </p>
          }
         </td>
  <td>
      <p className="text-center">
-         general name: {climate.climateGenralName(iLunch.climate_id)} <br/>
-         name: {climate.climateName(iLunch.climate_id)} <br/>
-         level: {climate.climateLevel(iLunch.climate_id)}
+         general name: {climate.climateGenralName(iLunch.climate_place)} <br/>
+         name: {climate.climateName(iLunch.climate_place)} <br/>
+         level: {climate.climateLevel(iLunch.climate_place)}
      </p>
  </td>
      <td>
@@ -200,16 +203,16 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       :
       <p className="text-center">
           name : {Places.placeName(iDinner.place_id)} <br/>
-          Region: {Places.placeName(iDinner.place_id)} <br/>
+          Region: {Places.placeRegion(iDinner.place_id)} <br/>
           scale:{Calculation.scale(emp_id,iDinner.place_id)}
       </p>
          }
         </td>
  <td>
      <p className="text-center">
-         general name: {climate.climateGenralName(iDinner.climate_id)} <br/>
-         name: {climate.climateName(iDinner.climate_id)}  <br/>
-         level: {climate.climateLevel(emp_id,iDinner.climate_id)} 
+         general name: {climate.climateGenralName(iDinner.climate_place)} <br/>
+         name: {climate.climateName(iDinner.climate_place)}  <br/>
+         level: {climate.climateLevel(emp_id,iDinner.climate_place)} 
      </p>
  </td>
      <td>
@@ -236,16 +239,16 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       :
       <p className="text-center">
           name : {Places.placeName(iBed.place_id)} <br/>
-          Region: {Places.placeName(iBed.place_id)} <br/>
+          Region: {Places.placeRegion(iBed.place_id)} <br/>
           scale:{Calculation.scale(emp_id,iBed.place_id)}
       </p>
          }
         </td>
  <td>
      <p className="text-center">
-         general name: {climate.climateGenralName(iBed.climate_id)} <br/>
-         name: {climate.climateName(iBed.climate_id)}  <br/>
-         level: {climate.climateLevel(iBed.climate_id)}
+         general name: {climate.climateGenralName(iBed.climate_place)} <br/>
+         name: {climate.climateName(iBed.climate_place)}  <br/>
+         level: {climate.climateLevel(iBed.climate_place)}
      </p>
  </td>
      <td>
@@ -330,16 +333,13 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
       {
         isFieldEmployee?
       <p className="text-center">
-place {findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').project_allowance:''
-          } Addis Ababa
+place {findSpendingDay(d._id,'breakfast')?
+findSpendingDay(d._id,'breakfast').project_allowance:''} Addis Ababa
       </p>:
       <p className="text-center">
-name : {Places.placeName(findSpendingDay(d._id,'breakfast')?
-        findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
-Region: {Places.placeRegion(findSpendingDay(d._id,'breakfast')?
-          findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
-scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'breakfast')?
-          findSpendingDay(d._id,'breakfast').place_id:'')}
+name : {Places.placeName(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
+Region: {Places.placeRegion(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
+scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')}
       </p>
       }    
        
@@ -491,6 +491,274 @@ level: {climate.climateLevel(findSpendingDay(d._id,'bed')?
         </div>:
     <p></p>
         }
+        {/**return day */}
+        <div className="col-lg-12 my-2">
+          <div className="card">
+   <h4 className="text-center">
+     Return Day
+     </h4>
+     <MDBTable hover striped bordered>
+       <MDBTableHead>
+<tr>
+  <th>
+    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info mx-2' />
+       Return date
+  </th>
+  <th>
+    <FontAwesomeIcon icon={faCalendarCheck} className='fa-1x text-info mx-2' />
+       Return Time
+    </th>
+    <th>
+    <FontAwesomeIcon icon={faPaperPlane} className='fa-1x text-info mx-2' />
+       Allowance situation
+    </th>
+    <th>
+    <FontAwesomeIcon icon={faMap} className='fa-1x text-info mx-2' />
+       User Entered place
+    </th>
+    <th>
+    <FontAwesomeIcon icon={faMapMarked} className='fa-1x text-info mx-2' />
+       Place to calculate
+    </th>
+    <th>
+      <FontAwesomeIcon icon={faSun} className='fa-1x text-info mx-2'/>
+      Climate place
+    </th>
+    <th>
+    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info' />
+       Day allowance
+    </th>
+ 
+    <th>
+    <FontAwesomeIcon icon={faSun} className='fa-1x text-info' />
+       Climate Allowance
+    </th>
+</tr>
+       </MDBTableHead>
+       <MDBTableBody>
+       <tr>
+      <td rowSpan={3}> 
+        {/**initial date */}
+        {ToEthiopianDateSting(deduction.initial_date)}
+        </td>
+      <td rowSpan={3}>
+        {/**initial time */}
+        {deduction.return_time.hour}:{deduction.return_time.min<10?
+        '0'+deduction.return_time.min:deduction.return_time.min
+        }
+      </td>
+      <td>Breakfast</td>
+      <td>
+        {/**place */}
+        {deduction.return_day.breakfast}
+        </td>
+        <td>
+        {
+      isFieldEmployee?
+      <p className="text-center">
+          place {rBreakfast.project_allowance} Addis Ababa
+      </p>
+      :
+      <p className="text-center">
+          name : {Places.placeName(rBreakfast.place_id)} <br/>
+          Region: {Places.placeRegion(rBreakfast.place_id)} <br/>
+          scale:{Calculation.scale(emp_id,rBreakfast.place_id)}
+      </p>
+         }
+        </td>
+ <td>
+     <p className="text-center">
+         general name: {climate.climateGenralName(rBreakfast.climate_place)} <br/>
+         name: {climate.climateName(rBreakfast.climate_palce)}  <br/>
+         level: {climate.climateLevel(rBreakfast.climate_place)}
+     </p>
+ </td>
+     <td>
+        {/**Day Allowance show */}
+        {rBreakfast.scale}
+      </td>
+      <td>
+   {/**climate place to calculate */}     
+   {rBreakfast.c_scale}
+      </td>
+    </tr>
+    <tr>
+      <td>lunch</td>
+      <td>
+        {/**user entered place */}
+        {deduction.return_day.lunch}
+        </td>
+        <td>
+        {
+      isFieldEmployee?
+      <p className="text-center">
+          place {rLunch.project_allowance} Addis Ababa
+      </p>
+      :
+      <p className="text-center">
+          name : {Places.placeName(rLunch.place_id)} <br/>
+          Region: {Places.placeRegion(rLunch.place_id)} <br/>
+          scale:{Calculation.scale(emp_id,rLunch.place_id)}
+      </p>
+         }
+        </td>
+ <td>
+     <p className="text-center">
+         general name: {climate.climateGenralName(rLunch.climate_place)} <br/>
+         name: {climate.climateName(rLunch.climate_place)} <br/>
+         level: {climate.climateLevel(rLunch.climate_place)}
+     </p>
+ </td>
+     <td>
+        {/**Day Allowance show */}
+        {rLunch.scale}
+      </td>
+      <td>
+   {/**climate place to calculate */}     
+   {rLunch.c_scale}
+      </td>
+    </tr>
+    <tr>
+      <td>Dinner</td>
+      <td>
+        {/**user entered place */}
+        {deduction.return_day.dinner}
+        </td>
+        <td>
+        {
+      isFieldEmployee?
+      <p className="text-center">
+          place {rDinner.project_allowance} Addis Ababa
+      </p>
+      :
+      <p className="text-center">
+          name : {Places.placeName(rDinner.place_id)} <br/>
+          Region: {Places.placeRegion(rDinner.place_id)} <br/>
+          scale:{Calculation.scale(emp_id,rDinner.place_id)}
+      </p>
+         }
+        </td>
+ <td>
+     <p className="text-center">
+         general name: {climate.climateGenralName(rDinner.climate_place)} <br/>
+         name: {climate.climateName(rDinner.climate_place)}  <br/>
+         level: {climate.climateLevel(emp_id,rDinner.climate_place)} 
+     </p>
+ </td>
+     <td>
+        {/**Day Allowance show */}
+        {rDinner.scale}
+      </td>
+      <td>
+   {/**climate place to calculate */}     
+   {rDinner.c_scale}
+      </td>
+    </tr>
+    
+    
+    <tr>
+      <td colSpan={6}>
+        <h4 className="float-right font-weight-bold">
+          Totall Day and climate allowance
+        </h4>
+      </td>
+      <td>
+        <h5 className="float-right font-weight-bold">
+          {deduction.day_amount}
+        </h5>
+      </td>
+      <td>
+        <h5 className="float-right font-weight-bold">
+          {deduction.climate_amount}
+        </h5>
+      </td>
+      </tr>
+      <tr>
+        <td colSpan={7}>
+          <h4 className="float-right font-weight-bold">
+          petrol and gas spending
+          </h4>
+        </td>
+        <td>
+        <h5 className="float-right font-weight-bold">
+          {deduction.petrol}
+          </h5>   
+        </td>
+        </tr>
+        <tr>
+        <td colSpan={7}>
+          <h4 className="float-right font-weight-bold">
+          Maintainance and repair spending
+          </h4>
+        </td>
+        <td>
+        <h5 className="float-right font-weight-bold">
+          {deduction.maintainace}
+          </h5>   
+        </td>
+        </tr>
+        <tr>
+        <td colSpan={7}>
+          <h4 className="float-right font-weight-bold">
+          other spendings
+          </h4>
+        </td>
+        <td>
+        <h5 className="float-right font-weight-bold">
+          {deduction.other}
+          </h5>   
+        </td>
+        </tr>
+        <tr>
+        <td colSpan={7}>
+          <h4 className="float-right font-weight-bold">
+          Totall
+          </h4>
+        </td>
+        <td>
+        <h5 className="float-right font-weight-bold">
+          {deduction.totall_amount}
+          </h5>   
+        </td>
+        </tr>
+        <tr>
+        <td colSpan={7}>
+          <h4 className="float-right font-weight-bold text-danger">
+          prepaid amount
+          </h4>
+        </td>
+        <td>
+        <h5 className="float-right font-weight-bold text-danger">
+          -{prePaid}
+          </h5>   
+        </td>
+        </tr>
+        <tr>
+        <td colSpan={7}>
+          {
+            deduction.difference_amount<0?
+            <h4 className="float-right font-weight-bold text-info">
+         Refundable amount
+          </h4>:
+          deduction.difference_amount>0?
+          <h4 className="float-right font-weight-bold text-info">
+          Additional amount
+          </h4>:
+          <p></p>
+          }
+          
+        </td>
+        <td>
+        <h5 className="float-right font-weight-bold text-info">
+          {Math.abs(deduction.difference_amount)}
+          </h5>   
+        </td>
+        </tr>    
+       </MDBTableBody>
+       </MDBTable>          
+          </div>
+        </div>
+      {/** */}  
                </div>   
             </div>
         </div>

@@ -473,7 +473,7 @@ const errorHandle=(id,type)=>ERROR.find(e=>e._id===id && e.type===type)?true:fal
           place_id:iBed.place_id,
           climate_place:iBed.climate_place,
           project_allowance:iBed.project_allowance,
-          scale:Calculation.singleDinner(iBed.scale),
+          scale:Calculation.singleBed(iBed.scale),
           c_scale:Calculation.bedClimate(iBed.climate_place,iBed.scale)
             }
               }
