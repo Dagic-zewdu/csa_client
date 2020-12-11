@@ -1,4 +1,4 @@
-import { faBarcode, faBell, faCalculator, faCheckCircle, faCog, faComment, faHammer, faPaperPlane, faUser, faWindowClose } from '@fortawesome/free-solid-svg-icons'
+import { faBarcode, faBell, faCalculator, faCheckCircle, faCog, faComment, faHammer, faPaperPlane, faPencilAlt, faUser, faWindowClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
 import React, { useContext, useEffect, useState } from 'react'
@@ -8,6 +8,8 @@ import { fetchData_Deductions } from '../../fetchers/Functions/FerchDeductions'
 import ModalDeduction from '../../layout/ModalDeduction'
 import ReactTimeAgo from 'react-time-ago/commonjs/ReactTimeAgo'
 import { TellDay, tellTime } from '../../../controllers/Date'
+import { Link } from 'react-router-dom/cjs/react-router-dom.min'
+import DoDeduction from './DeductionCalculation.js/DoDeduction'
 const F_Employee=()=> {
     const [state,setState]=useState({
         deductions:[],
@@ -36,7 +38,6 @@ useEffect(()=>{
    const found=index===''?false:true
    setState({...state,newDeductions:NewDeductions,seenDeductions:SeenDeductions,found})
     }
-    console.log(Deductions)
   const SeenDeductions=allDeductions.length?
   state.seenDeductions.map(d=>{
       return(
@@ -61,7 +62,7 @@ useEffect(()=>{
         {TellDay(d.f_employee.calculated_date)} <br/>
         {tellTime(d.f_employee.calculated_date)}        
            </p>:
-       d.f_employee.save_options==='Approve'?    
+       d.f_employee.save_options==='Approve'||d.f_employee.save_options==='approve'?    
     <p className="text-center font-italic">
         calculation is done <ReactTimeAgo date={d.f_employee.calculated_date} /> sent for approval  <br/>
         {TellDay(d.f_employee.calculated_date)} <br/>
@@ -69,7 +70,8 @@ useEffect(()=>{
         </p>:
       <p></p>:
      <p className="text-center font-italic">
-         Waiting to do the calculation. Accepted <ReactTimeAgo date={d.f_employee.accepted_date} />   <br/>
+         Waiting to do the calculation. Accepted
+          <ReactTimeAgo date={d.f_employee.accepted_date} />   <br/>
         {TellDay(d.f_employee.accepted_date)} <br/>
         {tellTime(d.f_employee.accepted_date)}  
          </p>    
@@ -80,8 +82,20 @@ useEffect(()=>{
 <ModalDeduction type='view_details' fetch={fetch} deduction={d} ftli={false} 
       am={false} fe={true}/>
 {
-    Deduction.Progress(d._id)!==15&&Deduction.Progress!==16?
-    <ModalDeduction type='calculate' fetch={fetch} deduction={d} ftli={false} />:
+    Deduction.Progress(d._id)===11?
+      <Link to={'/deduction/'+d._id}>
+      <div  className=' btn btn-outline-success mx-2 my-2 ' >
+    <FontAwesomeIcon icon={faCalculator} className='mx-2 fa-1x text-success' />
+        Calculate
+        </div>
+    </Link> :
+    Deduction.Progress(d._id)===12||Deduction.Progress(d._id)===14?
+    <Link to={'/editDeduction/'+d._id}>
+      <div  className=' btn btn-outline-success mx-2 my-2 ' >
+    <FontAwesomeIcon icon={faPencilAlt} className='mx-2 fa-1x text-success' />
+        Edit Calculation
+        </div>
+    </Link>:
     <p></p>  
 }
 {

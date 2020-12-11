@@ -125,11 +125,11 @@ const prePaid=allowance?allowance.totall_amount:0
         <td>
         {
       isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           place {iBreakfast.project_allowance} Addis Ababa
       </p>
       :
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           name : {Places.placeName(iBreakfast.place_id)} <br/>
           Region: {Places.placeRegion(iBreakfast.place_id)} <br/>
           scale:{Calculation.scale(emp_id,iBreakfast.place_id)}
@@ -137,7 +137,7 @@ const prePaid=allowance?allowance.totall_amount:0
          }
         </td>
  <td>
-     <p className="text-center">
+     <p className="text-center font-weight-bold">
          general name: {climate.climateGenralName(iBreakfast.climate_place)} <br/>
          name: {climate.climateName(iBreakfast.climate_place)}  <br/>
          level: {climate.climateLevel(iBreakfast.climate_place)}
@@ -161,11 +161,11 @@ const prePaid=allowance?allowance.totall_amount:0
         <td>
         {
       isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           place {iLunch.project_allowance} Addis Ababa
       </p>
       :
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           name : {Places.placeName(iLunch.place_id)} <br/>
           Region: {Places.placeRegion(iLunch.place_id)} <br/>
           scale:{Calculation.scale(emp_id,iLunch.place_id)}
@@ -173,7 +173,7 @@ const prePaid=allowance?allowance.totall_amount:0
          }
         </td>
  <td>
-     <p className="text-center">
+     <p className="text-center font-weight-bold">
          general name: {climate.climateGenralName(iLunch.climate_place)} <br/>
          name: {climate.climateName(iLunch.climate_place)} <br/>
          level: {climate.climateLevel(iLunch.climate_place)}
@@ -197,11 +197,11 @@ const prePaid=allowance?allowance.totall_amount:0
         <td>
         {
       isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           place {iDinner.project_allowance} Addis Ababa
       </p>
       :
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           name : {Places.placeName(iDinner.place_id)} <br/>
           Region: {Places.placeRegion(iDinner.place_id)} <br/>
           scale:{Calculation.scale(emp_id,iDinner.place_id)}
@@ -209,7 +209,7 @@ const prePaid=allowance?allowance.totall_amount:0
          }
         </td>
  <td>
-     <p className="text-center">
+     <p className="text-center font-weight-bold">
          general name: {climate.climateGenralName(iDinner.climate_place)} <br/>
          name: {climate.climateName(iDinner.climate_place)}  <br/>
          level: {climate.climateLevel(emp_id,iDinner.climate_place)} 
@@ -233,11 +233,11 @@ const prePaid=allowance?allowance.totall_amount:0
         <td>
         {
       isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           place {iBed.project_allowance} Addis Ababa
       </p>
       :
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           name : {Places.placeName(iBed.place_id)} <br/>
           Region: {Places.placeRegion(iBed.place_id)} <br/>
           scale:{Calculation.scale(emp_id,iBed.place_id)}
@@ -245,7 +245,7 @@ const prePaid=allowance?allowance.totall_amount:0
          }
         </td>
  <td>
-     <p className="text-center">
+     <p className="text-center font-weight-bold">
          general name: {climate.climateGenralName(iBed.climate_place)} <br/>
          name: {climate.climateName(iBed.climate_place)}  <br/>
          level: {climate.climateLevel(iBed.climate_place)}
@@ -332,11 +332,11 @@ const prePaid=allowance?allowance.totall_amount:0
              <td>
       {
         isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
 place {findSpendingDay(d._id,'breakfast')?
 findSpendingDay(d._id,'breakfast').project_allowance:''} Addis Ababa
       </p>:
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
 name : {Places.placeName(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
 Region: {Places.placeRegion(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
 scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')}
@@ -345,7 +345,7 @@ scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'breakfast')?findSpendingD
        
              </td>
              <td>
-             <p className="text-center">
+             <p className="text-center font-weight-bold">
 general name: {climate.climateGenralName(findSpendingDay(d._id,'breakfast')?
             findSpendingDay(d._id,'breakfast').climate_place:'')} <br/>
 name: {climate.climateName(findSpendingDay(d._id,'breakfast')?
@@ -369,11 +369,11 @@ level: {climate.climateLevel(findSpendingDay(d._id,'breakfast')?
              <td>
       {
         isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
 place {findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').project_allowance:''
           } Addis Ababa
       </p>:
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
 name : {Places.placeName(findSpendingDay(d._id,'lunch')?
         findSpendingDay(d._id,'lunch').place_id:'')} <br/>
 Region: {Places.placeRegion(findSpendingDay(d._id,'lunch')?
@@ -385,7 +385,7 @@ scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'lunch')?
        
              </td>
              <td>
-             <p className="text-center">
+             <p className="text-center font-weight-bold">
 general name: {climate.climateGenralName(findSpendingDay(d._id,'lunch')?
             findSpendingDay(d._id,'lunch').climate_place:'')} <br/>
 name: {climate.climateName(findSpendingDay(d._id,'lunch')?
@@ -409,11 +409,11 @@ level: {climate.climateLevel(findSpendingDay(d._id,'lunch')?
              <td>
       {
         isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
 place {findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').project_allowance:''
           } Addis Ababa
       </p>:
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
 name : {Places.placeName(findSpendingDay(d._id,'dinner')?
         findSpendingDay(d._id,'dinner').place_id:'')} <br/>
 Region: {Places.placeRegion(findSpendingDay(d._id,'dinner')?
@@ -425,7 +425,7 @@ scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'dinner')?
        
              </td>
              <td>
-             <p className="text-center">
+             <p className="text-center font-weight-bold">
 general name: {climate.climateGenralName(findSpendingDay(d._id,'dinner')?
             findSpendingDay(d._id,'dinner').climate_place:'')} <br/>
 name: {climate.climateName(findSpendingDay(d._id,'dinner')?
@@ -449,11 +449,11 @@ level: {climate.climateLevel(findSpendingDay(d._id,'dinner')?
              <td>
       {
         isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
 place {findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').project_allowance:''
           } Addis Ababa
       </p>:
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
 name : {Places.placeName(findSpendingDay(d._id,'bed')?
         findSpendingDay(d._id,'bed').place_id:'')} <br/>
 Region: {Places.placeRegion(findSpendingDay(d._id,'bed')?
@@ -465,7 +465,7 @@ scale:{Calculation.scale(emp_id,findSpendingDay(d._id,'bed')?
        
              </td>
              <td>
-             <p className="text-center">
+             <p className="text-center font-weight-bold">
 general name: {climate.climateGenralName(findSpendingDay(d._id,'bed')?
             findSpendingDay(d._id,'bed').climate_place:'')} <br/>
 name: {climate.climateName(findSpendingDay(d._id,'bed')?
@@ -555,11 +555,11 @@ level: {climate.climateLevel(findSpendingDay(d._id,'bed')?
         <td>
         {
       isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           place {rBreakfast.project_allowance} Addis Ababa
       </p>
       :
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           name : {Places.placeName(rBreakfast.place_id)} <br/>
           Region: {Places.placeRegion(rBreakfast.place_id)} <br/>
           scale:{Calculation.scale(emp_id,rBreakfast.place_id)}
@@ -567,7 +567,7 @@ level: {climate.climateLevel(findSpendingDay(d._id,'bed')?
          }
         </td>
  <td>
-     <p className="text-center">
+     <p className="text-center font-weight-bold">
          general name: {climate.climateGenralName(rBreakfast.climate_place)} <br/>
          name: {climate.climateName(rBreakfast.climate_palce)}  <br/>
          level: {climate.climateLevel(rBreakfast.climate_place)}
@@ -591,11 +591,11 @@ level: {climate.climateLevel(findSpendingDay(d._id,'bed')?
         <td>
         {
       isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           place {rLunch.project_allowance} Addis Ababa
       </p>
       :
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           name : {Places.placeName(rLunch.place_id)} <br/>
           Region: {Places.placeRegion(rLunch.place_id)} <br/>
           scale:{Calculation.scale(emp_id,rLunch.place_id)}
@@ -603,7 +603,7 @@ level: {climate.climateLevel(findSpendingDay(d._id,'bed')?
          }
         </td>
  <td>
-     <p className="text-center">
+     <p className="text-center font-weight-bold">
          general name: {climate.climateGenralName(rLunch.climate_place)} <br/>
          name: {climate.climateName(rLunch.climate_place)} <br/>
          level: {climate.climateLevel(rLunch.climate_place)}
@@ -627,11 +627,11 @@ level: {climate.climateLevel(findSpendingDay(d._id,'bed')?
         <td>
         {
       isFieldEmployee?
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           place {rDinner.project_allowance} Addis Ababa
       </p>
       :
-      <p className="text-center">
+      <p className="text-center font-weight-bold">
           name : {Places.placeName(rDinner.place_id)} <br/>
           Region: {Places.placeRegion(rDinner.place_id)} <br/>
           scale:{Calculation.scale(emp_id,rDinner.place_id)}
@@ -639,7 +639,7 @@ level: {climate.climateLevel(findSpendingDay(d._id,'bed')?
          }
         </td>
  <td>
-     <p className="text-center">
+     <p className="text-center font-weight-bold">
          general name: {climate.climateGenralName(rDinner.climate_place)} <br/>
          name: {climate.climateName(rDinner.climate_place)}  <br/>
          level: {climate.climateLevel(emp_id,rDinner.climate_place)} 

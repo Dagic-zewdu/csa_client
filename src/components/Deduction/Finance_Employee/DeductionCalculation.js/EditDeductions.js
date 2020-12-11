@@ -16,7 +16,6 @@ import { DeductionDnd, StoreContext } from '../../../contexts/contexts'
 import DragClimatePlace from './DragClimatePlace'
 import DragEmployeePlace from './DragEmployeePlace'
 import DragFieldPlace from './DragFieldPlace'
-import DragPlace from './DragFieldPlace'
 import DragOfficialPlace from './DragOfficialPlace'
 import { DropFieldSpending, FieldBedInitial, FieldBreakfastInitial, FieldDinnerInitial, FieldLunchInitial, ReturnPlaceField } from './DropFieldPlace'
 import { dropInitialClimatePlace, dropPlace_id, fieldSpendingDay, initialFieldEmployee, removeClimatePlace, removeInitialPlaces ,climateSpendingDays, removeSpendingDay, removeClimateSpending, dropSpendingDays } from './HandleFunctions'
@@ -32,7 +31,7 @@ import ErrorLoading from '../../../layout/ErrorLoading'
 import { fetchData_Deductions } from '../../../fetchers/Functions/FerchDeductions'
 import { Link, withRouter } from 'react-router-dom'
 import { UsersClass } from '../../../../controllers/Users'
-  const DeductionCalculation=(props)=> {
+  const EditDeduction=(props)=> {
     const {_id:id}=props
     const [state,setState]=useState({
         places:[],
@@ -80,7 +79,20 @@ import { UsersClass } from '../../../../controllers/Users'
     initial_day:{breakfast:'',lunch:'',dinner:'',bed:''},
     return_day:{breakfast:'',lunch:'',dinner:''},
     initial_time:{min:0,hour:0},
-    return_time:{min:0,hour:0}                    
+    return_time:{min:0,hour:0},
+    c_spending_days:[],
+    f_employee:{save_options:''},
+    c_initial_day:{
+        breakfast:{place_id:'',climate_place:'',project_allowance:'',scale:0},
+        lunch:{place_id:'',climate_place:'',project_allowance:'',scale:0},
+        dinner:{place_id:'',climate_place:'',project_allowance:'',scale:0},
+        bed:{place_id:'',climate_place:'',project_allowance:'',scale:0}
+    },
+    c_return_day:{
+        breakfast:{place_id:'',climate_place:'',project_allowance:'',scale:0},
+        lunch:{place_id:'',climate_place:'',project_allowance:'',scale:0},
+        dinner:{place_id:'',climate_place:'',project_allowance:'',scale:0},
+    }                 
 }
   const emp_id=deduction.creater
   const isOfficial=Calculation.isOfficial(emp_id) //check the deduction creater is official
@@ -92,114 +104,105 @@ import { UsersClass } from '../../../../controllers/Users'
                state.check.outAA?fieldEmployee.faOut_A_A(emp_id):0
 const places=isOfficial?Places.officialPlaces():Places.employeePlaces()
 
-/**returns String id that is detect through
- * @param index-string name to detect
- *  */ 
-const place_idDetect=index=>isFieldEmployee?'':
-isOfficial?Places.findByName(index,'official')?Places.findByName(index,'official')._id:'':
-Places.findByName(index,'employee')?Places.findByName(index,'employee')._id:''
-/**returns number scale that is detect through the place
- * @param index-string name to detect
- *  */ 
-const place_scaleDetect=index=>isFieldEmployee?index!==''?fieldEmployee.faOut_A_A(emp_id):0:
-isOfficial?Places.findByName(index,'official')?Calculation.scale(emp_id,Places.findByName(index,'official')._id):0:
-Places.findByName(index,'employee')?Calculation.scale(emp_id,Places.findByName(index,'employee')._id):0
-/**returns String of 'inside' 'outside' addis ababa for project allowance employee
- * @param index-name to search and set
- *  */  
-const projectDetect=index=>isFieldEmployee?index!==''?'Outside':'':''
-/** returns string id that is detect on climate place
- * @param index-String name to detect
-*/
-const detectClimatePlace=index=>climate.findSinglePlace(index)?climate.findSinglePlace(index)._id:''
+ /**return an object of state.c_spending_days
+  * @param id-spending day id
+  * @param type-string 'breakfast' || 'lunch' || 'dinner' || 'bed'
+    */
+const getSpendingDay=(id,type)=>deduction.c_spending_days.find(d=>d.s_id === id && d.type === type)
 const User=new UsersClass(Users,Employees)
 const fetch=()=>fetchData_Deductions(dispatchDeductions)
+const {breakfast:Ibreakfast,lunch:ILunch,dinner:Idinner,bed:Ibed}=deduction.c_initial_day
+const {breakfast:Rbreakfast,lunch:RLunch,dinner:Rdinner}=deduction.c_return_day
     useEffect(()=>{
-      deductionsLoading?Donothing():User.isFinanceEmployee()?Donothing():props.history.push('/login')
+deductionsLoading?Donothing():User.isFinanceEmployee()?Donothing():props.history.push('/login')
       fetchData_Deductions(dispatchDeductions)
-    document.title='Do deduction'
+    document.title='Edit deduction'
     
       let c_spending_days=[]
       /**auto detect */
       deduction.spending_days.map(d=>{
         c_spending_days.push(
       {
-      _id:d._id,type:'breakfast',duration:Calculation.sDuration(id,d._id),
-      place_id:place_idDetect(d.breakfast),
-      climate_place:detectClimatePlace(d.breakfast),
-      project_allowance:projectDetect(d.breakfast),
-      scale:place_scaleDetect(d.breakfast)
+_id:d._id,type:'breakfast',
+duration:getSpendingDay(d._id,'breakfast')?getSpendingDay(d._id,'breakfast').duration:0,
+place_id:getSpendingDay(d._id,'breakfast')?getSpendingDay(d._id,'breakfast').place_id:'',
+climate_place:getSpendingDay(d._id,'breakfast')?getSpendingDay(d._id,'breakfast').climate_place:'',
+project_allowance:getSpendingDay(d._id,'breakfast')?getSpendingDay(d._id,'breakfast').project_allowance:'',
+scale: Calculation.scale(emp_id,getSpendingDay(d._id,'breakfast')?getSpendingDay(d._id,'breakfast').place_id:'')
       },
       {
-      _id:d._id,type:'lunch',duration:Calculation.sDuration(id,d._id),
-      place_id:place_idDetect(d.lunch),
-      climate_place:detectClimatePlace(d.lunch),
-      project_allowance:projectDetect(d.lunch),
-      scale:place_scaleDetect(d.lunch)
-     },
+_id:d._id,type:'lunch',
+duration:getSpendingDay(d._id,'lunch')?getSpendingDay(d._id,'lunch').duration:0,
+place_id:getSpendingDay(d._id,'lunch')?getSpendingDay(d._id,'lunch').place_id:'',
+climate_place:getSpendingDay(d._id,'lunch')?getSpendingDay(d._id,'lunch').climate_place:'',
+project_allowance:getSpendingDay(d._id,'lunch')?getSpendingDay(d._id,'lunch').project_allowance:'',
+scale:Calculation.scale(emp_id,getSpendingDay(d._id,'lunch')?getSpendingDay(d._id,'lunch').place_id:'')
+},
       {
-      _id:d._id,type:'dinner',duration:Calculation.sDuration(id,d._id),
-      place_id:place_idDetect(d.dinner),
-      climate_place:detectClimatePlace(d.dinner),
-      project_allowance:projectDetect(d.dinner),
-      scale:place_scaleDetect(d.dinner)
+_id:d._id,type:'dinner',
+duration:getSpendingDay(d._id,'dinner')?getSpendingDay(d._id,'dinner').duration:0,
+place_id:getSpendingDay(d._id,'dinner')?getSpendingDay(d._id,'dinner').place_id:'',
+climate_place:getSpendingDay(d._id,'dinner')?getSpendingDay(d._id,'dinner').climate_place:'',
+project_allowance:getSpendingDay(d._id,'dinner')?getSpendingDay(d._id,'dinner').project_allowance:'',
+scale:Calculation.scale(emp_id,getSpendingDay(d._id,'dinner')?getSpendingDay(d._id,'dinner').place_id:'')
       },
       {
-      _id:d._id,type:'bed',duration:Calculation.sDuration(id,d._id),
-      place_id:place_idDetect(d.bed),
-      climate_place:detectClimatePlace(d.bed),
-      project_allowance:projectDetect(d.bed),
-      scale:place_scaleDetect(d.bed)
+_id:d._id,type:'bed',
+duration:getSpendingDay(d._id,'bed')?getSpendingDay(d._id,'bed').duration:0,
+place_id:getSpendingDay(d._id,'bed')?getSpendingDay(d._id,'bed').place_id:'',
+climate_place:getSpendingDay(d._id,'bed')?getSpendingDay(d._id,'bed').climate_place:'',
+project_allowance:getSpendingDay(d._id,'bed')?getSpendingDay(d._id,'bed').project_allowance:'',
+scale:Calculation.scale(emp_id,getSpendingDay(d._id,'bed')?getSpendingDay(d._id,'bed').place_id:'')
      }
      )
       })
       let c_initial_day={ 
         breakfast:{
-        place_id:place_idDetect(deduction.initial_day.breakfast),
-        climate_place:detectClimatePlace(deduction.initial_day.breakfast),
-        project_allowance:projectDetect(deduction.initial_day.breakfast),
-        scale:place_scaleDetect(deduction.initial_day.breakfast)
+        place_id:Ibreakfast.place_id,
+        climate_place:Ibreakfast.climate_place,
+        project_allowance:Ibreakfast.project_allowance,
+        scale:Calculation.scale(emp_id,Ibreakfast.place_id)
               },
         lunch:{
-        place_id:place_idDetect(deduction.initial_day.lunch),
-        climate_place:detectClimatePlace(deduction.initial_day.lunch),
-        project_allowance:projectDetect(deduction.initial_day.lunch),
-        scale:place_scaleDetect(deduction.initial_day.lunch)
+        place_id:ILunch.place_id,
+        climate_place:ILunch.climate_place,
+        project_allowance:ILunch.project_allowance,
+        scale:Calculation.scale(emp_id,ILunch.place_id)
             },
         dinner:{
-          place_id:place_idDetect(deduction.initial_day.dinner),
-          climate_place:detectClimatePlace(deduction.initial_day.dinner),
-          project_allowance:projectDetect(deduction.initial_day.dinner),
-          scale:place_scaleDetect(deduction.initial_day.dinner)
+          place_id:Idinner.place_id,
+          climate_place:Idinner.climate_place,
+          project_allowance:Idinner.project_allowance,
+          scale:Calculation.scale(emp_id,Idinner.place_id)
          },
         bed:{
-          place_id:place_idDetect(deduction.initial_day.bed),
-          climate_place:detectClimatePlace(deduction.initial_day.bed),
-          project_allowance:projectDetect(deduction.initial_day.bed),
-          scale:place_scaleDetect(deduction.initial_day.bed)
+          place_id:Ibed.place_id,
+          climate_place:Ibed.climate_place,
+          project_allowance:Ibed.project_allowance,
+          scale:Calculation.scale(emp_id,Ibed.place_id)
           }
             }
       let c_return_day={ 
         breakfast:{
-          place_id:place_idDetect(deduction.return_day.breakfast),
-          climate_place:detectClimatePlace(deduction.return_day.breakfast),
-          project_allowance:projectDetect(deduction.return_day.breakfast),
-          scale:place_scaleDetect(deduction.return_day.breakfast)
-                },
+        place_id:Rbreakfast.place_id,
+        climate_place:Rbreakfast.climate_place,
+        project_allowance:Rbreakfast.project_allowance,
+        scale:Calculation.scale(emp_id,Rbreakfast.place_id)
+              },
         lunch:{
-          place_id:place_idDetect(deduction.return_day.lunch),
-          climate_place:detectClimatePlace(deduction.return_day.lunch),
-          project_allowance:projectDetect(deduction.return_day.lunch),
-          scale:place_scaleDetect(deduction.return_day.lunch)
-           },
+        place_id:RLunch.place_id,
+        climate_place:RLunch.climate_place,
+        project_allowance:RLunch.project_allowance,
+        scale:Calculation.scale(emp_id,RLunch.place_id)
+            },
         dinner:{
-          place_id:place_idDetect(deduction.return_day.dinner),
-          climate_place:detectClimatePlace(deduction.return_day.dinner),
-          project_allowance:projectDetect(deduction.return_day.dinner),
-          scale:place_scaleDetect(deduction.return_day.dinner)
+          place_id:Rdinner.place_id,
+          climate_place:Rdinner.climate_place,
+          project_allowance:Rdinner.project_allowance,
+          scale:Calculation.scale(emp_id,Rdinner.place_id)
          }
-         }      
-      setState({...state,c_spending_days,c_initial_day,c_return_day})
+            }      
+setState({...state,c_spending_days,c_initial_day,c_return_day,save_options:deduction.f_employee.save_options})
     },[deductionsLoading,place.loading,climatePlaces.loading])
   const handleOfficialSearch=(index)=>index===''?
   setState({...state,official_places:[]}):
@@ -1515,7 +1518,8 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpending
        </p>
        <div className="input-container">
  <FontAwesomeIcon icon={faSave} className=' fa-2x mx-2 my-auto '/>
-<select  className="input-field form-control my-auto"
+ 
+<select  className="input-field form-control my-auto" value={state.save_options}
 onChange={e=>e.target.value==='draft'?
    setState({...state,save_options:e.target.value,
     approval_manager:{emp_id:''}}):
@@ -1540,4 +1544,4 @@ onChange={e=>e.target.value==='draft'?
     )
 }
 
-export default withRouter (DeductionCalculation)
+export default withRouter (EditDeduction)

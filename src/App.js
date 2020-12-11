@@ -33,8 +33,8 @@ import { climatePlacesReducer, climatePlaceState } from './store/Reducers/climat
 import Deduction from './components/routes/Deduction'
 import { deductionReducer, deductionState } from './store/Reducers/deductionReducer'
 import Test from './components/test/Test'
-import {DndProvider}  from 'react-dnd'
-import {Backend}  from 'react-dnd-html5-backend'
+import DoDeduction from './components/Deduction/Finance_Employee/DeductionCalculation.js/DoDeduction'
+import Edit from './components/Deduction/Finance_Employee/DeductionCalculation.js/Edit'
 const App = () => {
 
   const [employees, dispatchEmployees] = useReducer(employeeReducer, empState)
@@ -68,6 +68,8 @@ const App = () => {
       <Route exact path='/'><Home/></Route>
       <Route path='/letter'><Letter/></Route>
       <Route path='/allowance'><Allowance/></Route>
+      <Route path='/editDeduction/:id'><Edit/></Route>
+      <Route path='/deduction/:id'><DoDeduction/> </Route>
       <Route path='/deduction'><Deduction/></Route>
       {/**user routes */}
       <Route path='/login'><Login/></Route>
