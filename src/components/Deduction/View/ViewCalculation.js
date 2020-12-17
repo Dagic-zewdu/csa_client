@@ -1,17 +1,22 @@
 import { faCalendar, faCalendarCheck, faMap, faMapMarked, faPaperPlane, faSun, faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import axios from 'axios'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { climateClass } from '../../../controllers/climatePlaces'
 import { TellDay, ToEthiopianDateSting } from '../../../controllers/Date'
 import { DeductionCalculate } from '../../../controllers/DeductionCalculate'
 import { FieldAllowance } from '../../../controllers/FieldAllowance'
 import { PlaceClass } from '../../../controllers/Places'
+import { Donothing } from '../../../controllers/saveProcess'
+import { encryptObject } from '../../auth/encrypt'
+import { host } from '../../config/config'
 import { StoreContext } from '../../contexts/contexts'
+import { userInfo } from '../../users/userInfo'
 
 const ViewCalculation=(props)=> {
   /**view calculation */
-    const {deduction}=props
+    const {deduction,ftl}=props
     const {_id:id}=deduction
     const { allowances,deductions,employees,users, place,
         fieldEmployees,climatePlaces,config }=useContext(StoreContext)
@@ -38,6 +43,19 @@ const isFieldEmployee=fieldEmployee.faCheck(emp_id)
   const {breakfast:rBreakfast,lunch:rLunch,dinner:rDinner}=deduction.c_return_day
   const allowance=Calculation.findAllowance(deduction.allowance_id)
 const prePaid=allowance?allowance.totall_amount:0
+
+useEffect(()=>{
+  let data=encryptObject({
+       ...deduction,
+       _id:deduction._id,
+       f_tl_approve:{...deduction.f_tl_approve,seen:true},...userInfo() 
+  })
+  console.log(ftl,!deduction.f_tl_approve.seen)
+  const setSeen=async ()=>ftl&&!deduction.f_tl_approve.seen?
+  await axios.put(host+'/deductions',{data}):Donothing()
+setSeen()
+},[])
+
   return (
         <div className="container">
             <div className="row">

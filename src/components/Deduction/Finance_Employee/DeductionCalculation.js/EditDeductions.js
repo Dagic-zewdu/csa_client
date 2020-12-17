@@ -61,7 +61,6 @@ import { UsersClass } from '../../../../controllers/Users'
     const {breakfast:rBreakfast,lunch:rLunch,dinner:rDinner}=state.c_return_day
     const { allowances,deductions,employees,users, place,
             fieldEmployees,climatePlaces,config ,dispatchDeductions}=useContext(StoreContext)
-    console.log(useContext(StoreContext))
     const {state:Allowances,loading,error}=allowances
     const {state:Employees,loading:empLoading,error:empError}=employees
     const {state:Users,loading:userLoading,error:userError}=users
@@ -553,7 +552,14 @@ const errorHandle=(id,type)=>ERROR.find(e=>e._id===id && e.type===type)?true:fal
         const calculated_date=await getDate()   
         const data=encryptObject({
             _id:deduction._id,...userInfo(),
-          f_employee:{...deduction.f_employee,calculated:true,calculated_date,save_options:state.save_options},
+          f_employee:{...deduction.f_employee,calculated:true,calculated_date,
+            save_options:state.save_options,
+            redone:deduction.f_tl_approve.redone?true:false
+          },
+          f_tl_approve:{
+            ...deduction.f_tl_approve,
+            redone:false
+          },
           c_initial_day,c_return_day,c_spending_days, 
           difference_amount:addPayment,
           climate_amount:totallClimateSum,
@@ -573,6 +579,7 @@ const errorHandle=(id,type)=>ERROR.find(e=>e._id===id && e.type===type)?true:fal
           }
        }
        catch(err){
+         console.log(err)
         setState({...state,...saveProcess('error',
         'Error while saving... server is not active or responding please contact admin'
               )})

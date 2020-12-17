@@ -1,16 +1,15 @@
-import { faBarcode, faBell, faCalculator, faCheckCircle, faCog, faComment, faExclamationTriangle, faHammer, faPaperPlane, faPencilAlt, faUser, faWindowClose } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
 import React, { useContext, useEffect, useState } from 'react'
 import { DeductionClass } from '../../../controllers/Deductions'
 import { StoreContext } from '../../contexts/contexts'
-import { fetchData_Deductions } from '../../fetchers/Functions/FerchDeductions'
+import { faBarcode, faBell, faCalculator, faCheck, faCheckCircle, faCog, faComment, faPaperPlane, faUser, faWindowClose } from '@fortawesome/free-solid-svg-icons'
+import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ModalDeduction from '../../layout/ModalDeduction'
 import ReactTimeAgo from 'react-time-ago/commonjs/ReactTimeAgo'
 import { TellDay, tellTime } from '../../../controllers/Date'
-import { Link } from 'react-router-dom/cjs/react-router-dom.min'
+import { fetchData_Deductions } from '../../fetchers/Functions/FerchDeductions'
 
-const F_Employee=()=> {
+const ShowCalculated=(props)=> {
     const [state,setState]=useState({
         deductions:[],
         found:false,
@@ -24,24 +23,17 @@ const F_Employee=()=> {
     const {state:Users,loading:userLoading,error:userError}=users
     const {state:Deductions,loading:deductionsLoading,error:deductionError}=deductions
 const Deduction=new DeductionClass(Deductions,Allowances,Employees,Users)
-const allDeductions=Deduction.fEmployeeDeductions()  //array of deductions of the employee
-const seenDeductions=Deduction.fSeenEmployeeDeductions() //array of seen deductions
-const newDeductions=Deduction.fNewEmployeeDeductions()
-const redoneDeductions=Deduction.fe_RedoneDeductions()
-const emp_id=Deduction.getEmp_id()
+const All=Deduction.ftl_Calulated()
+const New=Deduction.ftl_newCalculated()  //array of new calculated deductions
+const redone=Deduction.ftl_Redone()  //array of redone calculations
+const  Seen=Deduction.ftl_CalulatedSeen() //array of seen calculations
+ 
 const fetch=()=>fetchData_Deductions(dispatchDeductions)
-useEffect(()=>{
-    fetchData_Deductions(dispatchDeductions)
-    setState({...state,seenDeductions,newDeductions,redoneDeductions})
-},[deductionsLoading,JSON.stringify(allDeductions)])
-    const handleSearch=(index)=>{
-   const NewDeductions=index===''?newDeductions:Deduction.searchFemployee(index).new
-   const SeenDeductions=index===''?seenDeductions:Deduction.searchFemployee(index).seen
-   const RedoneDeductions=index===''?redoneDeductions:Deduction.searchFemployee(index).redone
-   const found=index===''?false:true
-   setState({...state,newDeductions:NewDeductions,seenDeductions:SeenDeductions,found,redoneDeductions:RedoneDeductions})
-    }
-  const SeenDeductions=allDeductions.length?
+  useEffect(()=>{
+      fetchData_Deductions(dispatchDeductions)
+  setState({...state,newDeductions:New,seenDeductions:Seen,redoneDeductions:redone})
+  },[deductionsLoading,JSON.stringify(All)])
+const SeenDeductions=All.length?
   state.seenDeductions.map(d=>{
       return(
      <tr key={d._id}>
@@ -57,55 +49,39 @@ useEffect(()=>{
        {Deduction.Name(d.creater)} 
     </td>
     <td className='text-center'>
-    {
-       d.f_employee.calculated?
-       d.f_employee.save_options==='draft'?
-       <p className="text-center font-italic">
-        Calculated <ReactTimeAgo date={d.f_employee.calculated_date} /> save as a draft <br/>
-        {TellDay(d.f_employee.calculated_date)} <br/>
-        {tellTime(d.f_employee.calculated_date)}        
-           </p>:
-       d.f_employee.save_options==='Approve'||d.f_employee.save_options==='approve'?    
+  {
+    d.f_tl_approve.approve==='waiting'?
     <p className="text-center font-italic">
-        calculation is done <ReactTimeAgo date={d.f_employee.calculated_date} /> sent for approval  <br/>
+        Calculated by -{Deduction.Name(d.f_employee.emp_id)} <br/>
+         Waiting to approve the calculation. <br/>
+          Calculated <ReactTimeAgo date={d.f_employee.calculated_date} /> <br/>
         {TellDay(d.f_employee.calculated_date)} <br/>
-        {tellTime(d.f_employee.calculated_date)} 
-        </p>:
-      <p></p>:
-     <p className="text-center font-italic">
-         Waiting to do the calculation. Accepted
-          <ReactTimeAgo date={d.f_employee.accepted_date} />   <br/>
-        {TellDay(d.f_employee.accepted_date)} <br/>
-        {tellTime(d.f_employee.accepted_date)}  
-         </p>    
-    }   
+        {tellTime(d.f_employee.calculated_date)}  
+         </p> :
+         d.f_tl_approve.approve==='Approved'?
+         <p className="text-center font-italic">
+          <FontAwesomeIcon icon={faCheckCircle} className='mx-2 fa-2x text-success'/>
+      Approved at <ReactTimeAgo date={d.f_tl_approve.approved_date} /> <br/>
+        {TellDay(d.f_tl_approve.approved_date)} <br/>
+        {tellTime(d.f_tl_approve.approved_date)}
+         </p>:
+         d.f_tl_approve.approve==='commented'?
+         <p className="text-center font-italic text-warning">
+          <FontAwesomeIcon icon={faComment} className='mx-2 fa-2x text-warning'/> commented <br/>
+        comment -{d.f_tl_approve.comment}  
+         </p>:
+         d.f_tl_approve.approve==='unApproved'?
+         <p className="text-center font-italic text-danger">
+<FontAwesomeIcon icon={faWindowClose} className='mx-2 fa-2x text-danger'/> unApproved <br/>
+        comment -{d.f_tl_approve.comment}  
+         </p>:
+         <p></p>
+  } 
     </td>
-    
+    <ModalDeduction type='view_calculation' fetch={fetch} deduction={d} ftl={true}/>
+    <ModalDeduction type='approve_calculation'fetch={fetch} deduction={d}/>
     <td>
-<ModalDeduction type='view_details' fetch={fetch} deduction={d} ftli={false} 
-      am={false} fe={true}/>
-{
-    Deduction.Progress(d._id)===11?
-      <Link to={'/deduction/'+d._id}>
-      <div  className=' btn btn-outline-success mx-2 my-2 ' >
-    <FontAwesomeIcon icon={faCalculator} className='mx-2 fa-1x text-success' />
-        Calculate
-        </div>
-    </Link> :
-    Deduction.Progress(d._id)===12||Deduction.Progress(d._id)===14?
-    <Link to={'/editDeduction/'+d._id}>
-      <div  className=' btn btn-outline-success mx-2 my-2 ' >
-    <FontAwesomeIcon icon={faPencilAlt} className='mx-2 fa-1x text-success' />
-        Edit Calculation
-        </div>
-    </Link>:
-    <p></p>  
-}
-{
-    d.f_employee.calculated?
-    <ModalDeduction type='view_calculation' fetch={fetch} deduction={d} ftl={false}/>:
-    <p></p>
-}
+
 </td>
     </tr>
       )
@@ -132,62 +108,65 @@ const NewDeductions=state.newDeductions.map(d=>{
     </td>
     <td className='text-info font-weight-bold'>
     <p className="text-center font-italic">
-         Waiting to do the calculation. Accepted <ReactTimeAgo date={d.f_employee.accepted_date} /> <br/>
-        {TellDay(d.f_employee.accepted_date)} <br/>
-        {tellTime(d.f_employee.accepted_date)}  
+        Calculated by -{Deduction.Name(d.f_employee.emp_id)} <br/>
+         Waiting to approve the calculation. <br/>
+          Calculated <ReactTimeAgo date={d.f_employee.calculated_date} /> <br/>
+        {TellDay(d.f_employee.calculated_date)} <br/>
+        {tellTime(d.f_employee.calculated_date)}  
          </p> 
     </td>
     
     <td>
-<ModalDeduction type='view_details' fetch={fetch} deduction={d} am={false} ftli={false} fe={true}/>
-
+    <ModalDeduction type='view_calculation' fetch={fetch} deduction={d} ftl={true}/>
     </td>
     </tr>
       )
   })
-
-const redone=state.redoneDeductions.map(d=>{
+  const RedoneDeductions=state.redoneDeductions.map(d=>{
     return(
    <tr key={d._id}>
-  <td className="text-center text-warning">
+  <td className="text-center text-warning font-weight-bold">
       {d.id}
   </td>
-  <td className="text-center text-warning">
+  <td className="text-center text-warning font-weight-bold">
       {Deduction.findAllowance(d.allowance_id)?
       Deduction.findAllowance(d.allowance_id).id:''
       }
   </td>
-  <td className="text-center  text-warning">
+  <td className="text-center font-weight-bold text-warning">
      {Deduction.Name(d.creater)} 
   </td>
-  <td className='text-center'>
-   <p className="text-warning font-italic font-weight-bold">
-       calculation need to be redone again <br/>
-       comment-{d.f_tl_approve.comment} <br/>
-       commented by your finace team leader -{Deduction.Name(d.f_tl_pending.emp_id)}
-   </p>
+  <td className='font-weight-bold'>
+     <p className="text-center text-warning font-italic">
+   Comment - {d.f_tl_approve.comment}       
+         </p> 
+  <p className="text-center text-warning">
+       Calulation is redone please review!! Calculated at
+       <ReactTimeAgo date={d.f_employee.calculated_date} /> <br/>
+      {TellDay(d.f_employee.calculated_date)} <br/>
+      {tellTime(d.f_employee.calculated_date)}  
+       </p> 
   </td>
   
   <td>
-<ModalDeduction type='view_details' fetch={fetch} deduction={d} ftli={false} 
-    am={false} fe={true}/>
- <Link to={'/editDeduction/'+d._id}>
-    <div  className=' btn btn-outline-success mx-2 my-2 ' >
-  <FontAwesomeIcon icon={faPencilAlt} className='mx-2 fa-1x text-success' />
-      Edit Calculation
-      </div>
-  </Link>
-{
-  d.f_employee.calculated?
-  <ModalDeduction type='view_calculation' fetch={fetch} deduction={d} ftl={false}/>:
-  <p></p>
-}
-</td>
+  <ModalDeduction type='view_calculation' fetch={fetch} deduction={d} ftl={true}/>
+  <ModalDeduction type='approve_calculation'fetch={fetch} deduction={d}/>
+  </td>
   </tr>
     )
 })
-    return (
-         <div className="container">
+
+
+    const handleSearch=(index)=>{
+        const NewDeductions=index===''?New:Deduction.ftlSeacrchCalulated(index).new
+        const SeenDeductions=index===''?Seen:Deduction.ftlSeacrchCalulated(index).seen
+        const redoneDeductions=index===''?redone:Deduction.ftlSeacrchCalulated(index).redone
+        const found=index===''?false:true
+        setState({...state,newDeductions:NewDeductions,
+            seenDeductions:SeenDeductions,found,redoneDeductions})   
+    }
+return (
+                <div className="container">
      <div className="row">
        <div className="col-lg-3 my-auto">
        </div>
@@ -213,7 +192,7 @@ const redone=state.redoneDeductions.map(d=>{
                     </div>
                     <div className="widget-content-right">
                         <div className="widget-numbers text-white"><span>
-                            {allDeductions.length}
+                            {All.length}
                             </span></div>
                     </div>
                 </div>
@@ -225,18 +204,18 @@ const redone=state.redoneDeductions.map(d=>{
             <div className="row">
          <div className="col-lg-12">
              {
-         newDeductions.length?
+         New.length?
          <h5 className="text-center font-weight-bold text-info">
              <FontAwesomeIcon icon={faBell} className='mx-2 text-info' />
-             {newDeductions.length} Deductions to do calculation
+             {New.length} Deductions are calculated
              </h5>:
              <p></p>   
              }
              {
-         redoneDeductions.length?
-         <h5 className="text-center font-weight-bold text-warning">
-             <FontAwesomeIcon icon={faExclamationTriangle} className='mx-2 text-warning' />
-             {redoneDeductions.length} Deductions need to calculate again please review!!
+         redone.length?
+         <h5 className="text-center font-weight-bold text-info">
+             <FontAwesomeIcon icon={faBell} className='mx-2 text-warning' />
+             {redone.length} Deductions are calculation are redone
              </h5>:
              <p></p>   
              }
@@ -274,7 +253,7 @@ const redone=state.redoneDeductions.map(d=>{
                       </MDBTableHead>
                     <MDBTableBody>
                            {NewDeductions}
-                           {redone}
+                           {RedoneDeductions}
                           {SeenDeductions}
                       </MDBTableBody>
                   </MDBTable>
@@ -288,7 +267,6 @@ const redone=state.redoneDeductions.map(d=>{
  </div>
 
     )
-
 }
 
-export default F_Employee
+export default ShowCalculated

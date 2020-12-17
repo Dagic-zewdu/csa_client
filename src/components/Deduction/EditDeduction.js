@@ -211,8 +211,7 @@ ToEthiopianDateSting(upto_date)+' is the return date. Return date information is
     const {initial_time,initial_day,return_time,petrol,maintainace,
         other,save_options,approval_manager,return_day}=state
         const  {initial_date,return_date}=Dates()
-        console.log(initial_date,return_date)
-      if(initial_date===null||return_date===null){
+       if(initial_date===null||return_date===null){
       setState({...state,...saveProcess('error','Invalid return or initial date')})
       } 
       else if(!checkDate(initial_date,return_date)){
@@ -227,9 +226,7 @@ ToEthiopianDateSting(upto_date)+' is the return date. Return date information is
          other,save_options,approval_manager,...userInfo(),return_day
       }
    try{
-    console.log(spending_days)
-     
-      const data=encryptObject(Data)    
+     const data=encryptObject(Data)    
       const req= await axios.put(host+'/deductions',{data})
       const res=decrptObject(req.data)
       if(res.error){
@@ -250,7 +247,6 @@ ToEthiopianDateSting(upto_date)+' is the return date. Return date information is
   } 
   }
 
-  console.log(state)
 return (
     <form onSubmit={e=>handleSubmit(e)}>
     <div className="container">

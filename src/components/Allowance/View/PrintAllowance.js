@@ -51,6 +51,9 @@ class ComponentToPrint extends React.Component {
            <h5 className="text-center lead">
           Initial place- {allowance.initial_place} 
            </h5>
+           <h5 className="text-center lead">
+          Destination place- {allowance.destination_place} 
+           </h5>
    <h5 className="text-center lead">
            Initial Date -{ToEthiopianDateSting(allowance.initial_date)} E.C <br/>
            <p className="font-italic small">
@@ -181,6 +184,7 @@ const [date,setDate]=useState('')
         if(!allowance.all_done)
           {setSeen()}
           fecthDate()
+          document.title='csa calculator developed by metrix technologies'
       },[])
   const componentRef = useRef();
  const ethDate=ToEthiopianDateSting(date)

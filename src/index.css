@@ -25,19 +25,16 @@ code {
     overflow: initial !important;
     -webkit-print-color-adjust: exact;
   }
+ table {display:block; page-break-after: always;}
+  
+ 
 }
 
-@media print {
-  .page-break {
-    margin-top: 1rem;
-    display: block;
-    page-break-before: auto;
-  }
-}
 
 @page {
   size: auto;
-  margin: 0mm;
+  margin-top: 1cm;
+  margin-bottom: 1cm;
 }
 /**notification*/
 .notification {

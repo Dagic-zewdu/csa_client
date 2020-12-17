@@ -12,7 +12,7 @@ import {host} from '../../config/config'
 import { userInfo } from '../../users/userInfo'
 const ViewDetails=(props)=> {
     const {deduction,am,ftli,fe}=props
-    const { allowances,employees,users,dispatchDeductions,deductions}=useContext(StoreContext)
+    const { allowances,employees,users,deductions}=useContext(StoreContext)
     const {state:Allowances,loading}=allowances
     const {state:Employees}=employees
     const {state:Users}=users

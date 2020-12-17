@@ -64,6 +64,12 @@ export class DeductionClass extends AllowanceClass {
   findWithId = (id) => this.deductions.find(d => d.id === id)
   /**returns all deduction of the user */
   userDeductions = () => this.deductions.filter(d => d.creater === this.getEmp_id())
+  /**returns uncompleted deduction array  for the user */
+  userUnCompleted=()=>this.userDeductions().filter(d=>!d.c_seen && this.Progress(d._id) !== 16 )
+  /**returns completed unseen deductions of array for the user */
+  userNewCompleted=()=>this.userDeductions().filter(d=>!d.c_seen && this.Progress(d._id) === 16 )
+   /**returns completed seen deductions of array for the user */
+   userSeenCompleted=()=>this.userDeductions().filter(d=> d.c_seen && this.Progress(d._id) === 16 )
   /**return array of deductions found by the index text of the deduction
    * creater user
    * @param index=>is deduction searching text index
@@ -80,7 +86,12 @@ export class DeductionClass extends AllowanceClass {
     let id = this.userDeductions().filter(d => {
       return d.id.toString().toLowerCase().includes(index, 0)
     })
-    return removeDuplicates([...allowance_id, ...id], '_id')
+    const results=removeDuplicates([...allowance_id, ...id], '_id')
+    return {
+      unCompleted : results.filter(d=>!d.c_seen && this.Progress(d._id) !== 16),
+      completedSeen:results.filter(d=> d.c_seen && this.Progress(d._id) === 16),
+      completedUnseen:results.filter(d=>!d.c_seen && this.Progress(d._id) === 16)
+    }
   }
   /**tell the progress of the deduction from totall 16
    * @param id=>Deduction _id
@@ -209,8 +220,10 @@ export class DeductionClass extends AllowanceClass {
     d.f_employee.emp_id === this.getEmp_id())
   /**returns new Deductions for finance employee */
   fNewEmployeeDeductions = () => this.fEmployeeDeductions().filter(d => !d.f_employee.seen)
-  /**return new seen deduction for finance employee */
-  fSeenEmployeeDeductions = () => this.fEmployeeDeductions().filter(d => d.f_employee.seen)
+  /**return seen that are not redone deduction for finance employee */
+  fSeenEmployeeDeductions = () => this.fEmployeeDeductions().filter(d => d.f_employee.seen && !d.f_tl_approve.redone)
+  /**return's seen array of deduction s that need to be redone */
+  fe_RedoneDeductions = () => this.fEmployeeDeductions().filter(d => d.f_employee.seen && d.f_tl_approve.redone)
   /**search deductions for employee */
   searchFemployee = (Index) => {
     let index = Index.toString().toLowerCase()
@@ -228,7 +241,8 @@ export class DeductionClass extends AllowanceClass {
     let deductions = removeDuplicates([...id, ...a_id, ...creater, ...name], '_id')
     return {
       new: deductions.filter(d => !d.f_employee.seen),
-      seen: deductions.filter(d => d.f_employee.seen)
+      seen: deductions.filter(d => d.f_employee.seen && !d.f_tl_approve.redone),
+      redone: deductions.filter(d => d.f_employee.seen && d.f_tl_approve.redone)
     }
   }
   /**returns array of spending days if the deduction is found
@@ -254,7 +268,45 @@ export class DeductionClass extends AllowanceClass {
   /**return spending upto date string of ethiopian date
    * @param id=>deduction id
    * @param sid=>spending day id
-   */
+   */ 
   sUptoDate = (id, sid) => this.findSpendingDay(id, sid) ? this.findSpendingDay(id, sid).upto_date : ''
-
+  /*return's calculated deductions of array that need to be approved*/
+  ftl_Calulated=()=>this.ftl_IncomingDeductions().filter(d=>
+     d.f_tl_pending.emp_id ===this.getEmp_id() && d.f_employee.calculated && (d.f_employee.save_options === 'Approve' || d.f_employee.save_options === 'approve' )
+     )
+   /**return's array of new calculated deduction for finance team leader */
+   ftl_newCalculated=()=>this.ftl_Calulated().filter(d=>!d.f_tl_approve.seen)
+   /**return's array of calculated allowance that are redone by finance employee
+    *  and that are seen  by finance team leader
+    * */
+   ftl_Redone=()=>this.ftl_Calulated().filter(d=>d.f_employee.redone && d.f_tl_approve.seen)
+   /**return's array of calculted deductions that are seen are not necessary redone by
+    * finance employee
+    *  */  
+   ftl_CalulatedSeen=()=>this.ftl_Calulated().filter(d=>!d.f_employee.redone && d.f_tl_approve.seen)
+/**return's object of array new,seen,redone
+ * @Param Index-search string
+ */
+   ftlSeacrchCalulated=(Index)=>{
+    let index = Index.toString().toLowerCase()
+    //deduction id
+    let id = this.ftl_Calulated().filter(a => a.id.toString().toLowerCase().includes(index, 0))
+    //allowance _id
+    let a_id = this.ftl_Calulated().filter(d => {
+      let allowance = this.findAllowance(d.allowance_id) ? this.findAllowance(d.allowance_id).id : ''
+      return allowance.toString().toLowerCase().includes(index, 0)
+    })
+    //emp_id creater of deduction
+    let creater = this.ftl_Calulated().filter(a => a.creater.toString().toLowerCase().includes(index, 0))
+    /**searchs approval type */
+    let approval = this.ftl_Calulated().filter(a => a.f_tl_approve.approve.toString().toLowerCase().includes(index, 0))
+    /**searchs name for deductions */
+    let name = this.ftl_Calulated().filter(a => this.Name(a.creater).toString().toLowerCase().includes(index, 0))
+    let deductions = removeDuplicates([...id, ...a_id, ...creater, ...approval, ...name], '_id')
+    return {
+      new: deductions.filter(d => !d.f_tl_approve.seen),
+      seen: deductions.filter(d => !d.f_employee.redone && d.f_tl_approve.seen),
+      redone: deductions.filter(d=>d.f_employee.redone && d.f_tl_approve.seen)
+    }
 }
+  }

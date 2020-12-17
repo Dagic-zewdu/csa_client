@@ -2,7 +2,7 @@ import {  faCalendar, faCalendarAlt, faCoffee, faGasPump, faMoneyBill, faPizzaSl
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
 import React, { useContext, useEffect, useState } from 'react'
-import { checkDate, convertToEuropean, durationDays, durationMonth, getDate, toEthiopianDate, ToEthiopianDateSting, toEthiopianMonth } from '../../controllers/Date'
+import { checkDate, convertToEuropean, durationDays, getDate, toEthiopianDate, ToEthiopianDateSting } from '../../controllers/Date'
 import { DeductionClass } from '../../controllers/Deductions'
 import { randomId, saveProcess } from '../../controllers/saveProcess'
 import { StoreContext } from '../contexts/contexts'

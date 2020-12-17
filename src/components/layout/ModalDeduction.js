@@ -11,6 +11,8 @@ import Dam_takeActions from '../Deduction/ApprovalManager/Dam_takeActions';
 import Forward_to_Employee from '../Deduction/f_team_leader/Forward_to_Employee';
 import DeductionCalculation from '../Deduction/Finance_Employee/DeductionCalculation.js/DeductionCalculation';
 import ViewCalculation from '../Deduction/View/ViewCalculation';
+import ApproveCalculation from '../Deduction/f_team_leader/ApproveCalculation';
+import { ViewCompleted } from '../Deduction/View/ViewCompleted';
 const ModalDeduction = (props) => {
     const {  className,type } = props;
 
@@ -197,6 +199,46 @@ else if(type==='view_calculation'){
         </ModalHeader>
                 <ModalBody>
   <ViewCalculation  deduction={props.deduction} ftl={props.ftl}/>
+                </ModalBody>
+
+            </Modal>
+        </div>
+    )
+}
+else if(type==='approve_calculation'){
+    return(
+        <div>
+        <div onClick={toggle}  className=' btn btn-outline-success mx-2 my-2 ' >
+    <FontAwesomeIcon icon={faHammer} className='mx-2 fa-1x text-success' />
+        Take decision
+        </div>
+            <Modal isOpen={modal} toggle={toggle}  className={className}>
+    <ModalHeader toggle={toggle} className='text-center' onClick={()=>props.fetch()}>
+     <FontAwesomeIcon icon={faEye} className='mx-2' />
+                Take Decision
+        </ModalHeader>
+                <ModalBody>
+  <ApproveCalculation  deduction={props.deduction}/>
+                </ModalBody>
+
+            </Modal>
+        </div>
+    )
+}
+else if(type==='view_final'){
+    return(
+        <div>
+        <div onClick={toggle}  className=' btn btn-outline-success mx-2 my-2 ' >
+    <FontAwesomeIcon icon={faCalculator} className='mx-2 fa-1x text-success' />
+        See Final result
+        </div>
+            <Modal isOpen={modal} toggle={toggle}  size={'xl'} className={className}>
+    <ModalHeader toggle={toggle} className='text-center' onClick={()=>props.fetch()}>
+     <FontAwesomeIcon icon={faCalculator} className='mx-2' />
+                see Final result 
+        </ModalHeader>
+                <ModalBody>
+  <ViewCompleted  deduction={props.deduction}/>
                 </ModalBody>
 
             </Modal>

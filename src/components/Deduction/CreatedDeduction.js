@@ -1,4 +1,4 @@
-import { faBarcode, faCalendar, faChartLine, faCog, faPaperPlane, faProjectDiagram, faSdCard } from '@fortawesome/free-solid-svg-icons'
+import { faBarcode, faBell, faCalendar, faChartLine, faCog, faPaperPlane, faProjectDiagram, faSdCard } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
 import React, { useContext,useState } from 'react'
@@ -14,6 +14,9 @@ import ModalDeduction from '../layout/ModalDeduction'
  const CreatedDeduction=()=> {
     const [state,setState]=useState({
         deductions:[],
+        unCompleted:[],
+        newCompleted:[],
+        seenCompleted:[],
         found:false
     })
     const { allowances,dispatchDeductions,deductions,employees,users }=useContext(StoreContext)
@@ -23,18 +26,23 @@ import ModalDeduction from '../layout/ModalDeduction'
     const {state:Deductions,loading:deductionsLoading,error:deductionError}=deductions
 const Deduction=new DeductionClass(Deductions,Allowances,Employees,Users)
 const userDeductions=Deduction.userDeductions() 
+const unCompleted=Deduction.userUnCompleted()  //array of uncompleted deductions
+const newCompleted=Deduction.userNewCompleted() //array of completed unseen deductions
+const seenCompleted=Deduction.userSeenCompleted()
 const fetch=()=>fetchData_Deductions(dispatchDeductions)
 useEffect(()=>{
     fetchData_Deductions(dispatchDeductions)
-    setState({...state,deductions:userDeductions})
+    setState({...state,unCompleted,newCompleted,seenCompleted,deductions:userDeductions})
 },[deductionsLoading,JSON.stringify(Deductions)])
     const handleSearch=(index)=>{
-   const deductions=index===''?userDeductions:Deduction.searchUserDeductions(index)
+   const UnCompleted=index===''?unCompleted:Deduction.searchUserDeductions(index).unCompleted
+   const CompletedNew=index===''?newCompleted:Deduction.searchUserDeductions(index).completedUnseen
+   const SeenCompleted=index===''?seenCompleted:Deduction.searchUserDeductions(index).completedSeen
    const found=index===''?false:true
-   setState({...state,deductions,found})
+   setState({...state,unCompleted:UnCompleted,newCompleted:CompletedNew,seenCompleted:SeenCompleted,found})
     }
   const listDeductions=state.deductions.length?
-  state.deductions.map(d=>{
+  state.unCompleted.map(d=>{
       return(
      <tr key={d._id}>
     <td className="text-center">
@@ -91,6 +99,71 @@ useEffect(()=>{
      No deductions created yet
       </td>
   </tr>  
+
+const CompletedNew=state.newCompleted.map(d=>{
+    return(
+   <tr key={d._id}>
+  <td className="text-center text-success">
+      {d.id}
+  </td>
+  <td className="text-center text-success">
+      {Deduction.findAllowance(d.allowance_id)?
+      Deduction.findAllowance(d.allowance_id).id:''
+      }
+  </td>
+  <td>
+        <p className="text-center text-success">
+                Deduction is sent for approval
+            </p>
+        
+    </td>
+    
+  <td>
+      <p className="text-center font-italic font-weight-bold text-success">
+          Deduction is completed
+      </p>
+  </td>
+  
+  <td className="tex-center text-success">
+    <ModalDeduction type="view_final" deduction={d} fetch={fetch} />
+</td>
+  </tr>
+    )
+})
+const CompletedSeen=state.seenCompleted.map(d=>{
+    return(
+   <tr key={d._id}>
+  <td className="text-center">
+      {d.id}
+  </td>
+  <td className="text-center">
+      {Deduction.findAllowance(d.allowance_id)?
+      Deduction.findAllowance(d.allowance_id).id:''
+      }
+  </td>
+  <td>
+       <p className="text-center">
+                Deduction is sent for approval
+            </p>
+    </td>
+    
+  <td>
+      <p className="text-center font-italic font-weight-bold">
+          Deduction is completed
+      </p>
+  </td>
+  
+  <td className="tex-center">
+  <ModalDeduction type="view_final" deduction={d} fetch={fetch} />
+</td>
+  </tr>
+    )
+})
+
+
+
+
+
     return (
          <div className="container">
      <div className="row">
@@ -131,9 +204,17 @@ useEffect(()=>{
             <div className="row">
          <div className="col-lg-12">
          {
+         newCompleted.length?
+         <h5 className="text-center font-weight-bold text-success">
+             <FontAwesomeIcon icon={faBell} className='mx-2 text-success' />
+             {newCompleted.length} Deductions are completed
+             </h5>:
+             <p></p>   
+             }
+         {
                  state.found?
                  <h5 className='text-center'>
-   Deductions found -{state.deductions.length}
+   Deductions found -{state.unCompleted.length+state.newCompleted.length+state.seenCompleted.length}
                 </h5>
          :
          <p></p>   
@@ -166,7 +247,9 @@ useEffect(()=>{
                  </tr>
                       </MDBTableHead>
                     <MDBTableBody>
+                          {CompletedNew}
                           {listDeductions}
+                          {CompletedSeen}
                       </MDBTableBody>
                   </MDBTable>
                 
