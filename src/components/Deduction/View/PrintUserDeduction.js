@@ -22,8 +22,8 @@ class PrintUserDeduction extends Component {
 
            <div className="col-lg-6">
                <h5 className="text-center">
-               <FontAwesomeIcon icon={faUser} className='fa-2x mx-2 ' />
-               User info    
+               <FontAwesomeIcon icon={faUser} className='fa-1x mx-2 ' />
+               Employee information    
                </h5>
             <p className="text-center font-weight-bold">
             <p className="text-center font-weight-bold">
@@ -47,11 +47,11 @@ class PrintUserDeduction extends Component {
     
                </p>
                </div>    
-                <div className="col-lg-12 my-2">
+                <div className="col-lg-12 my-1">
                     <h5 className="text-center font-weight-bold">
                         Initial days
                     </h5>
-    <MDBTable hover striped bordered>
+    <MDBTable striped bordered>
        <MDBTableHead>
 <tr>
   <th>
@@ -164,7 +164,7 @@ class PrintUserDeduction extends Component {
    <h5 className="text-center">
      spending days
      </h5>
-     <MDBTable hover striped bordered >
+     <MDBTable hover striped bordered className="table table-condensed" >
        <MDBTableHead>
 <tr>
   <th>
@@ -366,106 +366,147 @@ class PrintUserDeduction extends Component {
     
     <tr>
       <td colSpan={4}>
-        <h5 className="float-right font-weight-bold">
+        <h6 className="float-right font-weight-bold">
           Totall Day and climate allowance
-        </h5>
+        </h6>
       </td>
       <td>
-        <h5 className="float-right font-weight-bold">
+        <h6 className="float-right font-weight-bold">
           {deduction.day_amount}
-        </h5>
+        </h6>
       </td>
       <td>
-        <h5 className="float-right font-weight-bold">
+        <h6 className="float-right font-weight-bold">
           {deduction.climate_amount}
-        </h5>
+        </h6>
       </td>
       </tr>
       <tr>
         <td colSpan={5}>
-          <h5 className="float-right font-weight-bold">
+          <h6 className="float-right font-weight-bold">
           petrol and gas spending
-          </h5>
+          </h6>
         </td>
         <td>
-        <h5 className="float-right font-weight-bold">
+        <h6 className="float-right font-weight-bold">
           {deduction.petrol}
-          </h5>   
+          </h6>   
         </td>
         </tr>
         <tr>
         <td colSpan={5}>
-          <h5 className="float-right font-weight-bold">
+          <h6 className="float-right font-weight-bold">
           Maintainance and repair spending
-          </h5>
+          </h6>
         </td>
         <td>
-        <h5 className="float-right font-weight-bold">
+        <h6 className="float-right font-weight-bold">
           {deduction.maintainace}
-          </h5>   
+          </h6>   
         </td>
         </tr>
         <tr>
         <td colSpan={5}>
-          <h5 className="float-right font-weight-bold">
+          <h6 className="float-right font-weight-bold">
           other spendings
-          </h5>
+          </h6>
         </td>
         <td>
-        <h5 className="float-right font-weight-bold">
+        <h6 className="float-right font-weight-bold">
           {deduction.other}
-          </h5>   
+          </h6>   
         </td>
         </tr>
         <tr>
         <td colSpan={5}>
-          <h5 className="float-right font-weight-bold">
+          <h6 className="float-right font-weight-bold">
           Totall
-          </h5>
+          </h6>
         </td>
         <td>
-        <h5 className="float-right font-weight-bold">
+        <h6 className="float-right font-weight-bold">
           {deduction.totall_amount}
-          </h5>   
+          </h6>   
         </td>
         </tr>
         <tr>
         <td colSpan={5}>
-          <h5 className="float-right font-weight-bold text-danger">
+          <h6 className="float-right font-weight-bold text-danger">
           prepaid amount
-          </h5>
+          </h6>
         </td>
         <td>
-        <h5 className="float-right font-weight-bold text-danger">
+        <h6 className="float-right font-weight-bold text-danger">
           -{prePaid}
-          </h5>   
+          </h6>   
         </td>
         </tr>
         <tr>
         <td colSpan={5}>
           {
             deduction.difference_amount<0?
-            <h5 className="float-right font-weight-bold text-info">
+            <h6 className="float-right font-weight-bold text-info">
          Refundable amount
-          </h5>:
+          </h6>:
           deduction.difference_amount>0?
-          <h5 className="float-right font-weight-bold text-info">
+          <h6 className="float-right font-weight-bold text-info">
           Additional amount
-          </h5>:
+          </h6>:
           <p></p>
           }
           
         </td>
         <td>
-        <h5 className="float-right font-weight-bold text-info">
+        <h6 className="float-right font-weight-bold text-info">
           {Math.abs(deduction.difference_amount)}
-          </h5>   
+          </h6>   
         </td>
         </tr>    
        </MDBTableBody>
        </MDBTable>
         </div>
-      {/** */}  
+      {/**Approval */}  
+      <div className="col-lg-6">
+<p className="font-weight-bold">
+    Employee name- {Calculation.Name(deduction.creater)}
+</p>
+<div className="form-group">
+<div className="input-group input-container">
+				<span className="input-group-addon">
+                 Signature
+                    </span>
+    <input type="text" className="input-field form-control"
+     disabled={true} />
+            </div>
+            </div>
+            </div>
+         <div className="col-lg-6">
+            <h6 className="text-center font-weight-bold">
+      Fianance employee who has done the calculation
+      name- {Calculation.Name(deduction.f_employee.emp_id)}  
+            </h6>
+          <div className="input-group input-container">
+				<span className="input-group-addon">
+                 Signature
+                    </span>
+    <input type="text" className="input-field form-control"  disabled={true} />
+            </div>    
+             </div> 
+           <div className="col-lg-6">
+           <p className="font-weight-bold">
+    calculation approval Manager-{Calculation.Name(deduction.f_tl_pending.emp_id)}  
+             </p>
+             <div className="input-group input-container">
+				<span className="input-group-addon">
+                 Signature
+                    </span>
+    <input type="text" className="input-field form-control"
+     disabled={true}/>
+            </div>        
+               </div>
+             <div className="col-lg-6 text-center small font-weight-bold font-italic">
+             Allowance system developed by metrix technologies
+              </div>
                </div>   
             </div>
         </div>

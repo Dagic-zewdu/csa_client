@@ -14,8 +14,7 @@ code {
 /*print**/
 @media all {
   .page-break {
-    overflow: hidden;
-     height: 0;
+    display: none;
   }
 }
 
@@ -25,17 +24,23 @@ code {
     overflow: initial !important;
     -webkit-print-color-adjust: exact;
   }
- table {display:block; page-break-after: always;}
-  
- 
 }
 
+@media print {
+  .page-break {
+    margin-top: 1rem;
+    display: block;
+    page-break-before: auto;
+  }
+}
 
 @page {
   size: auto;
-  margin-top: 1cm;
-  margin-bottom: 1cm;
+  margin: 20mm;
 }
+
+
+
 /**notification*/
 .notification {
   text-decoration: none;

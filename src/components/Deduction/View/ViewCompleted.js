@@ -41,7 +41,7 @@ useEffect(()=>{
       }
        setSeen()
       fecthDate()
-      document.title='csa calculator developed by metrix technologies'
+      document.title='Allowance system developed by metrix technologies'
 },[])
 /**return an object of state.c_spending_days
  * @param id -spending day id
@@ -67,7 +67,7 @@ return (
      </div>
      }
        content={() => componentRef.current }
-     />
+    />
       <PrintUserDeduction ref={componentRef} deduction={deduction}  isOfficial={isOfficial} 
      isFieldEmployee={isFieldEmployee} Calculation={Calculation} date={date}
      findSpendingDay={findSpendingDay} company={company.state[0].name} prePaid={prePaid}/> 

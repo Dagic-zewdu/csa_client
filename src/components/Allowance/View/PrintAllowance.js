@@ -24,55 +24,41 @@ class ComponentToPrint extends React.Component {
               </p>
               </div> 
              <div className="col-lg-12">
-                <h3 className="text-center font-weight-bold">
+                <h4 className="text-center font-weight-bold">
            {company.state[0].name}   
-                    </h3> 
+                    </h4> 
                  </div>   
             <div className="col-lg-6">
-            <div className="card">
-    <h4 className="text-center font-weight-bold">
+    <h5 className="text-center font-weight-bold">
        Allowance Information  
-          </h4>
-          <h5 className="text-center lead">
-        Allowance id - {allowance.id} 
-          </h5>    
-      <h5 className="text-center lead">
-        Letter id - {allowance.letter_id} 
           </h5>
-          <h5 className="text-center lead">
-         program- {allowance.program} 
-           </h5>
-           <h5 className="text-center lead">
-         project Name and code- {allowance.project_name} 
-           </h5>
-           <h5 className="text-center lead">
-          objective- {allowance.program} 
-           </h5>
-           <h5 className="text-center lead">
-          Initial place- {allowance.initial_place} 
-           </h5>
-           <h5 className="text-center lead">
-          Destination place- {allowance.destination_place} 
-           </h5>
-   <h5 className="text-center lead">
+          <p className="text-center">
+        Allowance id - {allowance.id} <br/>
+        Letter id - {allowance.letter_id} <br/>
+        program- {allowance.program} <br/>
+        project Name and code- {allowance.project_name} <br/>
+        objective- {allowance.program} <br/>
+        Initial place- {allowance.initial_place} <br/>
+        Destination place- {allowance.destination_place} <br/> 
+          </p>    
+   <div className="text-center">
            Initial Date -{ToEthiopianDateSting(allowance.initial_date)} E.C <br/>
            <p className="font-italic small">
              {TellDay(allowance.initial_date)} G.C
              </p>   
-            </h5>
-            <h5 className="text-center lead">
+            </div>
+            <div className="text-center">
             Return Date -{ToEthiopianDateSting(allowance.destination_date)} 
             <p className="font-italic small">
              {TellDay(allowance.destination_date)} G.C
              </p>
-            </h5>
-      </div>  
+            </div>
             </div>
             <div className="col-lg-6">
               <hr/>
             {
     allowance.type==='living'?
-    <div className="text-center font-weight-bold card">
+    <div className="text-center font-weight-bold">
             Day allowance scale:{allowance.scale} <br/>
             Duration days:{calculation.durationDate(id)} <br/>
             living allowance : {allowance.living_allowance} <br/>
@@ -80,9 +66,9 @@ class ComponentToPrint extends React.Component {
             petrol and oil amount:{allowance.petrol_allowance} <br/>
             reserve amount:{allowance.reserve_amount} <br/>
             <hr/>
-            <h5 className="font-weight-bold">
+            <h6 className="font-weight-bold">
             Totall:{allowance.totall_amount}
-        </h5>
+        </h6>
      <hr/>
          </div>:
     allowance.type==='day'?
@@ -98,9 +84,9 @@ class ComponentToPrint extends React.Component {
         reserve amount={allowance.reserve_amount} <br/>
         Totall Day allowance:{allowance.day_allowance}
         <hr/>
-     <h5 className="font-weight-bold">
+     <h6 className="font-weight-bold">
        Totall:{allowance.totall_amount}
-       </h5>   
+       </h6>   
         </div>:
     <p></p>
    } 
@@ -147,8 +133,8 @@ class ComponentToPrint extends React.Component {
      disabled={true}/>
             </div>        
                </div>
-             <div className="col-lg-6 mt-2"></div>
-             <div className="col-lg-6 mt-2">
+             <div className="col-lg-6"></div>
+             <div className="col-lg-6">
              <p className="text-center small font-weight-bold font-italic">
                Allowance system developed by metrix technologies
                </p>  
@@ -184,7 +170,7 @@ const [date,setDate]=useState('')
         if(!allowance.all_done)
           {setSeen()}
           fecthDate()
-          document.title='csa calculator developed by metrix technologies'
+          document.title='Allowance system developed by metrix technologies'
       },[])
   const componentRef = useRef();
  const ethDate=ToEthiopianDateSting(date)
