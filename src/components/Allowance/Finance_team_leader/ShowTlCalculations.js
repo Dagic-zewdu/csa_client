@@ -166,7 +166,7 @@ Allowance calculation is redone please see the calculation
              <FontAwesomeIcon icon={faBarcode} className='mx-2'/>                            
                 Allowance id                                
                               </th>    
-                              <th>
+                      <th>
              <FontAwesomeIcon icon={faUser} className='mx-2'/>                            
                      From user                                
                               </th>

@@ -50,7 +50,6 @@ useEffect(()=>{
        _id:deduction._id,
        f_tl_approve:{...deduction.f_tl_approve,seen:true},...userInfo() 
   })
-  console.log(ftl,!deduction.f_tl_approve.seen)
   const setSeen=async ()=>ftl&&!deduction.f_tl_approve.seen?
   await axios.put(host+'/deductions',{data}):Donothing()
 setSeen()

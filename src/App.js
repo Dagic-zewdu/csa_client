@@ -49,6 +49,7 @@ const App = () => {
   const [climatePlaces,dispatchClimatePlaces]=useReducer(climatePlacesReducer,climatePlaceState)
   const [deductions,dispatchDeductions]=useReducer(deductionReducer,deductionState)
   return (
+    
     <StoreContext.Provider
       value={{
         allowances,dispatchAllowances,employees, dispatchEmployees,

@@ -238,7 +238,7 @@ else if(type==='view_final'){
                 see Final result 
         </ModalHeader>
                 <ModalBody>
-  <ViewCompleted  deduction={props.deduction}/>
+  <ViewCompleted  deduction={props.deduction} user={props.user}/>
                 </ModalBody>
 
             </Modal>

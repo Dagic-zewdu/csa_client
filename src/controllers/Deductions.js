@@ -309,4 +309,23 @@ export class DeductionClass extends AllowanceClass {
       redone: deductions.filter(d=>d.f_employee.redone && d.f_tl_approve.seen)
     }
 }
+/**return's array of completed  deduction for finance users*/
+completedDeductions=()=>this.deductions.filter(d=>this.Progress(d._id)===16)
+searchCompleted=Index=>{
+  let index = Index.toString().toLowerCase()
+  //deduction id
+  let id = this.completedDeductions().filter(a => a.id.toString().toLowerCase().includes(index, 0))
+  //allowance _id
+  let a_id = this.completedDeductions().filter(d => {
+    let allowance = this.findAllowance(d.allowance_id) ? this.findAllowance(d.allowance_id).id : ''
+    return allowance.toString().toLowerCase().includes(index, 0)
+  })
+  //emp_id creater of deduction
+  let creater = this.completedDeductions().filter(a => a.creater.toString().toLowerCase().includes(index, 0))
+  /**searchs name for deductions */
+  let name = this.completedDeductions().filter(a => this.Name(a.creater).toString().toLowerCase().includes(index, 0))
+  /**search department  */
+  let department = this.completedDeductions().filter(a => this.Department(a.creater).toString().toLowerCase().includes(index, 0))
+  return removeDuplicates([...id, ...a_id, ...creater, ...name,...department], '_id')
+}
   }

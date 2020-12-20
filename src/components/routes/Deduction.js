@@ -1,4 +1,4 @@
-import { faBell, faCalculator, faEdit, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+import { faBell, faCalculator, faEdit, faExclamationTriangle, faPaperclip } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useContext, useState } from 'react'
 import { useEffect } from 'react'
@@ -7,6 +7,7 @@ import { UsersClass } from '../../controllers/Users'
 import { LayoutContext, StoreContext } from '../contexts/contexts'
 import AllowanceToDeduct from '../Deduction/AllowanceToDeduct'
 import ApprovalManager from '../Deduction/ApprovalManager/ApprovalManager'
+import CompletedDeduction from '../Deduction/CompletedDeduction'
 import CreatedDeduction from '../Deduction/CreatedDeduction'
 import F_Employee from '../Deduction/Finance_Employee/F_Employee'
 import Ft_showIncomingDeduction from '../Deduction/f_team_leader/Ft_showIncomingDeduction'
@@ -24,7 +25,8 @@ const Deduction=()=> {
         am:'',               //approval manager
         itl:'',               //incoming deduction for finance team leader
         fe:'',                 //finance employee
-        ctl:''                //calculated deductions for team leader 
+        ctl:'',                //calculated deductions for team leader
+        cfe:'' 
     })
     const { allowances,dispatchAllowances,deductions,
         employees,users }=useContext(StoreContext)
@@ -33,6 +35,7 @@ const Deduction=()=> {
     const {state:Users,loading:userLoading,error:userError}=users
     const {state:Deductions,loading:deductionsLoading,error:deductionError}=deductions
 const Deduction=new DeductionClass(Deductions,Allowances,Employees,Users)
+const completedDeduction=Deduction.userNewCompleted().length
 const newManagerDeductions=Deduction.newManagerDeductions().length  //deduction notify if new deductions is come 
 const newFtlDeductions=Deduction.ftl_newIncomingDeductions().length //incoming array of deductions length for finance team leader 
 const newFtlCalculated=Deduction.ftl_newCalculated().length  //calculated array of deductions length for finance team leader
@@ -65,25 +68,34 @@ const isFe=User.isFinanceEmployee()
      <div className="row">
      <div className="col-lg-3">
      <h5 className={"text-center "+state.created}
-     onClick={()=>setState({...state,allowance_deduct:'',created:'text-info',am:'',fe:'',ctl:''})}   
+     onClick={()=>setState({...state,allowance_deduct:'',created:'text-info',am:'',fe:'',ctl:'',cfe:''})}   
        >
      <FontAwesomeIcon icon={faEdit} className='fa-1x m-2x'/>
     created Deduction
-     </h5> 
+     </h5>
+     {
+         completedDeduction?
+         <h5 className=" mx-2 font-weight-bold text-center">
+   <FontAwesomeIcon icon={faBell} className='fa-1x m-2x text-success'/>
+    {completedDeduction}
+       </h5>  :
+       <p></p>
+     }  
      </div>
      <div className="col-lg-3">
      <h5 className={"text-center "+state.allowance_deduct}
-onClick={()=>setState({...state,allowance_deduct:'text-info',created:'',am:'',fe:'',ctl:''})}>
+onClick={()=>setState({...state,allowance_deduct:'text-info',created:'',am:'',fe:'',ctl:'',cfe:''})}>
      <FontAwesomeIcon icon={faEdit} className='fa-1x m-2x'/>
     Allowance to deduct
      </h5> 
-     </div> 
+     </div>
+    
      {
          isAM?
          <div className="col-lg-3 row">
       
      <h5 className={"text-center "+state.am}
-onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'text-info',fe:'',ctl:''})}>
+onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'text-info',fe:'',ctl:'',cfe:''})}>
      <FontAwesomeIcon icon={faEdit} className='fa-1x m-2x'/>
     Approve Deductions
      </h5>
@@ -103,7 +115,7 @@ onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'text-info',fe
          <div className="col-lg-3 row">
       
      <h5 className={"text-center "+state.itl}
-onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'',itl:'text-info',fe:'',ctl:''})}>
+onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'',itl:'text-info',fe:'',ctl:'',cfe:''})}>
      <FontAwesomeIcon icon={faEdit} className='fa-1x m-2x'/>
     Incoming Deductions
      </h5>
@@ -123,7 +135,7 @@ onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'',itl:'text-i
          <div className="col-lg-3 row">
       
      <h5 className={"text-center "+state.ctl}
-onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'',itl:'',fe:'',ctl:'text-info'})}>
+onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'',itl:'',fe:'',ctl:'text-info',cfe:''})}>
      <FontAwesomeIcon icon={faCalculator} className='fa-1x m-2x'/>
     Calculated Deductions
      </h5>
@@ -145,10 +157,10 @@ onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'',itl:'',fe:'
      }
      {
          isFe?
-         <div className="col-lg-4 row">
+         <div className="col-lg-3 row">
       
       <h5 className={"text-center "+state.fe}
- onClick={()=>setState({...state,allowance_deduct:'',created:'', am:'',itl:'',fe:'text-info',ctl:''})}>
+ onClick={()=>setState({...state,allowance_deduct:'',created:'', am:'',itl:'',fe:'text-info',ctl:'',cfe:''})}>
       <FontAwesomeIcon icon={faEdit} className='fa-1x m-2x'/>
      Incoming Deductions
       </h5>
@@ -171,6 +183,19 @@ onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'',itl:'',fe:'
  </div> :
       <p></p>  
      }
+     {
+         isFe?
+         <div className="col-lg-3 row">
+      
+      <h5 className={"text-center "+state.cfe}
+ onClick={()=>setState({...state,allowance_deduct:'',created:'', am:'',itl:'',fe:'',ctl:'',cfe:'text-info'})}>
+      <FontAwesomeIcon icon={faPaperclip} className='fa-1x m-2x'/>
+     Completed deductions
+      </h5>
+ </div> :
+      <p></p>  
+     }
+     
         </div>
            </div>
         <div className="col-lg-12">
@@ -191,7 +216,9 @@ onClick={()=>setState({...state,allowance_deduct:'',created:'',am:'',itl:'',fe:'
          <F_Employee/> :
          state.ctl==='text-info'?
          <ShowCalculated/>:
-          <p></p>    
+         state.cfe==='text-info'?
+          <CompletedDeduction/> 
+          :<p></p>    
            }
             </div>   
                     </div>

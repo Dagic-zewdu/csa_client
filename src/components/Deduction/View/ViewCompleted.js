@@ -14,7 +14,7 @@ import { userInfo } from '../../users/userInfo'
 import PrintUserDeduction from './PrintUserDeduction'
 
 export const ViewCompleted=(props)=> {
-    const {deduction}=props
+    const {deduction,user}=props
     const [date,setDate]=useState('')
     const { allowances,deductions,employees,users, place,fieldEmployees,climatePlaces,config, company }=useContext(StoreContext)
 const {state:Allowances}=allowances
@@ -30,7 +30,7 @@ const allowance=Calculation.findAllowance(deduction.allowance_id)
 const prePaid=allowance?allowance.totall_amount:0
 
 useEffect(()=>{
-    const setSeen=async ()=>deduction.c_seen?Donothing():
+    const setSeen=async ()=>deduction.c_seen&&user?Donothing():
     await axios.put(host+'/deductions',{data:encryptObject({
         ...userInfo(),...deduction,c_seen:true
     })})

@@ -125,7 +125,7 @@ const CompletedNew=state.newCompleted.map(d=>{
   </td>
   
   <td className="tex-center text-success">
-    <ModalDeduction type="view_final" deduction={d} fetch={fetch} />
+    <ModalDeduction type="view_final" deduction={d} fetch={fetch} user={true}/>
 </td>
   </tr>
     )
@@ -154,7 +154,7 @@ const CompletedSeen=state.seenCompleted.map(d=>{
   </td>
   
   <td className="tex-center">
-  <ModalDeduction type="view_final" deduction={d} fetch={fetch} />
+  <ModalDeduction type="view_final" deduction={d} fetch={fetch} user={true} />
 </td>
   </tr>
     )

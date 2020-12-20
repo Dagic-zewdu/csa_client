@@ -16,7 +16,6 @@ import { DeductionDnd, StoreContext } from '../../../contexts/contexts'
 import DragClimatePlace from './DragClimatePlace'
 import DragEmployeePlace from './DragEmployeePlace'
 import DragFieldPlace from './DragFieldPlace'
-import DragPlace from './DragFieldPlace'
 import DragOfficialPlace from './DragOfficialPlace'
 import { DropFieldSpending, FieldBedInitial, FieldBreakfastInitial, FieldDinnerInitial, FieldLunchInitial, ReturnPlaceField } from './DropFieldPlace'
 import { dropInitialClimatePlace, dropPlace_id, fieldSpendingDay, initialFieldEmployee, removeClimatePlace, removeInitialPlaces ,climateSpendingDays, removeSpendingDay, removeClimateSpending, dropSpendingDays } from './HandleFunctions'
@@ -32,7 +31,12 @@ import ErrorLoading from '../../../layout/ErrorLoading'
 import { fetchData_Deductions } from '../../../fetchers/Functions/FerchDeductions'
 import { Link, withRouter } from 'react-router-dom'
 import { UsersClass } from '../../../../controllers/Users'
-  const DeductionCalculation=(props)=> {
+import withScrolling,{createVerticalStrength,createHorizontalStrength} from 'react-dnd-scrolling';
+
+const ScrollingComponent = withScrolling('table') //for scrolling multiple item
+const vStrength = createVerticalStrength(500);
+const hStrength = createHorizontalStrength(300); 
+const DeductionCalculation=(props)=> {
     const {_id:id}=props
     const [state,setState]=useState({
         places:[],
@@ -56,13 +60,11 @@ import { UsersClass } from '../../../../controllers/Users'
        },
        save_options:'Approve',
         ...saveProcess('default')     
-    },
-    )
+    })
     const {breakfast:iBreakfast,lunch:iLunch,dinner:iDinner,bed:iBed}=state.c_initial_day
     const {breakfast:rBreakfast,lunch:rLunch,dinner:rDinner}=state.c_return_day
     const { allowances,deductions,employees,users, place,
             fieldEmployees,climatePlaces,config ,dispatchDeductions}=useContext(StoreContext)
-    console.log(useContext(StoreContext))
     const {state:Allowances,loading,error}=allowances
     const {state:Employees,loading:empLoading,error:empError}=employees
     const {state:Users,loading:userLoading,error:userError}=users
@@ -587,9 +589,8 @@ return (
     addFieldSpending,addSpendingClimate,RemoveSpendingDay,RemoveClimateSpending,
     DropSpendingDays,returnOfficial,removeReturnClimate,removeReturnPlace,returnClimatePlace,
     returnProject
-               }}
-               > 
-        <div className="container mt-3">
+               }} > 
+    <div className="container mt-3">
           <div className="row">
             <div className="col-lg-12">
               <Link to='/deduction' className='float-left'>
@@ -785,6 +786,7 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
    <h4 className="text-center">
      Initial day
      </h4>
+<ScrollingComponent className="App" verticalStrength={vStrength} horizontalStrength={hStrength}>     
      <MDBTable hover striped bordered>
        <MDBTableHead>
 <tr>
@@ -891,7 +893,7 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
          name:Places.placeName(iLunch.place_id),
          region:Places.placeRegion(iLunch.place_id),
          type:Places.placeType(iLunch.place_id),
-         scale:iBreakfast.scale,
+         scale:iLunch.scale,
          Item:'lunch'
          }}/></td>
            }
@@ -980,7 +982,8 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
       </td>
     </tr>  
        </MDBTableBody>
-       </MDBTable>          
+       </MDBTable>   
+      </ScrollingComponent>        
           </div>
         </div>
       {/**spending days */}
@@ -1032,7 +1035,7 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
        {
         deduction.spending_days.map(d=>{
           return(
-       <MDBTableBody>
+       <MDBTableBody key={d._id} label={`deduction ${d}`}>
       
          <tr key={d._id}>
            <td rowSpan={4}>
@@ -1227,8 +1230,7 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpending
           )
         })
       }   
-     
-       </MDBTable>          
+     </MDBTable>          
           </div>
         </div>:
     <p></p>
@@ -1535,7 +1537,7 @@ onChange={e=>e.target.value==='draft'?
      </div>
           </div>
         </div>
-        </DeductionDnd.Provider>
+       </DeductionDnd.Provider>
         </DndProvider>
     )
 }

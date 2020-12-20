@@ -79,8 +79,12 @@ const SeenDeductions=All.length?
   } 
     </td>
     <ModalDeduction type='view_calculation' fetch={fetch} deduction={d} ftl={true}/>
-    <ModalDeduction type='approve_calculation'fetch={fetch} deduction={d}/>
-    <td>
+    {
+      !d.c_seen?
+      <ModalDeduction type='approve_calculation'fetch={fetch} deduction={d}/>:
+      <p></p>
+  }
+     <td>
 
 </td>
     </tr>

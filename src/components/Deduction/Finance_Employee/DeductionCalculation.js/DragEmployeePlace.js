@@ -10,7 +10,7 @@ const {place_id,region,type,scale}=props.info
  })
  
     return (
-    <div className="text-center" ref={dragRef} style={{opacity:isDragging?0.5:1}}>
+    <div className="text-center" ref={dragRef} style={{opacity:isDragging?2:1}}>
     <p className="font-weight-bold">
         Region:{region} <br/>
         type:{type}   <br/>

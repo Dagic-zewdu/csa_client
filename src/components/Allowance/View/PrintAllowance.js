@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPrint } from '@fortawesome/free-solid-svg-icons';
 import { getDate, TellDay, toEthiopianDate, ToEthiopianDateSting } from '../../../controllers/Date';
 import { useState } from 'react';
+import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
 class ComponentToPrint extends React.Component {
 
   render() {
@@ -24,78 +25,173 @@ class ComponentToPrint extends React.Component {
               </p>
               </div> 
              <div className="col-lg-12">
-                <h4 className="text-center font-weight-bold">
+                <h5 className="text-center font-weight-bold">
            {company.state[0].name}   
-                    </h4> 
-                 </div>   
-            <div className="col-lg-6">
-    <h5 className="text-center font-weight-bold">
+                    </h5> 
+                 </div> 
+            <div className="col-lg-12">
+        {
+          allowance.type==='living'?
+          <MDBTable hover bordered striped >
+           <MDBTableHead>
+             <th colSpan={2}>
+             <h6 className="text-center font-weight-bold">
        Allowance Information  
-          </h5>
-          <p className="text-center">
-        Allowance id - {allowance.id} <br/>
-        Letter id - {allowance.letter_id} <br/>
-        program- {allowance.program} <br/>
-        project Name and code- {allowance.project_name} <br/>
-        objective- {allowance.program} <br/>
-        Initial place- {allowance.initial_place} <br/>
-        Destination place- {allowance.destination_place} <br/> 
-          </p>    
-   <div className="text-center">
-           Initial Date -{ToEthiopianDateSting(allowance.initial_date)} E.C <br/>
+          </h6>
+             </th>
+             <th colSpan={2}>
+             <h6 className="text-center font-weight-bold">
+       Calculation 
+          </h6>
+             </th>
+           </MDBTableHead>
+        <MDBTableBody>
+       <tr>
+         <td> Allowance id  </td>
+         <td> {allowance.id}</td>
+         <td className='font-weight-bold'>Day allowance scale</td>
+         <td className='font-weight-bold'>{allowance.scale}</td>
+         </tr> 
+         <tr>
+           <td>Letter id</td>
+           <td>{allowance.letter_id}</td>
+           <td className='font-weight-bold'>Duration days</td>
+         <td className='font-weight-bold'>{calculation.durationDate(id)}</td>
+           </tr>
+          <tr>
+            <td>program</td>
+            <td>{allowance.program}</td>
+            <td className='font-weight-bold'>living allowance </td>
+         <td className='font-weight-bold'>{allowance.living_allowance}</td>
+            </tr>
+            <tr>
+              <td>project Name and code</td>
+              <td>{allowance.project_name}</td>
+              <td className='font-weight-bold'>climate Allowance </td>
+         <td className='font-weight-bold'>{allowance.climate_allowance}</td>
+              </tr>
+              <tr>
+                <td> objective</td>
+                <td>{allowance.program}</td>
+                <td className='font-weight-bold'> petrol and oil amount </td>
+         <td className='font-weight-bold'>{allowance.petrol_allowance}</td>
+                </tr>
+                <tr>
+                  <td>Initial place</td>
+                  <td>{allowance.initial_place}</td>
+                  <td className='font-weight-bold'> reserve amount </td>
+         <td className='font-weight-bold'>{allowance.reserve_amount}</td>  
+                  </tr> 
+               <tr>
+                 <td>Destination place</td>
+                 <td>{allowance.destination_place}</td>
+                 <td className='font-weight-bold'> Totall </td>
+         <td className='font-weight-bold'>{allowance.totall_amount}</td>  
+                 </tr>  
+               <tr>
+                 <td>Initial Date</td>
+                 <td>
+          {ToEthiopianDateSting(allowance.initial_date)} E.C <br/>
            <p className="font-italic small">
              {TellDay(allowance.initial_date)} G.C
-             </p>   
-            </div>
-            <div className="text-center">
-            Return Date -{ToEthiopianDateSting(allowance.destination_date)} 
+             </p>
+                 </td>
+                 </tr>  
+                 <tr>
+                   <td>Return Date</td>
+                   <td>
+                   Return Date -{ToEthiopianDateSting(allowance.destination_date)} 
             <p className="font-italic small">
              {TellDay(allowance.destination_date)} G.C
              </p>
-            </div>
-            </div>
-            <div className="col-lg-6">
-              <hr/>
-            {
-    allowance.type==='living'?
-    <div className="text-center font-weight-bold">
-            Day allowance scale:{allowance.scale} <br/>
-            Duration days:{calculation.durationDate(id)} <br/>
-            living allowance : {allowance.living_allowance} <br/>
-            climate Allowance:{allowance.climate_allowance} <br/>
-            petrol and oil amount:{allowance.petrol_allowance} <br/>
-            reserve amount:{allowance.reserve_amount} <br/>
-            <hr/>
-            <h6 className="font-weight-bold">
-            Totall:{allowance.totall_amount}
-        </h6>
-     <hr/>
-         </div>:
-    allowance.type==='day'?
-    <div className="card text-center font-weight-bold">
-        <hr/>
-        Day allowance scale:{allowance.scale} <br/>
-        Breakfast amount ={allowance.breakfast} <br/>
-        Lunch amount={allowance.lunch} <br/>
-        Dinner amount={allowance.dinner} <br/>
-        Bed amount={allowance.bed} <br/>
-        climate allowance={allowance.climate_allowance} <br/>
-        petrol and oil amount={allowance.petrol_allowance} <br/>
-        reserve amount={allowance.reserve_amount} <br/>
-        Totall Day allowance:{allowance.day_allowance}
-        <hr/>
-     <h6 className="font-weight-bold">
-       Totall:{allowance.totall_amount}
-       </h6>   
-        </div>:
-    <p></p>
-   } 
-            </div>
-            <div className="col-lg-6">
-<p className="font-weight-bold">
-    Employee name- {calculation.Name(emp_id)}
-</p>
-<div className="form-group">
+                   </td>
+                   </tr>   
+          </MDBTableBody>   
+           </MDBTable>:
+           allowance.type==='day'?
+           <MDBTable hover bordered striped >
+           <MDBTableHead>
+             <th colSpan={2}>
+             <h6 className="text-center font-weight-bold">
+       Allowance Information  
+          </h6>
+             </th>
+             <th colSpan={2}>
+             <h6 className="text-center font-weight-bold">
+       Calculation 
+          </h6>
+             </th>
+           </MDBTableHead>
+        <MDBTableBody>
+       <tr>
+         <td> Allowance id  </td>
+         <td> {allowance.id}</td>
+         <td className='font-weight-bold'>Day allowance scale</td>
+         <td className='font-weight-bold'>{allowance.scale}</td>
+         </tr> 
+         <tr>
+           <td>Letter id</td>
+           <td>{allowance.letter_id}</td>
+           <td className='font-weight-bold'> Breakfast amount  </td>
+         <td className='font-weight-bold'>{allowance.breakfast}</td>
+           </tr>
+          <tr>
+            <td>program</td>
+            <td>{allowance.program}</td>
+            <td className='font-weight-bold'>Lunch amount </td>
+         <td className='font-weight-bold'>{allowance.lunch}</td>
+            </tr>
+            <tr>
+              <td>project Name and code</td>
+              <td>{allowance.project_name}</td>
+              <td className='font-weight-bold'>Dinner amount </td>
+         <td className='font-weight-bold'>{allowance.dinner}</td>
+              </tr>
+              <tr>
+                <td> objective</td>
+                <td>{allowance.program}</td>
+                <td className='font-weight-bold'> Bed amount </td>
+         <td className='font-weight-bold'>{allowance.bed}</td>
+                </tr>
+                <tr>
+            <td>program</td>
+            <td>{allowance.program}</td>
+            <td className='font-weight-bold'>living allowance </td>
+         <td className='font-weight-bold'>{allowance.living_allowance}</td>
+            </tr>
+            <tr>
+              <td>project Name and code</td>
+              <td>{allowance.project_name}</td>
+              <td className='font-weight-bold'>climate Allowance </td>
+         <td className='font-weight-bold'>{allowance.climate_allowance}</td>
+              </tr>
+              <tr>
+                <td> objective</td>
+                <td>{allowance.program}</td>
+                <td className='font-weight-bold'> petrol and oil amount </td>
+         <td className='font-weight-bold'>{allowance.petrol_allowance}</td>
+                </tr>
+                <tr>
+                  <td>Initial place</td>
+                  <td>{allowance.initial_place}</td>
+                  <td className='font-weight-bold'> reserve amount </td>
+         <td className='font-weight-bold'>{allowance.reserve_amount}</td>  
+                  </tr> 
+               <tr>
+                 <td>Destination place</td>
+                 <td>{allowance.destination_place}</td>
+                 <td className='font-weight-bold'> Totall </td>
+         <td className='font-weight-bold'>{allowance.totall_amount}</td>  
+                 </tr>   
+          </MDBTableBody>   
+           </MDBTable> :
+<p></p>
+        }      
+             
+              </div>       
+            <div className="col-lg-6 font-weight-bold">
+     Employee name- {calculation.Name(emp_id)}
+    <div className="form-group">
 <div className="input-group input-container">
 				<span className="input-group-addon">
                  Signature
@@ -108,12 +204,10 @@ class ComponentToPrint extends React.Component {
           <div className="col-lg-6"></div>
          <div className="col-lg-6"></div>
          <div className="col-lg-6">
-            <h6 className="text-center">
+            <h6 className="text-center font-weight-bold">
                 Manager
             </h6>
-         <p className="font-weight-bold">
-           Manager name- {calculation.Name(allowance.approval_manager.emp_id)}  
-             </p> 
+         Manager name- {calculation.Name(allowance.approval_manager.emp_id)}  
              <div className="input-group input-container">
 				<span className="input-group-addon">
                  Signature
