@@ -456,6 +456,20 @@ class PrintUserDeduction extends Component {
             </div>
             </div>
             </div>
+            <div className="col-lg-6">
+<p className="font-weight-bold">
+    Manager name- {Calculation.Name(deduction.approval_manager.emp_id)}
+</p>
+<div className="form-group">
+<div className="input-group input-container">
+				<span className="input-group-addon">
+                 Signature
+                    </span>
+    <input type="text" className="input-field form-control"
+     disabled={true} />
+            </div>
+            </div>
+            </div>    
          <div className="col-lg-6">
             <h6 className="text-center font-weight-bold">
       Fianance employee who has done the calculation
