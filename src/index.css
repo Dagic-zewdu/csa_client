@@ -24,20 +24,21 @@ code {
     overflow: initial !important;
     -webkit-print-color-adjust: exact;
   }
-}
-
-@media print {
   .page-break {
     margin-top: 1rem;
     display: block;
     page-break-before: auto;
   }
-}
-
+  
 @page {
   size: auto;
-  margin: 20mm;
+  margin: 15mm;
 }
+
+thead,tfoot { display: table-row-group }
+tr { page-break-inside: avoid; }
+}
+
 
 
 

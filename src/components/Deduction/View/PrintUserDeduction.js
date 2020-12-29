@@ -14,29 +14,23 @@ class PrintUserDeduction extends Component {
         return (
             <div className="container">
             <div className="row">
-                <div className="col-lg-12">
-                <h3 className="text-center font-weight-bold">
+                
+           <div className="col-lg-12">
+           <h4 className="text-center font-weight-bold">
            {company}   
-                    </h3>     
-                </div>
-
-           <div className="col-lg-6">
-               <h5 className="text-center">
+                    </h4>
+               <h6 className="text-center">
                <FontAwesomeIcon icon={faUser} className='fa-1x mx-2 ' />
                Employee information    
-               </h5>
+               </h6>
             <p className="text-center font-weight-bold">
-            <p className="text-center font-weight-bold">
-            From- {Calculation.Name(deduction.creater)} <br/>
+            Name- {Calculation.Name(deduction.creater)} <br/>
            Department -{Calculation.Department(deduction.creater)} <br/>
            Is Employee official?-{isOfficial?'yes':'No'} <br/>
            Is Employe project allowance?-{isFieldEmployee?'yes':'no'} <br/>
            salary-{Calculation.Salary(deduction.creater)}
            </p>  
-                </p>   
-           </div> 
-           <div className="col-lg-6">
-               <p className="float-right font-italic">
+           <p className="float-right font-italic">
  <FontAwesomeIcon icon={faCalendar} className='mx-2'/> Date-{ToEthiopianDateSting(date)} E.c <br/>
 <FontAwesomeIcon icon={faCalendar} className='mx-2'/> Date-{TellDay(date)} G.c <br/>
               # Deduction id-{deduction.id} <br/>
@@ -45,13 +39,13 @@ class PrintUserDeduction extends Component {
         } <br/>
               # created date -{TellDay(deduction.created_date)}   
     
-               </p>
-               </div>    
-                <div className="col-lg-12 my-1">
-                    <h5 className="text-center font-weight-bold">
+               </p>   
+           </div>     
+                <div className="col-lg-12">
+                    <h6 className="text-center">
                         Initial day
-                    </h5>
-    <MDBTable striped bordered>
+                    </h6>
+    <MDBTable striped bordered className='table table-condensed'>
        <MDBTableHead>
 <tr>
   <th>
@@ -154,11 +148,11 @@ class PrintUserDeduction extends Component {
              <div className="col-lg-12">
              {
           deduction.spending_days.length?
-          <div className="col-lg-12 my-2">
-   <h5 className="text-center">
+          <div className="col-lg-12">
+   <h6 className="text-center">
      spending days
-     </h5>
-     <MDBTable hover striped bordered className="table table-condensed" >
+     </h6>
+     <MDBTable striped bordered className="table table-condensed" >
        <MDBTableHead>
 <tr>
   <th>
@@ -257,10 +251,10 @@ class PrintUserDeduction extends Component {
         }
         {/**return day */}
         <div className="col-lg-12 my-2">
-   <h5 className="text-center">
+   <h6 className="text-center">
      Return Day
-     </h5>
-     <MDBTable hover striped bordered>
+     </h6>
+     <MDBTable hover striped bordered className='table table-condensed'>
        <MDBTableHead>
 <tr>
   <th>
