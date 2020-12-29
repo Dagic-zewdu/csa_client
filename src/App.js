@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import './css/Main.css'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Admin from './components/system Admin/admin'
@@ -35,8 +35,17 @@ import { deductionReducer, deductionState } from './store/Reducers/deductionRedu
 import Test from './components/test/Test'
 import DoDeduction from './components/Deduction/Finance_Employee/DeductionCalculation.js/DoDeduction'
 import Edit from './components/Deduction/Finance_Employee/DeductionCalculation.js/Edit'
+import socketIOClient from "socket.io-client"
+import { server } from './components/config/config'
 const App = () => {
-
+   const [state,setState]=useState('')
+   useEffect(()=>{
+    //Very simply connect to the socket
+    const socket = socketIOClient(server);
+    socket.on('outgoing data',data=>{setState(data)
+    console.log(data)
+    })
+   },[])
   const [employees, dispatchEmployees] = useReducer(employeeReducer, empState)
   const [department, dispatchDepartment] = useReducer(departmentReducer, depState)
   const [place, dispatchPlaces] = useReducer(placeReducer, placeState)

@@ -1,4 +1,4 @@
-import { faArrowLeft, faBackward, faCalendar, faCalendarCheck, faCheck, faCity, faFlag, faLevelUpAlt, faMap, faMapMarked, faMoneyBill, faPaperPlane, faPlus, faSave, faSun, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faBackward, faCalendar, faCalendarCheck, faCheck, faCity, faFlag, faLevelUpAlt, faMap, faMapMarked, faMoneyBill, faPaperPlane, faPlus, faSave, faSun, faTrash, faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
 import React, { useContext } from 'react'
@@ -11,16 +11,9 @@ import { getDate, ToEthiopianDateSting } from '../../../../controllers/Date'
 import { DeductionCalculate } from '../../../../controllers/DeductionCalculate'
 import { FieldAllowance } from '../../../../controllers/FieldAllowance'
 import { PlaceClass } from '../../../../controllers/Places'
-import { Donothing, saveProcess } from '../../../../controllers/saveProcess'
+import { Donothing, randomId, saveProcess } from '../../../../controllers/saveProcess'
 import { DeductionDnd, StoreContext } from '../../../contexts/contexts'
-import DragClimatePlace from './DragClimatePlace'
-import DragEmployeePlace from './DragEmployeePlace'
-import DragFieldPlace from './DragFieldPlace'
-import DragOfficialPlace from './DragOfficialPlace'
-import { DropFieldSpending, FieldBedInitial, FieldBreakfastInitial, FieldDinnerInitial, FieldLunchInitial, ReturnPlaceField } from './DropFieldPlace'
 import { dropInitialClimatePlace, dropPlace_id, fieldSpendingDay, initialFieldEmployee, removeClimatePlace, removeInitialPlaces ,climateSpendingDays, removeSpendingDay, removeClimateSpending, dropSpendingDays } from './HandleFunctions'
-import {BreakfastInitialClimate, LunchInitialClimate,DinnerInitialClimate, BedInitialClimate, DropSpendingClimate,ReturnClimate} from './DropClimatePlace'
-import { DropPlace, DropReturnPlace, DropSpendingPlace } from './DropPlaces'
 import { DotLoading } from '../../../layout/Loading'
 import { decrptObject, encryptObject } from '../../../auth/encrypt'
 import { userInfo } from '../../../users/userInfo'
@@ -54,6 +47,8 @@ import { UsersClass } from '../../../../controllers/Users'
         dinner:{place_id:'',climate_place:'',project_allowance:'',scale:0}
        },
        save_options:'Approve',
+       day_Places:[],
+       Climate_Places:[],
         ...saveProcess('default')     
     },
     )
@@ -240,26 +235,48 @@ setState({...state,c_spending_days,c_initial_day,c_return_day,save_options:deduc
       climate_places:index===''?[]:climate.searchPlace(index)
           })
          /**list avaliable climate places that are in the state */
- const listClimatePlaces=state.climate_places.length?
- state.climate_places.map(p=>{
-   return(
-   <DragClimatePlace place={p} key={p._id}/> 
-   )
- }):
- <tr>
-   <td colSpan={3} className='text-danger font-weight-bold text-center'>
-   No climate allowance places found 
-   </td>
- </tr>
-const listOfficialPlaces=state.official_places.length?
-state.official_places.map(p=>{
-  return(
-<DragOfficialPlace info={{place:p,scale:Calculation.scale(emp_id,p._id)}} key={p._id} />     
-  )
-}):
-<td colSpan={4} className='text-danger font-weight-bold text-center'>
-  No official places found
-</td>
+const listClimatePlaces=state.climate_places.length?
+         state.climate_places.map(p=>{
+           return(
+                 <tr place={p} key={p._id}>
+               <td>{p.general_name}</td>
+               <td>{p.name}</td>
+                 <td>{p.level}</td>
+                 <td>
+                 <button className="btn btn-info" onClick={()=>setClimatePlaces(p._id)}>
+                <FontAwesomeIcon icon={faPlus} /> 
+                set  
+                   </button>  
+                 </td>
+              </tr> 
+              ) 
+         }):
+         <tr>
+           <td colSpan={3} className='text-danger font-weight-bold text-center'>
+           No climate allowance places found 
+           </td>
+         </tr>
+        const listOfficialPlaces=state.official_places.length?
+        state.official_places.map(p=>{
+          return(
+             <tr key={p._id}>
+                  <td>{p.name}</td>
+                  <td>{p.region}</td>
+                  <td>{p.type}</td>
+                  <td>{Calculation.scale(emp_id,p._id)}</td>
+                  <td>
+             <button className="btn btn-info"
+              onClick={()=>setPlaces(p._id,Calculation.scale(emp_id,p._id))}>
+               <FontAwesomeIcon icon={faPlus}/>
+               set
+               </button>       
+                  </td>
+              </tr>
+         )
+        }):
+        <td colSpan={4} className='text-danger font-weight-bold text-center'>
+          No official places found
+        </td>
 /**Drops places about intial official places
  * @param place=>place id
  * @param type=>breakfast,lunch,dinner,bed
@@ -586,6 +603,137 @@ const errorHandle=(id,type)=>ERROR.find(e=>e._id===id && e.type===type)?true:fal
        }
        
   }
+
+  /**************Multiple set *****************/
+/**
+ * set the array of  state.day_place with data
+ * @param {*} day_time -string('breakfast'||'lunch'.....)
+ * @param {*} day_type -string('initial' || 'spending' || 'return')
+ */
+const setInitialDay=(day_time,day_type)=>setState(s=>({...s,
+  day_Places:s.day_Places.find(i=> i.day_time === day_time && i.day_type === day_type)?
+  s.day_Places:[...s.day_Places,{id:randomId(),day_time,day_type,s_id:null}]
+}))
+/**
+* unset the array of  state.day_place with data
+* @param {*} day_time -string('breakfast'||'lunch'.....)
+* @param {*} day_type -string('initial' || 'spending' || 'return')
+*/
+const unSetInitialDay=(day_time,day_type)=>setState(s=>({...s,
+day_Places:s.day_Places.filter(i=> 
+  (i.day_time === day_time && i.day_type!==day_type) ||
+  (i.day_time !== day_time && i.day_type!==day_type ) ||
+  (i.day_time !== day_time && i.day_type===day_type)
+  )}))
+/**
+* set the array of  state.day_place with data
+* @param {*} day_time -string('breakfast'||'lunch'.....)
+* @param {*} day_type -string('initial' || 'spending' || 'return')
+*/
+const setInitialClimate=(day_time,day_type)=>setState(s=>({...s,
+Climate_Places:s.Climate_Places.find(i=>i.day_time === day_time && i.day_type === day_type)?
+s.Climate_Places:[...s.Climate_Places,{id:randomId(),day_time,day_type,s_id:null}]
+ }))
+/**
+* unset the array of  state.day_place with data
+* @param {*} day_time -string('breakfast'||'lunch'.....)
+* @param {*} day_type -string('initial' || 'spending' || 'return')
+*/
+const unSetInitialClimate=(day_time,day_type)=>setState(s=>({...s,
+Climate_Places:s.Climate_Places.filter(i=> 
+(i.day_time === day_time && i.day_type!==day_type) ||
+(i.day_time !== day_time && i.day_type!==day_type ) ||
+(i.day_time !== day_time && i.day_type===day_type)
+)}))
+/**
+ * set spending day's to the array of day place
+* @param {*} day_time -string('breakfast'||'lunch'.....)
+* @param {*} day_type -string('initial' || 'spending' || 'return')
+ * @param {*} s_id -spending day _id
+ */
+const setSpendingDay=(day_time,day_type,s_id)=>setState(s=>({...s,
+day_Places:s.day_Places.find(i=> i.day_time === day_time && i.day_type === day_type && i.s_id===s_id)?
+s.day_Places:[...s.day_Places,{id:randomId(),day_time,day_type,s_id}]
+}))
+/**
+ * set spending day's to the array of Climate_places
+* @param {*} day_time -string('breakfast'||'lunch'.....)
+* @param {*} day_type -string('initial' || 'spending' || 'return')
+ * @param {*} s_id -spending day _id
+ */
+const setSpendingClimate=(day_time,day_type,s_id)=>setState(s=>({...s,
+  Climate_Places:s.Climate_Places.find(i=> i.day_time === day_time && i.day_type === day_type && i.s_id===s_id)?
+  s.Climate_Places:[...s.Climate_Places,{id:randomId(),day_time,day_type,s_id}]
+}))  
+/**
+ * unset spending day's to the array of day place
+* @param {*} day_time -string('breakfast'||'lunch'.....)
+* @param {*} day_type -string('initial' || 'spending' || 'return')
+ * @param {*} s_id -spending day _id
+ */
+const unSetSpendingDay=(day_time,day_type,s_id)=>setState(s=>({...s,
+day_Places: s.day_Places.find(i=> i.day_time === day_time && i.day_type === day_type && i.s_id === s_id)?
+   s.day_Places.filter(S=>S.id  !== s.day_Places.find(i=> 
+    i.day_time === day_time && i.day_type === day_type && i.s_id === s_id).id):
+    s.day_Places
+}))
+/**
+ * unset spending day's to the array of day place
+* @param {*} day_time -string('breakfast'||'lunch'.....)
+* @param {*} day_type -string('initial' || 'spending' || 'return')
+ * @param {*} s_id -spending day _id
+ */
+const unSetSpendingClimate=(day_time,day_type,s_id)=>setState(s=>({...s,
+  Climate_Places: s.Climate_Places.find(i=> i.day_time === day_time && i.day_type === day_type && i.s_id === s_id)?
+       s.Climate_Places.filter(S=>S.id  !== s.Climate_Places.find(i=> 
+        i.day_time === day_time && i.day_type === day_type && i.s_id === s_id).id):
+        s.Climate_Places
+  }))
+  /**
+   * 
+   * @param {*} places=>String 'outside' || 'inside' addis ababa 
+   * @param {*} scale =>number scale to full fill
+   */
+const setProjectPlaces=(places,scale)=>state.day_Places.map(p=>{
+setState(s=>({
+  ...s,
+ c_initial_day:p.day_type==='initial'?initialFieldEmployee(places,p.day_time,scale,s.c_initial_day):
+           s.c_initial_day,
+ c_spending_days:p.day_type==='spending'?fieldSpendingDay(p.s_id,places,p.day_time,scale,s.c_spending_days):
+ s.c_spending_days,
+ c_return_day:p.day_type==='return'?initialFieldEmployee(places,p.day_time,scale,s.c_return_day):s.c_return_day,
+ ...saveProcess('default')
+}))
+  })
+/**
+ * set to c_initial_day, c_spending_day,c_return_day of official
+ * @param {*} id =>place id 
+ * @param {*} scale =>scale to calculate
+ */ 
+ const setPlaces=(id,scale)=>state.day_Places.map(p=>{
+   setState(s=>({
+     ...s,
+c_initial_day:p.day_type==='initial'?dropPlace_id(id,p.day_time,scale,s.c_initial_day):s.c_initial_day,
+c_spending_days:p.day_type==='spending'?dropSpendingDays(p.s_id,id,p.day_time,scale,s.c_spending_days):s.c_spending_days,
+c_return_day:p.day_type==='return'?dropPlace_id(id,p.day_time,scale,s.c_return_day):s.c_return_day,
+...saveProcess('default')
+   }))
+ })
+/**add palce object based on day time
+  * @param id=>refers to climate place id
+  */      
+ const setClimatePlaces=id=>state.Climate_Places.map(c=>{
+  setState(s=>({
+     ...s,
+c_initial_day:c.day_type==='initial'?dropInitialClimatePlace(id,c.day_time,s.c_initial_day):s.c_initial_day,
+c_spending_days:c.day_type==='spending'? climateSpendingDays(c.s_id,id,c.day_time,s.c_spending_days) :s.c_spending_days, 
+c_return_day:c.day_type==='return'?dropInitialClimatePlace(id,c.day_time,s.c_return_day)  :s.c_return_day,
+...saveProcess('default')
+   }))
+ })
+
+
+
 return (
   loading||empLoading||userLoading||deductionsLoading?
   <DataLoading/>:
@@ -597,9 +745,8 @@ return (
     addFieldSpending,addSpendingClimate,RemoveSpendingDay,RemoveClimateSpending,
     DropSpendingDays,returnOfficial,removeReturnClimate,removeReturnPlace,returnClimatePlace,
     returnProject
-               }}
-               > 
-        <div className="container mt-3">
+               }} > 
+    <div className="container mt-3">
           <div className="row">
             <div className="col-lg-12">
               <Link to='/deduction' className='float-left'>
@@ -643,7 +790,13 @@ return (
      onChange={e=>setState(s=>({...state,check:{inAA:false,outAA:true}}))}/>
      outside Addis Ababa    
  </div>
-<DragFieldPlace info={{scale:fescale,place:state.check.inAA?'Inside':state.check.outAA?'Outside':''}}  />
+ <h4 className="text-center font-weight-bold">
+Allowance scale: {fescale}
+</h4> <br/>
+<button className="btn-info  form-control" 
+onClick={e=>setProjectPlaces(state.check.inAA?'Inside':state.check.outAA?'Outside':'',fescale)}>
+  Set Place
+</button>
 </div>:
 <p></p>
 }
@@ -700,9 +853,18 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
   </select>
 </div>
     </div> 
- <DragEmployeePlace info={{_id:state.place_id,region:state.region,
-                    type:state.place_type,scale:state.scale}}
-   />
+    <div className="text-center">
+    <p className="font-weight-bold">
+        Region:{state.region} <br/>
+        type:{state.place_type}   <br/>
+        scale:{state.scale}
+    </p>
+        </div>
+    <button className="btn btn-info form-control"
+     onClick={()=>setPlaces(state.place_id,state.scale)}>
+      <FontAwesomeIcon icon={faPlus} />
+     Set 
+      </button>    
  </div> 
    
               </div>
@@ -754,6 +916,10 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
         <FontAwesomeIcon icon={faMoneyBill} className='mx-2'/>
           scale
               </th>
+              <th>
+          <FontAwesomeIcon icon={faPlus} className='mx-2'/>
+        set        
+              </th>
                 </tr>
                       </MDBTableHead>
                     <MDBTableBody>
@@ -782,6 +948,10 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
         <FontAwesomeIcon icon={faLevelUpAlt} className='mx-1' />
         level          
                 </th>
+                <th>
+              <FontAwesomeIcon icon={faPlus} className='mx-1' />
+        set         
+                </th>
                  </tr>
                       </MDBTableHead>
                     <MDBTableBody>
@@ -795,7 +965,7 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
    <h4 className="text-center">
      Initial day
      </h4>
-     <MDBTable hover striped bordered>
+<MDBTable hover striped bordered>
        <MDBTableHead>
 <tr>
   <th>
@@ -848,34 +1018,51 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
       <td>Breakfast</td>
       <td>
         {/**place */}
-        {deduction.initial_day.breakfast}
+         {deduction.initial_day.breakfast}
         </td>
-        {/**place to calculate drop */}
+        <td>
+    {/**place to calculate drop */}
+    <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialDay('breakfast','initial'):
+      unSetInitialDay('breakfast','initial')}/>
     {
       isFieldEmployee?
-      <FieldBreakfastInitial info={{
-        scale:iBreakfast.scale,
-        place:iBreakfast.project_allowance
-        }}/>:
-       <td><DropPlace info={{
-         name:Places.placeName(iBreakfast.place_id),
-         region:Places.placeRegion(iBreakfast.place_id),
-         type:Places.placeType(iBreakfast.place_id),
-         scale:iBreakfast.scale,
-         Item:'breakfast'
-         }}/></td>
-         }
+      <p className="text-center font-weight-bold my-auto">
+      scale:{iBreakfast.scale} <br/>
+      place:{iBreakfast.project_allowance}
+      </p>:
+    <p className="text-center font-weight-bold my-auto">
+    name:{Places.placeName(iBreakfast.place_id)}  <br/>
+    region:{Places.placeRegion(iBreakfast.place_id)}  <br/>
+    type:{Places.placeType(iBreakfast.place_id)} <br/>
+     scale:{iBreakfast.scale}  
+    </p>
+    }
+    
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeInitialPlace('breakfast')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+    
+        </td>
+    
     {/**climate place drop */}
-      
-        <BreakfastInitialClimate info={{
-        name:climate.findClimatePlace(iBreakfast.climate_place)?
-        climate.findClimatePlace(iBreakfast.climate_place).name:'',
-        level:climate.findClimatePlace(iBreakfast.climate_place)?
-        climate.findClimatePlace(iBreakfast.climate_place).level:'',
-        level_percent:Calculation.climateLevel(iBreakfast.climate_place)
-      }}/>
-      
-      
+      <td>
+      <input type="checkbox"  className="mx-2"
+      onChange={e=>e.currentTarget.checked?setInitialClimate('breakfast','initial'):
+      unSetInitialClimate('breakfast','initial')}/>   <br/>   
+        <p className="text-center font-weight-bold font-italic">
+  name:{climate.findClimatePlace(iBreakfast.climate_place)?
+  climate.findClimatePlace(iBreakfast.climate_place).name:''} <br/>
+  level:{climate.findClimatePlace(iBreakfast.climate_place)?
+  climate.findClimatePlace(iBreakfast.climate_place).level:''} <br/>
+  level_percent:{Calculation.climateLevel(iBreakfast.climate_place)} <br/>
+       </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveClimatePlace('breakfast')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
       <td>
         {/**Day Allowance show */}
         {Calculation.singleBreakfast(iBreakfast.scale)}
@@ -891,28 +1078,48 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
         {/**user entered place */}
         {deduction.initial_day.lunch}
         </td>
-      {
+        <td>
+    {/**place to calculate drop for initial lunch place*/}
+    <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialDay('lunch','initial'):
+      unSetInitialDay('lunch','initial')}/>
+    {
       isFieldEmployee?
-      <FieldLunchInitial info={{
-        scale:iLunch.scale,
-        place:iLunch.project_allowance
-        }}/>:
-       <td><DropPlace info={{
-         name:Places.placeName(iLunch.place_id),
-         region:Places.placeRegion(iLunch.place_id),
-         type:Places.placeType(iLunch.place_id),
-         scale:iBreakfast.scale,
-         Item:'lunch'
-         }}/></td>
-           }
-         {/**climate place drop for lunch*/}
-      <LunchInitialClimate info={{
-        name:climate.findClimatePlace(iLunch.climate_place)?
-        climate.findClimatePlace(iLunch.climate_place).name:'',
-        level:climate.findClimatePlace(iLunch.climate_place)?
-        climate.findClimatePlace(iLunch.climate_place).level:'',
-        level_percent:Calculation.climateLevel(iLunch.climate_place)
-      }}/>
+      <p className="text-center font-weight-bold my-auto">
+      scale:{iLunch.scale} <br/>
+      place:{iLunch.project_allowance}
+      </p>:
+    <p className="text-center font-weight-bold my-auto">
+    name:{Places.placeName(iLunch.place_id)}  <br/>
+    region:{Places.placeRegion(iLunch.place_id)}  <br/>
+    type:{Places.placeType(iLunch.place_id)} <br/>
+     scale:{iLunch.scale}  
+    </p>
+    }
+    
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeInitialPlace('lunch')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+    
+        </td>
+        {/**climate lunch place set */}
+      <td>
+      <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialClimate('lunch','initial'):
+      unSetInitialClimate('lunch','initial')}/>      
+        <p className="text-center font-weight-bold font-italic">
+  name:{climate.findClimatePlace(iLunch.climate_place)?
+  climate.findClimatePlace(iLunch.climate_place).name:''} <br/>
+  level:{climate.findClimatePlace(iLunch.climate_place)?
+  climate.findClimatePlace(iLunch.climate_place).level:''} <br/>
+  level_percent:{Calculation.climateLevel(iLunch.climate_place)} <br/>
+       </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveClimatePlace('lunch')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
       <td>
         {/**Day Allowance of lunch show */}
         {Calculation.singleLunch(iLunch.scale)}
@@ -928,24 +1135,48 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
         {/**user entered place */}
         {deduction.initial_day.dinner}
         </td>
-      {
+        <td>
+    {/**place to calculate drop for initial lunch place*/}
+    <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialDay('dinner','initial'):
+      unSetInitialDay('dinner','initial')}/>
+    {
       isFieldEmployee?
-      <FieldDinnerInitial info={{scale:iDinner.scale,place:iDinner.project_allowance}}/>:
-       <td><DropPlace info={{
-         name:Places.placeName(iDinner.place_id),region:Places.placeRegion(iDinner.place_id),
-         type:Places.placeType(iDinner.place_id),scale:iDinner.scale,
-         Item:'dinner'
-         }}/></td>
-          }
-         {/**climate place drop for Dinner*/}
-      <DinnerInitialClimate info={{
-        name:climate.findClimatePlace(iDinner.climate_place)?
-        climate.findClimatePlace(iDinner.climate_place).name:'',
-        level:climate.findClimatePlace(iDinner.climate_place)?
-        climate.findClimatePlace(iDinner.climate_place).level:'',
-        level_percent:Calculation.climateLevel(iDinner.climate_place)
-      }}
-      />
+      <p className="text-center font-weight-bold my-auto">
+      scale:{iDinner.scale} <br/>
+      place:{iDinner.project_allowance}
+      </p>:
+    <p className="text-center font-weight-bold my-auto">
+    name:{Places.placeName(iDinner.place_id)}  <br/>
+    region:{Places.placeRegion(iDinner.place_id)}  <br/>
+    type:{Places.placeType(iDinner.place_id)} <br/>
+     scale:{iDinner.scale}  
+    </p>
+    }
+    
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeInitialPlace('dinner')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+    
+        </td>
+        {/**climate lunch place set */}
+      <td>
+      <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialClimate('dinner','initial'):
+      unSetInitialClimate('dinner','initial')}/>      
+        <p className="text-center font-weight-bold font-italic">
+  name:{climate.findClimatePlace(iDinner.climate_place)?
+  climate.findClimatePlace(iDinner.climate_place).name:''} <br/>
+  level:{climate.findClimatePlace(iDinner.climate_place)?
+  climate.findClimatePlace(iDinner.climate_place).level:''} <br/>
+  level_percent:{Calculation.climateLevel(iDinner.climate_place)} <br/>
+       </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveClimatePlace('dinner')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
       <td>
         {/**Day Allowance of Dinner show */}
         { Calculation.singleDinner(iDinner.scale)}
@@ -961,25 +1192,48 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
         {/**user entered place */}
         {deduction.initial_day.bed}
         </td>
-      {
+        <td>
+    {/**place to calculate drop for initial bed place*/}
+    <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialDay('bed','initial'):
+      unSetInitialDay('bed','initial')}/>
+    {
       isFieldEmployee?
-      <FieldBedInitial info={{scale:iBed.scale,place:iBed.project_allowance}}/>:
-       <td><DropPlace info={{
-         name:Places.placeName(iBed.place_id),
-         region:Places.placeRegion(iBed.place_id),
-         type:Places.placeType(iBed.place_id),
-         scale:iBed.scale,
-         Item:'bed'
-         }}/></td>
-          }
-         {/**climate place drop for Dinner*/}
-      <BedInitialClimate info={{
-        name:climate.findClimatePlace(iBed.climate_place)?
-        climate.findClimatePlace(iBed.climate_place).name:'',
-        level:climate.findClimatePlace(iBed.climate_place)?
-        climate.findClimatePlace(iBed.climate_place).level:'',
-        level_percent:Calculation.climateLevel(iBed.climate_place)
-      }}/>
+      <p className="text-center font-weight-bold my-auto">
+      scale:{iBed.scale} <br/>
+      place:{iBed.project_allowance}
+      </p>:
+    <p className="text-center font-weight-bold my-auto">
+    name:{Places.placeName(iBed.place_id)}  <br/>
+    region:{Places.placeRegion(iBed.place_id)}  <br/>
+    type:{Places.placeType(iBed.place_id)} <br/>
+     scale:{iBed.scale}  
+    </p>
+    }
+    
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeInitialPlace('bed')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+    
+        </td>
+        {/**climate bed place set */}
+      <td>
+      <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialClimate('bed','initial'):
+      unSetInitialClimate('bed','initial')}/>      
+        <p className="text-center font-weight-bold font-italic">
+  name:{climate.findClimatePlace(iBed.climate_place)?
+  climate.findClimatePlace(iBed.climate_place).name:''} <br/>
+  level:{climate.findClimatePlace(iBed.climate_place)?
+  climate.findClimatePlace(iBed.climate_place).level:''} <br/>
+  level_percent:{Calculation.climateLevel(iBed.climate_place)} <br/>
+       </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveClimatePlace('bed')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
       <td>
         {/**Day Allowance of bed show */}
         {Calculation.singleBed(iBed.scale)}
@@ -990,7 +1244,7 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
       </td>
     </tr>  
        </MDBTableBody>
-       </MDBTable>          
+       </MDBTable>   
           </div>
         </div>
       {/**spending days */}
@@ -1042,7 +1296,7 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
        {
         deduction.spending_days.map(d=>{
           return(
-       <MDBTableBody>
+       <MDBTableBody key={d._id} label={`deduction ${d}`}>
       
          <tr key={d._id}>
            <td rowSpan={4}>
@@ -1059,33 +1313,43 @@ onChange={e=>handleEmployeePlace('place_type',e.target.value)}>
   {Calculation.findSpendingDay(id,d._id)?Calculation.findSpendingDay(id,d._id).breakfast:''}
              </td>
              <td style={{borderColor:errorHandle(d._id,'breakfast')?'red':''}}>
+    <input type="checkbox"  className="mx-2 float-left"
+onChange={e=>e.currentTarget.checked?setSpendingDay('breakfast','spending',d._id):
+unSetSpendingDay('breakfast','spending',d._id)}/>    <br/>       
       {
-        isFieldEmployee?
-      <DropFieldSpending info={{
-  _id:d._id,item:'breakfast',
-   scale:findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').scale:0,
-   place:findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').project_allowance:''
-             }} />:
-      <DropSpendingPlace info={{
-_id:d._id,//spending day id
-Item:'breakfast', //tell the place to drop is breakfast place
-//from place class find the name,region,type,scale of the place from the state
-name:Places.placeName(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:''),
-region:Places.placeRegion(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:''),
-type:Places.placeType(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:''),
-scale:findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').scale:0
-      }}/>
-      }    
-       
+      isFieldEmployee?
+<p className="text-center font-weight-bold my-auto">
+scale:{findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').scale:0} <br/>
+place:{findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').project_allowance:0}
+</p>:
+    <p className="text-center font-weight-bold my-auto">
+name:{Places.placeName(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')}  <br/>
+region:{Places.placeRegion(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')}  <br/>
+type:{Places.placeType(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').place_id:'')} <br/>
+scale:{findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').scale:0}  
+    </p>
+    } 
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveSpendingDay(d._id,'breakfast')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>                  
              </td>
              <td>
-    <DropSpendingClimate info={{_id:d._id,item:'breakfast',
- general_name:climate.climateGenralName(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').climate_place:''),
- name:climate.climateName(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').climate_place:''),
-level:climate.climateLevel(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').climate_place:''),
-level_percent:Calculation.climateLevel(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').climate_place:'') 
-      }} />           
-             </td>
+           {/**climate places */}    
+      <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setSpendingClimate('breakfast','spending',d._id):
+      unSetSpendingClimate('breakfast','spending',d._id)}/>      
+        <p className="text-center font-weight-bold font-italic">
+General name:{climate.climateName(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').climate_place:'')} <br/>
+name:{climate.climateName(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').climate_place:'')} <br/>
+level:{climate.climateLevel(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').climate_place:'')} <br/>
+level_percent:{Calculation.climateLevel(findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').climate_place:'')} <br/>
+      </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveClimateSpending(d._id,'breakfast')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
              <td>
      {Calculation.spendingBreakfast(id,d._id,findSpendingDay(d._id,'breakfast')?findSpendingDay(d._id,'breakfast').scale:0)}          
              </td>
@@ -1104,32 +1368,43 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'breakfast')?findSp
   {Calculation.findSpendingDay(id,d._id)?Calculation.findSpendingDay(id,d._id).lunch:''}
              </td>
              <td style={{borderColor:errorHandle(d._id,'lunch')?'red':''}}>
-             {
-        isFieldEmployee?
-      <DropFieldSpending info={{
- _id:d._id,item:'lunch',
- scale:findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').scale:0,
- place:findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').project_allowance:''
-             }} />:
-             <DropSpendingPlace info={{
-_id:d._id,//spending day id
-Item:'lunch', //tell the place to drop is breakfast place
-//from place class find the name,region,type,scale of the place from the state
-name:Places.placeName(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').place_id:''),
-region:Places.placeRegion(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').place_id:''),
-type:Places.placeType(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').place_id:''),
-scale:findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').scale:0
-      }}/>
-      } 
+    <input type="checkbox"  className="mx-2 float-left"
+onChange={e=>e.currentTarget.checked?setSpendingDay('lunch','spending',d._id):
+unSetSpendingDay('lunch','spending',d._id)}/>    <br/>       
+      {
+      isFieldEmployee?
+<p className="text-center font-weight-bold my-auto">
+scale:{findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').scale:0} <br/>
+place:{findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').project_allowance:0}
+</p>:
+    <p className="text-center font-weight-bold my-auto">
+name:{Places.placeName(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').place_id:'')}  <br/>
+region:{Places.placeRegion(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').place_id:'')}  <br/>
+type:{Places.placeType(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').place_id:'')} <br/>
+scale:{findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').scale:0}  
+    </p>
+    } 
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveSpendingDay(d._id,'lunch')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>                  
              </td>
              <td>
-             <DropSpendingClimate info={{_id:d._id,item:'lunch',
- general_name:climate.climateGenralName(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').climate_place:''),
- name:climate.climateName(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').climate_place:''),
-level:climate.climateLevel(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').climate_place:''),
-level_percent:Calculation.climateLevel(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').climate_place:'') 
-      }} />
-             </td>
+           {/**climate places */}    
+      <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setSpendingClimate('lunch','spending',d._id):
+      unSetSpendingClimate('lunch','spending',d._id)}/>      
+        <p className="text-center font-weight-bold font-italic">
+General name:{climate.climateName(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').climate_place:'')} <br/>
+name:{climate.climateName(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').climate_place:'')} <br/>
+level:{climate.climateLevel(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').climate_place:'')} <br/>
+level_percent:{Calculation.climateLevel(findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').climate_place:'')} <br/>
+      </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveClimateSpending(d._id,'lunch')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
              <td>
 {Calculation.spendingLunch(id,d._id,findSpendingDay(d._id,'lunch')?findSpendingDay(d._id,'lunch').scale:0)}          
                   
@@ -1149,32 +1424,43 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'lunch')?findSpendi
   {Calculation.findSpendingDay(id,d._id)?Calculation.findSpendingDay(id,d._id).dinner:''}
              </td>
              <td style={{borderColor:errorHandle(d._id,'dinner')?'red':''}}>
-             {
-        isFieldEmployee?
-      <DropFieldSpending info={{
- _id:d._id,item:'dinner',
- scale:findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').scale:0,
-place:findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').project_allowance:''
-             }} />:
-             <DropSpendingPlace info={{
-_id:d._id,//spending day id
-Item:'dinner', //tell the place to drop is breakfast place
-//from place class find the name,region,type,scale of the place from the state
-name:Places.placeName(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').place_id:''),
-region:Places.placeRegion(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').place_id:''),
-type:Places.placeType(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').place_id:''),
-scale:findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').scale:0
-      }}/>
-      }          
+    <input type="checkbox"  className="mx-2 float-left"
+onChange={e=>e.currentTarget.checked?setSpendingDay('dinner','spending',d._id):
+unSetSpendingDay('dinner','spending',d._id)}/>    <br/>       
+      {
+      isFieldEmployee?
+<p className="text-center font-weight-bold my-auto">
+scale:{findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').scale:0} <br/>
+place:{findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').project_allowance:0}
+</p>:
+    <p className="text-center font-weight-bold my-auto">
+name:{Places.placeName(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').place_id:'')}  <br/>
+region:{Places.placeRegion(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').place_id:'')}  <br/>
+type:{Places.placeType(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').place_id:'')} <br/>
+scale:{findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').scale:0}  
+    </p>
+    } 
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveSpendingDay(d._id,'dinner')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>                  
              </td>
              <td>
-      <DropSpendingClimate info={{_id:d._id,item:'dinner',
- general_name:climate.climateGenralName(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').climate_place:''),
- name:climate.climateName(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').climate_place:''),
-level:climate.climateLevel(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').climate_place:''),
-level_percent:Calculation.climateLevel(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').climate_place:'') 
-      }} />      
-             </td>
+           {/**climate places */}    
+      <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setSpendingClimate('dinner','spending',d._id):
+      unSetSpendingClimate('dinner','spending',d._id)}/>      
+        <p className="text-center font-weight-bold font-italic">
+General name:{climate.climateName(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').climate_place:'')} <br/>
+name:{climate.climateName(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').climate_place:'')} <br/>
+level:{climate.climateLevel(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').climate_place:'')} <br/>
+level_percent:{Calculation.climateLevel(findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').climate_place:'')} <br/>
+      </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveClimateSpending(d._id,'dinner')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
              <td>
 {Calculation.spendingDinner(id,d._id,findSpendingDay(d._id,'dinner')?findSpendingDay(d._id,'dinner').scale:0)}          
                   
@@ -1194,32 +1480,43 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'dinner')?findSpend
   {Calculation.findSpendingDay(id,d._id)?Calculation.findSpendingDay(id,d._id).bed:''}
              </td>
              <td style={{borderColor:errorHandle(d._id,'bed')?'red':''}}>
-             {
-        isFieldEmployee?
-      <DropFieldSpending info={{
- _id:d._id,item:'bed',
- scale:findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').scale:0,
- place:findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').project_allowance:''
-             }} />:
-             <DropSpendingPlace info={{
-_id:d._id,//spending day id
-Item:'bed', //tell the place to drop is breakfast place
-//from place class find the name,region,type,scale of the place from the state
-name:Places.placeName(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').place_id:''),
-region:Places.placeRegion(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').place_id:''),
-type:Places.placeType(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').place_id:''),
-scale:findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').scale:0
-      }}/>
-      } 
+    <input type="checkbox"  className="mx-2 float-left"
+onChange={e=>e.currentTarget.checked?setSpendingDay('bed','spending',d._id):
+unSetSpendingDay('bed','spending',d._id)}/>    <br/>       
+      {
+      isFieldEmployee?
+<p className="text-center font-weight-bold my-auto">
+scale:{findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').scale:0} <br/>
+place:{findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').project_allowance:0}
+</p>:
+    <p className="text-center font-weight-bold my-auto">
+name:{Places.placeName(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').place_id:'')}  <br/>
+region:{Places.placeRegion(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').place_id:'')}  <br/>
+type:{Places.placeType(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').place_id:'')} <br/>
+scale:{findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').scale:0}  
+    </p>
+    } 
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveSpendingDay(d._id,'bed')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>                  
              </td>
              <td>
-    <DropSpendingClimate info={{_id:d._id,item:'bed',
- general_name:climate.climateGenralName(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').climate_place:''),
- name:climate.climateName(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').climate_place:''),
-level:climate.climateLevel(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').climate_place:''),
-level_percent:Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').climate_place:'') 
-      }} />
-             </td>
+           {/**climate places */}    
+      <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setSpendingClimate('bed','spending',d._id):
+      unSetSpendingClimate('bed','spending',d._id)}/>       
+        <p className="text-center font-weight-bold font-italic">
+General name:{climate.climateName(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').climate_place:'')} <br/>
+name:{climate.climateName(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').climate_place:'')} <br/>
+level:{climate.climateLevel(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').climate_place:'')} <br/>
+level_percent:{Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').climate_place:'')} <br/>
+      </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>RemoveClimateSpending(d._id,'bed')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
              <td>
 {Calculation.spendingBed(id,d._id,findSpendingDay(d._id,'bed')?findSpendingDay(d._id,'bed').scale:0)}          
                   
@@ -1237,8 +1534,7 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpending
           )
         })
       }   
-     
-       </MDBTable>          
+     </MDBTable>          
           </div>
         </div>:
     <p></p>
@@ -1304,28 +1600,49 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpending
         {/**place */}
         {deduction.return_day.breakfast}
         </td>
-        {/**place to calculate drop */}
+        <td>
+    {/**place to calculate drop */}
+    <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialDay('breakfast','return'):
+      unSetInitialDay('breakfast','return')}/>
     {
       isFieldEmployee?
-<ReturnPlaceField info={{scale:rBreakfast.scale,place:rBreakfast.project_allowance,Item:'breakfast'}}/>:
-  <td>
-         <DropReturnPlace info={{
-         name:Places.placeName(rBreakfast.place_id),region:Places.placeRegion(rBreakfast.place_id),
-         type:Places.placeType(rBreakfast.place_id),scale:rBreakfast.scale,
-         Item:'breakfast'
-         }}/></td>
-         }
+      <p className="text-center font-weight-bold my-auto">
+      scale:{rBreakfast.scale} <br/>
+      place:{rBreakfast.project_allowance}
+      </p>:
+    <p className="text-center font-weight-bold my-auto">
+    name:{Places.placeName(rBreakfast.place_id)}  <br/>
+    region:{Places.placeRegion(rBreakfast.place_id)}  <br/>
+    type:{Places.placeType(rBreakfast.place_id)} <br/>
+     scale:{rBreakfast.scale}  
+    </p>
+    }
+    
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeReturnPlace('breakfast')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+    
+        </td>
+    
     {/**climate place drop */}
-      
-        <ReturnClimate info={{
-        Item:'breakfast',
-        name:climate.findClimatePlace(rBreakfast.climate_place)?
-        climate.findClimatePlace(rBreakfast.climate_place).name:'',
-        level:climate.findClimatePlace(rBreakfast.climate_place)?
-        climate.findClimatePlace(rBreakfast.climate_place).level:'',
-        level_percent:Calculation.climateLevel(rBreakfast.climate_place)
-      }}/>
-      
+      <td>
+      <input type="checkbox"  className="mx-2"
+      onChange={e=>e.currentTarget.checked?setInitialClimate('breakfast','return'):
+      unSetInitialClimate('breakfast','return')}/>   <br/>   
+        <p className="text-center font-weight-bold font-italic">
+  name:{climate.findClimatePlace(rBreakfast.climate_place)?
+  climate.findClimatePlace(rBreakfast.climate_place).name:''} <br/>
+  level:{climate.findClimatePlace(rBreakfast.climate_place)?
+  climate.findClimatePlace(rBreakfast.climate_place).level:''} <br/>
+  level_percent:{Calculation.climateLevel(rBreakfast.climate_place)} <br/>
+       </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeReturnClimate('breakfast')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
       
       <td>
         {/**Day Allowance show */}
@@ -1342,25 +1659,49 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpending
         {/**user entered place */}
         {deduction.return_day.lunch}
         </td>
-      {
+        <td>
+    <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialDay('lunch','return'):
+      unSetInitialDay('lunch','return')}/>
+    {
       isFieldEmployee?
-      <ReturnPlaceField info={{scale:rLunch.scale,place:rLunch.project_allowance,Item:'lunch'}}/> :
+      <p className="text-center font-weight-bold my-auto">
+      scale:{rLunch.scale} <br/>
+      place:{rLunch.project_allowance}
+      </p>:
+    <p className="text-center font-weight-bold my-auto">
+    name:{Places.placeName(iLunch.place_id)}  <br/>
+    region:{Places.placeRegion(iLunch.place_id)}  <br/>
+    type:{Places.placeType(iLunch.place_id)} <br/>
+     scale:{iLunch.scale}  
+    </p>
+    }
+    
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeReturnPlace('lunch')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+    
+        </td>
+    
+    {/**climate place  */}
       <td>
-      <DropReturnPlace info={{
-         name:Places.placeName(rLunch.place_id),region:Places.placeRegion(rLunch.place_id),
-         type:Places.placeType(rLunch.place_id),scale:rLunch.scale,
-         Item:'lunch'
-         }}/></td>
-           }
-         {/**climate place drop for lunch*/}
-         <ReturnClimate info={{
-        Item:'lunch',
-        name:climate.findClimatePlace(rLunch.climate_place)?
-        climate.findClimatePlace(rLunch.climate_place).name:'',
-        level:climate.findClimatePlace(rLunch.climate_place)?
-        climate.findClimatePlace(rLunch.climate_place).level:'',
-        level_percent:Calculation.climateLevel(rLunch.climate_place)
-      }}/>
+      <input type="checkbox"  className="mx-2"
+      onChange={e=>e.currentTarget.checked?setInitialClimate('lunch','return'):
+      unSetInitialClimate('lunch','return')}/>   <br/>   
+        <p className="text-center font-weight-bold font-italic">
+  name:{climate.findClimatePlace(rLunch.climate_place)?
+  climate.findClimatePlace(rLunch.climate_place).name:''} <br/>
+  level:{climate.findClimatePlace(rLunch.climate_place)?
+  climate.findClimatePlace(rLunch.climate_place).level:''} <br/>
+  level_percent:{Calculation.climateLevel(rLunch.climate_place)} <br/>
+       </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeReturnClimate('lunch')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
+      
       <td>
         {/**Day Allowance of lunch show */}
         {Calculation.singleLunch(rLunch.scale)}
@@ -1376,25 +1717,49 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpending
         {/**user entered place */}
         {deduction.return_day.dinner}
         </td>
-      {
+        <td>
+    <input type="checkbox"  className="mx-2 float-left"
+      onChange={e=>e.currentTarget.checked?setInitialDay('dinner','return'):
+      unSetInitialDay('dinner','return')}/>
+    {
       isFieldEmployee?
-<ReturnPlaceField info={{scale:rDinner.scale,place:rDinner.project_allowance,Item:'dinner'}}/> :
-<td>
-      <DropReturnPlace info={{
-         name:Places.placeName(rDinner.place_id),region:Places.placeRegion(rDinner.place_id),
-         type:Places.placeType(rDinner.place_id),scale:rDinner.scale,
-         Item:'dinner'
-         }}/></td>
-          }
-         {/**climate place drop for Dinner*/}
-         <ReturnClimate info={{
-        Item:'dinner',
-        name:climate.findClimatePlace(rDinner.climate_place)?
-        climate.findClimatePlace(rDinner.climate_place).name:'',
-        level:climate.findClimatePlace(rDinner.climate_place)?
-        climate.findClimatePlace(rDinner.climate_place).level:'',
-        level_percent:Calculation.climateLevel(rDinner.climate_place)
-      }}/>
+      <p className="text-center font-weight-bold my-auto">
+      scale:{rDinner.scale} <br/>
+      place:{rDinner.project_allowance}
+      </p>:
+    <p className="text-center font-weight-bold my-auto">
+    name:{Places.placeName(rDinner.place_id)}  <br/>
+    region:{Places.placeRegion(rDinner.place_id)}  <br/>
+    type:{Places.placeType(rDinner.place_id)} <br/>
+     scale:{rDinner.scale}  
+    </p>
+    }
+    
+    <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeReturnPlace('dinner')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+    
+        </td>
+    
+    {/**climate place  */}
+      <td>
+      <input type="checkbox"  className="mx-2"
+      onChange={e=>e.currentTarget.checked?setInitialClimate('dinner','return'):
+      unSetInitialClimate('dinner','return')}/>   <br/>   
+        <p className="text-center font-weight-bold font-italic">
+  name:{climate.findClimatePlace(rDinner.climate_place)?
+  climate.findClimatePlace(rDinner.climate_place).name:''} <br/>
+  level:{climate.findClimatePlace(rDinner.climate_place)?
+  climate.findClimatePlace(rDinner.climate_place).level:''} <br/>
+  level_percent:{Calculation.climateLevel(rDinner.climate_place)} <br/>
+       </p>
+       <button className="btn btn-outline-danger my-auto float-right"
+     onClick={e=>removeReturnClimate('dinner')}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
+      </td>
+ 
       <td>
         {/**Day Allowance of Dinner show */}
         { Calculation.singleDinner(rDinner.scale)}
@@ -1525,8 +1890,7 @@ level_percent:Calculation.climateLevel(findSpendingDay(d._id,'bed')?findSpending
        </p>
        <div className="input-container">
  <FontAwesomeIcon icon={faSave} className=' fa-2x mx-2 my-auto '/>
- 
-<select  className="input-field form-control my-auto" value={state.save_options}
+<select  className="input-field form-control my-auto"
 onChange={e=>e.target.value==='draft'?
    setState({...state,save_options:e.target.value,
     approval_manager:{emp_id:''}}):
@@ -1546,7 +1910,7 @@ onChange={e=>e.target.value==='draft'?
      </div>
           </div>
         </div>
-        </DeductionDnd.Provider>
+       </DeductionDnd.Provider>
         </DndProvider>
     )
 }

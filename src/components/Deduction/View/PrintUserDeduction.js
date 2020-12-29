@@ -49,34 +49,28 @@ class PrintUserDeduction extends Component {
                </div>    
                 <div className="col-lg-12 my-1">
                     <h5 className="text-center font-weight-bold">
-                        Initial days
+                        Initial day
                     </h5>
     <MDBTable striped bordered>
        <MDBTableHead>
 <tr>
   <th>
-    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info mx-2' />
        initial date
   </th>
   <th>
-    <FontAwesomeIcon icon={faCalendarCheck} className='fa-1x text-info mx-2' />
-       initial Time
+   initial Time
     </th>
     <th>
-    <FontAwesomeIcon icon={faPaperPlane} className='fa-1x text-info mx-2' />
        Allowance situation
     </th>
     <th>
-    <FontAwesomeIcon icon={faMap} className='fa-1x text-info mx-2' />
        User Entered place
     </th>
     <th>
-    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info' />
        Day allowance
     </th>
  
     <th>
-    <FontAwesomeIcon icon={faSun} className='fa-1x text-info' />
        Climate Allowance
     </th>
 </tr>
@@ -168,28 +162,22 @@ class PrintUserDeduction extends Component {
        <MDBTableHead>
 <tr>
   <th>
-    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info mx-2' />
        Duration date
   </th>
   <th>
-    <FontAwesomeIcon icon={faCalendarCheck} className='fa-1x text-info mx-2' />
        Duration days
     </th>
     <th>
-    <FontAwesomeIcon icon={faPaperPlane} className='fa-1x text-info mx-2' />
        Allowance situation
     </th>
     <th>
-    <FontAwesomeIcon icon={faMap} className='fa-1x text-info mx-2' />
        User Entered place
     </th>
     <th>
-    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info' />
        Day allowance
     </th>
  
     <th>
-    <FontAwesomeIcon icon={faSun} className='fa-1x text-info' />
        Climate Allowance
     </th>
 </tr>
@@ -276,29 +264,23 @@ class PrintUserDeduction extends Component {
        <MDBTableHead>
 <tr>
   <th>
-    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info mx-2' />
        Return date
   </th>
   <th>
-    <FontAwesomeIcon icon={faCalendarCheck} className='fa-1x text-info mx-2' />
        Return Time
     </th>
     <th>
-    <FontAwesomeIcon icon={faPaperPlane} className='fa-1x text-info mx-2' />
        Allowance situation
     </th>
     <th>
-    <FontAwesomeIcon icon={faMap} className='fa-1x text-info mx-2' />
        User Entered place
     </th>
     
     <th>
-    <FontAwesomeIcon icon={faCalendar} className='fa-1x text-info' />
        Day allowance
     </th>
  
     <th>
-    <FontAwesomeIcon icon={faSun} className='fa-1x text-info' />
        Climate Allowance
     </th>
 </tr>

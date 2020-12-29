@@ -17,3 +17,4 @@ export const saveProcess=(type,message)=>{
 /**generates random id */
 export const randomId=()=>Math.round(Math.random(0,100000000)*100000000)
 export const Donothing=()=>{}
+export const Round=num=>Math.round(num*100)/100
