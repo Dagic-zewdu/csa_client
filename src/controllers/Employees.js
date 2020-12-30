@@ -72,26 +72,16 @@ export class EmployeeClass{
       return teamLeaders     
     }
     /**returns availiable finance employee */
-    F_Employee=()=>{ 
-
-        let employees=this.employees.filter(f=>{
-            return f.type === 'f_employee'
-        })
-        return employees     
-      }
+    F_Employee=()=>this.employees.filter(f=> f.type === 'f_employee')
       /**accepts emp_id and returns employee salary */
-      Salary=(id)=>{
-        return this.Find(id)?this.Find(id).salary:0
-      }
+      Salary=(id)=> this.Find(id)?this.Find(id).salary:0
+      
       /**accepts emp_id and returns whether the employee is official or not */
-      isOfficial=(id)=>{
-       return this.Find(id)?this.Find(id).official?true:false:false
-      }
+      isOfficial=(id)=> this.Find(id)?this.Find(id).official?true:false:false
+      
       /**Accepts emp_id and returns position of  the official if it is official
        * employee.... returns empty string if the user is not found and
        * not official employee
        */
      officialPosition=(id)=>this.isOfficial(id)?this.Find(id).position:''      
-     
-   
     }

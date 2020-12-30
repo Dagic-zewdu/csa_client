@@ -37,6 +37,7 @@ import DoDeduction from './components/Deduction/Finance_Employee/DeductionCalcul
 import Edit from './components/Deduction/Finance_Employee/DeductionCalculation.js/Edit'
 import socketIOClient from "socket.io-client"
 import { server } from './components/config/config'
+import ContactEmployee from './components/routes/ContactEmployee'
 const App = () => {
    const [state,setState]=useState('')
    useEffect(()=>{
@@ -76,11 +77,12 @@ const App = () => {
       <BrowserRouter>
       <Switch>
       <Route exact path='/'><Home/></Route>
-      <Route path='/letter'><Letter/></Route>
+      <Route path='/message'><Letter/></Route>
       <Route path='/allowance'><Allowance/></Route>
       <Route path='/editDeduction/:id'><Edit/></Route>
       <Route path='/deduction/:id'><DoDeduction/> </Route>
       <Route path='/deduction'><Deduction/></Route>
+      <Route path='/contact'><ContactEmployee/></Route>
       {/**user routes */}
       <Route path='/login'><Login/></Route>
       <Route path='/signup'><Signup/></Route>

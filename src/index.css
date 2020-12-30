@@ -38,8 +38,12 @@ code {
 thead,tfoot { display: table-row-group }
 tr { page-break-inside: avoid; }
 }
-
-
+a{
+  color: #2C2E2E !important;
+}
+ .active{
+   color: #5bc0de !important;
+}
 
 
 /**notification*/
@@ -59,4 +63,26 @@ tr { page-break-inside: avoid; }
   padding: 5px 10px;
   border-radius: 50%;
   color: white;
+}
+.contact-header {
+  overflow: hidden;
+  text-align: center;
+}
+.contact-header:before,
+.contact-header:after {
+  background-color: #000;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+}
+.contact-header:before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+.contact-header:after {
+  left: 0.5em;
+  margin-right: -50%;
 }

@@ -1,16 +1,20 @@
-import React, { useState } from 'react'
-import { LayoutContext } from '../contexts/contexts'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useContext, useState } from 'react'
+import { NavLink } from 'react-router-dom'
+import { LayoutContext, StoreContext } from '../contexts/contexts'
 import Navbar from '../layout/Navbar/Navbar'
 import SideNav from '../layout/SideNav/SideNav'
 import {  faEnvelopeOpen, faComment, faEnvelopeOpenText, faUser } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { NavLink } from 'react-router-dom'
+import DataLoading from '../layout/DataLoading'
+import ErrorLoading from '../layout/ErrorLoading'
+import Contacts from '../letters/Contacts'
 
-   const Letter=()=> {
+const ContactEmployee=()=> {
     const [state,setState]=useState({
-        collapse : '',
-        
+        collapse:''
     })
+    const { allowances,dispatchAllowances,deductions,employees,users }=useContext(StoreContext)
+    const {state:Employees,loading:empLoading,error:empError}=employees
     return (
           <div className={"app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header "+state.collapse}>
        <LayoutContext.Provider value={{uiContents:state,togglers:setState}}>
@@ -19,10 +23,8 @@ import { NavLink } from 'react-router-dom'
         <SideNav/>
         <div className="app-main__outer">
                     <div className="app-main__inner">
-{/* title*/}
-
 {/**Navigations */}
-    <div className="container">
+<div className="container">
         <div className="row">
             <div className="col-lg-3">
        <h4 className="text-center">
@@ -58,8 +60,14 @@ import { NavLink } from 'react-router-dom'
            </div>  
         </div>
     </div>
-    {/** */}
-                   </div>
+{
+    empLoading?
+    <DataLoading/>:
+    empError?
+    <ErrorLoading/>:
+    <Contacts/>
+}
+                    </div>
                     </div>
        </div>
        </LayoutContext.Provider>    
@@ -67,4 +75,4 @@ import { NavLink } from 'react-router-dom'
     )
 }
 
-export default Letter
+export default ContactEmployee

@@ -108,7 +108,7 @@ const SideNav=()=> {
         </li>
  
     <li  >
-        <NavLink to='/letter'>
+        <NavLink to='/message'>
             <i className="metismenu-icon pe-7s-display2"></i>
             <p className="font-weight-bold">
           Letter
