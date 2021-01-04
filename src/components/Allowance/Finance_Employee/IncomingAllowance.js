@@ -142,7 +142,6 @@ allAllowances.length?
             Allowance is waiting for calculation
                </p>            
         }
-        {console.log(allowance.isReDone(na._id))}
         {
      allowance.progress(na._id)===16?
      <p className="font-italic text-warning font-weight-bold">

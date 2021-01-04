@@ -8,7 +8,7 @@ import DeductionCalculation from './DeductionCalculation'
 const DoDeduction=(props)=> {
     const {id:_id}=props.match.params
     const [state,setState]=useState({
-        collapse : '',
+        collapse : 'closed-sidebar-mobile closed-sidebar',
     })
     return (
      <div className={"app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header "+state.collapse}>

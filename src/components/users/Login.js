@@ -57,11 +57,12 @@ import { withRouter } from 'react-router'
         localStorage.removeItem('token')
         localStorage.removeItem('auth')
         localStorage.removeItem('user_type') 
+        localStorage.removeItem('emp_id')
         localStorage.setItem('id',id)
         localStorage.setItem('token',Token)
         localStorage.setItem('auth',true)
         localStorage.setItem('user_type',user_type) 
-          
+        localStorage.setItem('emp_id',res.emp_id)  
         setState({
             ...state,loading:false,disable:false,error:'',
                  success:res.message        

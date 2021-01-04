@@ -1,10 +1,12 @@
-import { faComment, faObjectGroup, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faCircle, faComment, faObjectGroup, faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { LettersClass } from '../../controllers/Letters'
+import { Message } from '../../controllers/Message'
 import { removeDuplicates } from '../../controllers/removeRedudant'
+import { Donothing } from '../../controllers/saveProcess'
 import { StoreContext } from '../contexts/contexts'
 
 const Contacts=()=> {
@@ -16,8 +18,9 @@ const Contacts=()=> {
         sector_leaders:[],
         employees:[],
         commisioner:[], 
+        users:[] // connected or discconnected users
     })
-    const {users,employees}=useContext(StoreContext)
+    const {users,employees,socket}=useContext(StoreContext)
     const {state:Users,loading:userLoading,error:userError}=users
     const {state:Employees,loading:empLoading,error:empError}=employees
     const Letter=new LettersClass([],Employees,Users)
@@ -30,7 +33,9 @@ const Contacts=()=> {
     const commisioner=Letter.Type('senior_officer')
     useEffect(()=>{
      setState({...state,directors,employees:emp,f_sector_leader,f_director,team_leaders,sector_leaders,commisioner})
-    },[userLoading,empLoading])
+   socket?socket.emit('users',''):Donothing() 
+  socket? socket.on('users',data=>setState(s=>({...s,users:data}))):Donothing()
+    },[userLoading,empLoading,socket])
     const handleSearch=index=>setState(s=>({...s,
         f_director:index!==''?Letter.ContactSearch(index).f_director:f_director,
         f_sector_leader:index!==''?Letter.ContactSearch(index).f_sector_leader:f_sector_leader,
@@ -40,11 +45,16 @@ const Contacts=()=> {
         employees:index!==''?Letter.ContactSearch(index).employees:emp,
         commisioner:index!==''?Letter.ContactSearch(index).commisioner:commisioner,
     }))
+    /***online users */
+   const Messages=new Message([],state.users,[],Employees,Users)
+
     return (
    <div className="col-lg-12 my-3">
    <div className="container my-3">
        <div className="row">
-           <div className="col-lg-6"></div>
+           <div className="col-lg-6">
+      
+           </div>
            <div className="col-lg-6">
            <div className="search-wrapper active">
                         <div className="input-holder">
@@ -75,6 +85,7 @@ const Contacts=()=> {
          </h4>
          <MDBTable  bordered striped>
        <MDBTableHead>
+         <tr>
       <th className='text-center'>
         # employee id 
       </th>
@@ -88,7 +99,11 @@ const Contacts=()=> {
       </th>
      <th className='text-center'>
      <FontAwesomeIcon icon={faComment} className='fa-1x text-danger mx-2'/>
-         </th> 
+         </th>
+      <th className="text-center">
+      status
+        </th>   
+         </tr> 
        </MDBTableHead>
        <MDBTableBody>
 {
@@ -105,13 +120,36 @@ const Contacts=()=> {
               {f.department}
           </td>
           <td className='text-center'>
-          <Link to={'/message/'+f.emp_id}>    
-         <button className="btn">
+          <Link to={'/message/'+f.emp_id}>
+        {
+          Messages.isOnline(f.emp_id)?
+          <button className="btn btn-success">
         <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
              contact
-             </button>
+             </button>:
+             <button className="btn">
+        <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
+             contact
+             </button>   
+        }      
+        
              </Link>     
           </td>
+        <td className="text-center">
+     <Link to={'message/'+f.emp_id} >     
+    {
+      Messages.isOnline(f.emp_id)?
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x text-success mx-2'/>
+      online
+    </p>:
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x mx-2'/>
+      offline
+    </p>
+    }      
+    </Link>
+          </td>  
       </tr>
         )
       
@@ -130,6 +168,7 @@ const Contacts=()=> {
          </h4>
          <MDBTable  bordered striped>
        <MDBTableHead>
+       <tr>
       <th className='text-center'>
         # employee id 
       </th>
@@ -144,6 +183,10 @@ const Contacts=()=> {
      <th className='text-center'>
      <FontAwesomeIcon icon={faComment} className='fa-1x text-danger mx-2'/>
          </th> 
+         <th className="text-center">
+      status
+        </th> 
+       </tr>
        </MDBTableHead>
        <MDBTableBody>
 {
@@ -160,13 +203,35 @@ const Contacts=()=> {
               {f.department}
           </td>
           <td className='text-center'>
-          <Link to={'/message/'+f.emp_id}>    
-         <button className="btn">
+          <Link to={'message/'+f.emp_id} >     
+          {
+          Messages.isOnline(f.emp_id)?
+          <button className="btn btn-success">
         <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
              contact
-             </button>
-             </Link>     
+             </button>:
+             <button className="btn">
+        <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
+             contact
+             </button>   
+        }    
+        </Link>     
+   
           </td>
+          <td className="text-center">
+  
+    {
+      Messages.isOnline(f.emp_id)?
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x text-success mx-2'/>
+      online
+    </p>:
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x mx-2'/>
+      offline
+    </p>
+    } 
+          </td>  
       </tr>
         )
       
@@ -186,6 +251,7 @@ const Contacts=()=> {
          </h4>
          <MDBTable  bordered striped>
        <MDBTableHead>
+         <tr>
       <th className='text-center'>
         # employee id 
       </th>
@@ -199,7 +265,11 @@ const Contacts=()=> {
       </th>
      <th className='text-center'>
      <FontAwesomeIcon icon={faComment} className='fa-1x text-danger mx-2'/>
-         </th> 
+         </th>
+         <th className="text-center">
+      status
+        </th> 
+         </tr> 
        </MDBTableHead>
        <MDBTableBody>
 {
@@ -216,13 +286,36 @@ const Contacts=()=> {
               {f.department}
           </td>
           <td className='text-center'>
-          <Link to={'/message/'+f.emp_id}>    
-         <button className="btn">
+          <Link to={'message/'+f.emp_id} >    
+          {
+          Messages.isOnline(f.emp_id)?
+          <button className="btn btn-success">
         <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
              contact
-             </button>
-             </Link>     
+             </button>:
+             <button className="btn">
+        <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
+             contact
+             </button>   
+        }     
+        </Link>
           </td>
+          <td className="text-center">
+          <Link to={'message/'+f.emp_id} >     
+  
+    {
+      Messages.isOnline(f.emp_id)?
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x text-success mx-2'/>
+      online
+    </p>:
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x mx-2'/>
+      offline
+    </p>
+    }
+    </Link>      
+          </td>    
       </tr>
         )
       
@@ -241,6 +334,7 @@ const Contacts=()=> {
          </h4>
          <MDBTable  bordered striped>
        <MDBTableHead>
+         <tr>
       <th className='text-center'>
         # employee id 
       </th>
@@ -255,6 +349,10 @@ const Contacts=()=> {
      <th className='text-center'>
      <FontAwesomeIcon icon={faComment} className='fa-1x text-danger mx-2'/>
          </th> 
+         <th className="text-center">
+      status
+        </th>  
+         </tr>
        </MDBTableHead>
        <MDBTableBody>
 {
@@ -271,13 +369,33 @@ const Contacts=()=> {
               {f.department}
           </td>
           <td className='text-center'>
-          <Link to={'/message/'+f.emp_id}>    
-         <button className="btn">
+          <Link to={'message/'+f.emp_id} > 
+          {
+          Messages.isOnline(f.emp_id)?
+          <button className="btn btn-success">
         <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
              contact
-             </button>
-             </Link>     
+             </button>:
+             <button className="btn">
+        <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
+             contact
+             </button>   
+        }    
+        </Link> 
           </td>
+          <td className="text-center">
+    {
+      Messages.isOnline(f.emp_id)?
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x text-success mx-2'/>
+      online
+    </p>:
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x mx-2'/>
+      offline
+    </p>
+    }      
+          </td>    
       </tr>
         )
       
@@ -297,6 +415,7 @@ const Contacts=()=> {
          </h4>
          <MDBTable  bordered striped>
        <MDBTableHead>
+         <tr>
       <th className='text-center'>
         # employee id 
       </th>
@@ -310,7 +429,11 @@ const Contacts=()=> {
       </th>
      <th className='text-center'>
      <FontAwesomeIcon icon={faComment} className='fa-1x text-danger mx-2'/>
-         </th> 
+         </th>
+         <th className="text-center">
+      status
+        </th> 
+         </tr> 
        </MDBTableHead>
        <MDBTableBody>
 {
@@ -327,13 +450,33 @@ const Contacts=()=> {
               {f.department}
           </td>
           <td className='text-center'>
-          <Link to={'/message/'+f.emp_id}>    
-         <button className="btn">
+          <Link to={'message/'+f.emp_id} >     
+          {
+          Messages.isOnline(f.emp_id)?
+          <button className="btn btn-success">
         <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
              contact
-             </button>
-             </Link>     
+             </button>:
+             <button className="btn">
+        <FontAwesomeIcon icon={faComment} className='fa-1x mx-2' />
+             contact
+             </button>   
+        }    
+        </Link>
           </td>
+          <td className="text-center">
+    {
+      Messages.isOnline(f.emp_id)?
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x text-success mx-2'/>
+      online
+    </p>:
+    <p>
+      <FontAwesomeIcon icon={faCircle} className='fa-1x mx-2'/>
+      offline
+    </p>
+    }      
+          </td>    
       </tr>
         )
       

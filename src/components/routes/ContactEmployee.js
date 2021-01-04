@@ -13,8 +13,8 @@ const ContactEmployee=()=> {
     const [state,setState]=useState({
         collapse:''
     })
-    const { allowances,dispatchAllowances,deductions,employees,users }=useContext(StoreContext)
-    const {state:Employees,loading:empLoading,error:empError}=employees
+    const { employees }=useContext(StoreContext)
+    const {loading:empLoading,error:empError}=employees
     return (
           <div className={"app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header "+state.collapse}>
        <LayoutContext.Provider value={{uiContents:state,togglers:setState}}>

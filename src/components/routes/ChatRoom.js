@@ -1,29 +1,26 @@
+import { faComment, faEnvelopeOpen, faEnvelopeOpenText, faUser } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import { LayoutContext } from '../contexts/contexts'
 import Navbar from '../layout/Navbar/Navbar'
 import SideNav from '../layout/SideNav/SideNav'
-import {  faEnvelopeOpen, faComment, faEnvelopeOpenText, faUser } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { NavLink } from 'react-router-dom'
 import Chat from '../letters/Chat'
 
-   const Letter=()=> {
+function ChatRoom() {
     const [state,setState]=useState({
-        collapse : '',
-        
+        collapse:'closed-sidebar-mobile closed-sidebar'
     })
-    return (
-          <div className={"app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header "+state.collapse}>
+ return (
+         <div className={"app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header "+state.collapse}>
        <LayoutContext.Provider value={{uiContents:state,togglers:setState}}>
        <Navbar/>
        <div className="app-main">
         <SideNav/>
         <div className="app-main__outer">
                     <div className="app-main__inner">
-{/* title*/}
-
-{/**Navigations */}
-    <div className="container">
+{/**Navigation */}
+<div className="container">
         <div className="row">
             <div className="col-lg-3">
        <h4 className="text-center">
@@ -59,10 +56,9 @@ import Chat from '../letters/Chat'
            </div>  
         </div>
     </div>
-    {/**chat */}
-    <Chat />
-    {/** */}
-                   </div>
+{/** */}
+<Chat/>
+                    </div>
                     </div>
        </div>
        </LayoutContext.Provider>    
@@ -70,4 +66,4 @@ import Chat from '../letters/Chat'
     )
 }
 
-export default Letter
+export default ChatRoom

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { LayoutContext,StoreContext } from '../../contexts/contexts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,9 +14,14 @@ import LettersFetcher from '../../fetchers/LettersFetcher'
 import AllowanceFetchers from '../../fetchers/AllowanceFetchers'
 import ClimatePlacesFetcher from '../../fetchers/ClimatePlacesFetcher'
 import DeductionFetcher from '../../fetchers/DeductionFetcher'
+import { webSocket } from '../../../socket'
+import { Donothing } from '../../../controllers/saveProcess'
 const SideNav=()=> {
   
-    const setToggler=useContext(LayoutContext)
+    const {setSocket,users,employees,socket}=useContext(StoreContext)
+setSocket(webSocket)
+socket?socket.emit('onConnect',{emp_id:localStorage.emp_id}):Donothing()   
+const setToggler=useContext(LayoutContext)
   const {sidetheme}=setToggler.uiContents
   
   

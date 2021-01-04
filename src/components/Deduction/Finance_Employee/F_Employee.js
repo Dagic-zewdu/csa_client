@@ -30,6 +30,7 @@ const newDeductions=Deduction.fNewEmployeeDeductions()
 const redoneDeductions=Deduction.fe_RedoneDeductions()
 const emp_id=Deduction.getEmp_id()
 const fetch=()=>fetchData_Deductions(dispatchDeductions)
+
 useEffect(()=>{
     fetchData_Deductions(dispatchDeductions)
     setState({...state,seenDeductions,newDeductions,redoneDeductions})

@@ -35,18 +35,11 @@ import { deductionReducer, deductionState } from './store/Reducers/deductionRedu
 import Test from './components/test/Test'
 import DoDeduction from './components/Deduction/Finance_Employee/DeductionCalculation.js/DoDeduction'
 import Edit from './components/Deduction/Finance_Employee/DeductionCalculation.js/Edit'
-import socketIOClient from "socket.io-client"
-import { server } from './components/config/config'
 import ContactEmployee from './components/routes/ContactEmployee'
+import ChatRoom from './components/routes/ChatRoom'
+
 const App = () => {
-   const [state,setState]=useState('')
-   useEffect(()=>{
-    //Very simply connect to the socket
-    const socket = socketIOClient(server);
-    socket.on('outgoing data',data=>{setState(data)
-    console.log(data)
-    })
-   },[])
+  const [socket,setSocket]=useState('')
   const [employees, dispatchEmployees] = useReducer(employeeReducer, empState)
   const [department, dispatchDepartment] = useReducer(departmentReducer, depState)
   const [place, dispatchPlaces] = useReducer(placeReducer, placeState)
@@ -62,6 +55,7 @@ const App = () => {
     
     <StoreContext.Provider
       value={{
+        socket,setSocket,
         allowances,dispatchAllowances,employees, dispatchEmployees,
         department, dispatchDepartment,place, dispatchPlaces,
         users,dispatchUsers,
@@ -70,13 +64,14 @@ const App = () => {
         company,dispatchCompany,
         letters,dispatchLetters,
         climatePlaces,dispatchClimatePlaces,
-        deductions,dispatchDeductions
-      }}>
+        deductions,dispatchDeductions,
+     }}>
       <ScripTag isHydrating={true} type='text/javascript'
        src='./css/assets/scripts/main.js' />
       <BrowserRouter>
       <Switch>
       <Route exact path='/'><Home/></Route>
+      <Route path='/message/:id'><ChatRoom/></Route>
       <Route path='/message'><Letter/></Route>
       <Route path='/allowance'><Allowance/></Route>
       <Route path='/editDeduction/:id'><Edit/></Route>
