@@ -110,3 +110,17 @@ export const durationYears=(initial_year,final_year)=>{
    }
    return years
 }
+/**returns a string of local time formatted like this (11:00 am)  */
+export const localTime=DATE=>{
+   const date=new Date(DATE)
+   const time=date.toLocaleTimeString()
+   const t=time.split(':')
+  const local= t[2].split(' ')
+  return t[0]+':'+t[1]+' '+(local[1]?local[1]:'')
+}
+/**return astring of month contactenated like (dec 2 2020) */
+export const simpleDate=DATE=>{
+    const date=TellDay(DATE)
+    const d=date.split(',')
+    return d[1]
+}

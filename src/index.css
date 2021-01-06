@@ -107,7 +107,7 @@ img{ max-width:100%;}
   background: #f8f8f8 none repeat scroll 0 0;
   float: left;
   overflow: hidden;
-  width: 35%; border-right:1px solid #c4c4c4;
+  width: 32%; border-right:1px solid #c4c4c4;
 }
 .inbox_msg {
   border: 1px solid #c4c4c4;
@@ -192,7 +192,7 @@ img{ max-width:100%;}
 .mesgs {
   float: left;
   padding: 30px 15px 0 25px;
-  width: 65%;
+  width: 68%;
 }
 
  .sent_msg p {
@@ -236,4 +236,5 @@ img{ max-width:100%;}
   height: 516px;
   overflow-y: scroll;
 }
+
 /********************************************************************/

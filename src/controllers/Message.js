@@ -39,21 +39,27 @@ export class Message extends LettersClass{
   lastSeen=emp_id=>this.findConnected(emp_id)?this.findConnected(emp_id).disconnected_time:''
   /**return's array of messages of the current user */
   myMessage=()=>this.message.filter(m=> m.sender === this.getEmp_id() || m.reciever === this.getEmp_id() )
+ /* return's array of employee contacted recently*/ 
   contactedUsers=()=>{
     var users=[]
     this.myMessage().map(m=>{
-m.sender!==this.getEmp_id()?users.find(u=> u === m.sender)?Donothing():users.push(m.sender):
-m.reciever!==this.getEmp_id()?users.find(u=> u=== m.reciever)?Donothing():users.push(m.reciever):
+      m.sender!==this.getEmp_id()?users.push(m.sender):
+      m.reciever!==this.getEmp_id()?users.push(m.reciever):
       Donothing()
     })
-    return users
+    let contact=new Set(users)
+    return [...contact]
   }
   /**return's array of messages of the current user and provided emp_id
-  * @param emp_id - employee emp_id
+  * @param {*} emp_id => emp_id of the the user that contact the current user
     */
-  chatRoom=emp_id=>this.myMessage().filter(m=>m.sender === emp_id || m.reciever === emp_id  )
+  chatRoom=emp_id=>(this.myMessage().filter(m=>m.sender === emp_id || m.reciever === emp_id  ))
   /**returns new message of the the current user and the provided id
-   * @param emp_id employee id of the user
+   * @param {*} emp_id => emp_id of the the user that contact the current user
    */
-  newMessages=emp_id=>this.chatRoom(emp_id).filter(m=> !m.seen)
+  newMessages=emp_id=>this.chatRoom(emp_id).filter(m=> !m.seen && m.reciever === this.getEmp_id())
+  /**return's object of last chat contacted with the current user
+   * @param {*} emp_id => emp_id of the the user that contact the current user
+   */
+  last_message=emp_id=>this.chatRoom(emp_id)[0]
 }
