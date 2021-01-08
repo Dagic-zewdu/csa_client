@@ -27,7 +27,7 @@ export class Message extends LettersClass{
      @param {*} emp_id =>string of emp_id
      */
     messageName=emp_id=>this.Name(emp_id).split(' ')[0]+' '+this.Name(emp_id).split(' ')[1]
-  /**return's two letter of one letter from first name one letter from last name
+  /**return's two letter string of one letter from first name one letter from last name
    * @param {*} emp_id =>emp_id of the user 
    */   
   firstLetters=emp_id=>(this.messageName(emp_id).split(' ')[0].slice(0,1)+
@@ -53,7 +53,7 @@ export class Message extends LettersClass{
   /**return's array of messages of the current user and provided emp_id
   * @param {*} emp_id => emp_id of the the user that contact the current user
     */
-  chatRoom=emp_id=>(this.myMessage().filter(m=>m.sender === emp_id || m.reciever === emp_id  ))
+  chatRoom=emp_id=>this.myMessage().filter(m=>m.sender === emp_id || m.reciever === emp_id  )
   /**returns new message of the the current user and the provided id
    * @param {*} emp_id => emp_id of the the user that contact the current user
    */
