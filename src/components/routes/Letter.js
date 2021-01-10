@@ -1,17 +1,21 @@
-import React, { useState } from 'react'
-import { LayoutContext } from '../contexts/contexts'
+import React, { useContext, useState } from 'react'
+import { LayoutContext,StoreContext } from '../contexts/contexts'
 import Navbar from '../layout/Navbar/Navbar'
 import SideNav from '../layout/SideNav/SideNav'
-import {  faEnvelopeOpen, faComment, faEnvelopeOpenText, faUser } from '@fortawesome/free-solid-svg-icons'
+import {  faEnvelopeOpen, faComment, faEnvelopeOpenText, faUser, faBell } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { NavLink } from 'react-router-dom'
 import Chat from '../letters/Chat'
+import { Message } from '../../controllers/Message'
 
    const Letter=()=> {
     const [state,setState]=useState({
         collapse : '',
         
     })
+    const {users,employees,messages,connections}=useContext(StoreContext)
+    const Messages=new Message(messages.state,connections.state,[],users.state,employees.state)  //importing message class
+    
     return (
           <div className={"app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header "+state.collapse}>
        <LayoutContext.Provider value={{uiContents:state,togglers:setState}}>
@@ -25,13 +29,21 @@ import Chat from '../letters/Chat'
 {/**Navigations */}
     <div className="container">
         <div className="row">
-            <div className="col-lg-3">
+            <div className="col-lg-3 row">
        <h4 className="text-center">
        <NavLink to='/message'> 
       <FontAwesomeIcon icon={faComment} className='fa-1x mx-2 text-danger' />  
             Messages
             </NavLink>  
             </h4>
+            {
+        Messages.notifiaction()?
+      <h4 className="mx-1 text-info font-weight-bold">
+<FontAwesomeIcon icon={faBell} className='text-info mx-1' />
+{Messages.notifiaction() }  
+      </h4>:
+      <p></p>
+      }  
            </div>
            <div className="col-lg-3">
         <h4 className="text-center">

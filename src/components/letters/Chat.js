@@ -1,61 +1,49 @@
-import { faCheck, faCheckDouble, faCircle, faEnvelope, faPaperPlane, faPlus, faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faCheckDouble, faCircle, faCommentDots, faEnvelope, faEnvelopeOpen, faPaperPlane, faPlus, faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { createRef, useContext, useEffect, useRef, useState } from 'react'
 import { withRouter } from 'react-router'
 import ReactTimeAgo from 'react-time-ago/commonjs/ReactTimeAgo'
 import { Message } from '../../controllers/Message'
 import { Donothing } from '../../controllers/saveProcess'
-import { StoreContext } from '../contexts/contexts'
+import { Notification, StoreContext } from '../contexts/contexts'
 import DataLoading from '../layout/DataLoading'
 import ErrorLoading from '../layout/ErrorLoading'
 import ModalLetter from '../layout/ModalLetter'
 import {Link} from 'react-router-dom'
 import { localTime, simpleDate } from '../../controllers/Date'
-import { DotLoading } from '../layout/Loading'
 const Chat=({match})=> {
       const emp_id=match.params.id?match.params.id:''
-    const {socket,users,employees}=useContext(StoreContext)
+    const {socket,users,employees,messages,connections,typing}=useContext(StoreContext)
     const {loading:empLoading,error:empError}=employees
     const {loading:userLoading,error:userError}=users
     const [state,setState]=useState({
       message:'',
-      users:[],
-      messages:[],
-      typing:false,
-      isVisible:true
+      contacted:[]
    })
    const box=useRef(null)
-   const Messages=new Message(state.messages,state.users,[],employees.state,users.state)  //importing message class
-    useEffect(()=>{
-      
-      socket?socket.emit('users',''):Donothing() 
-      socket? socket.on('users',data=>setState(s=>({...s,users:data}))):Donothing()
-      socket?socket.emit('chat',''):Donothing()
-      socket?socket.on('chat',data=>{setState(s=>({...s,messages:data})); Scroll()}):Donothing()
-     socket?socket.on('typing',data=>{setState(s=>({...s,
-      typing:(data.emp_id === emp_id)? true : false
-    }))
-  Scroll()
-  }):Donothing()
-      box.current&&emp_id?box.current.focus():Donothing()
- 
-  },[socket,box,emp_id])
+   const Messages=new Message(messages.state,connections.state,[],users.state,employees.state)  //importing message class
+  
   /** */
-useEffect(()=>{
- Messages.newMessages(emp_id).map(m=>{ socket.emit('update',
-           {...m,seen:true})})
-
-  },[state.messages,emp_id])
+  useEffect(()=>{
+ Messages.newMessages(emp_id).map(m=>{ socket.emit('update',{...m,seen:true})})
+ setState(s=>({...s,contacted:Messages.contactedUsers()}))  
+  },[messages.state,emp_id])
 /**scroll */
-    useEffect(()=>{
-    try{
-    var scroll=document.getElementById(Messages.last_message(emp_id)?Messages.last_message(emp_id)._id:'dsdc')
+const Scroller=()=>{
+  try{
+    var scroll=document.getElementById(Messages.last_message(emp_id)?
+    Messages.last_message(emp_id)._id:'dsdc')
     scroll.scrollIntoView({behavior:'auto'})  
      }
     catch(err){
       console.log(err)
     }
-  },[state.messages,emp_id])
+}
+    useEffect(()=>{
+      setState(s=>({...s,contacted:Messages.contactedUsers()}))
+   Scroller()
+   box.current&&emp_id?box.current.focus():Donothing()
+   },[messages.state,emp_id,box])
   
   /**scroll */
 const Scroll=()=>{
@@ -67,29 +55,29 @@ catch(err){
   }
 }
 
-  /**handling changes */
+  /**emiiting message is typing*/
 const typingFocus=()=>socket.emit('typing',{emp_id:Messages.getEmp_id()})
  
-const stopTyping=()=>socket.emit('typing',{emp_id:''})
-
+const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),2000)
    /**handling submit */
    const handleSubmit=e=>{
     e.preventDefault()   
-    socket.emit('submit',{
+   state.message!==''? socket.emit('submit',{
       sender:Messages.getEmp_id(),
       reciever:emp_id,
       message:state.message
-    })
-    setState({...state,message:'',typing:false})
+    }):Donothing()
+    setState({...state,message:''})
+    Scroller()
   }
-   
+  const handleSearch=index=>setState({...state,contacted:Messages.searchContacted(index)})
    return (
       empLoading||userLoading?
       <DataLoading/>:
       empError||userError?
       <ErrorLoading/>:
        <div className="container">
-<div className="messaging my-2 card">
+<div className="messaging mt-2 card bg-dark">
       <div className="inbox_msg ">
         <div className="inbox_people">
           <div className="headind_srch">
@@ -100,7 +88,8 @@ const stopTyping=()=>socket.emit('typing',{emp_id:''})
             </div>
             <div className="srch_bar">
               <div className="stylish-input-group">
-                <input type="text" className="search-bar"  placeholder="Search" />
+                <input type="text" className="search-bar"  
+                placeholder="Search" onChange={e=>handleSearch(e.target.value)} />
                 <span className="input-group-addon">
                 <button type="button"> 
        <FontAwesomeIcon icon={faSearch} />
@@ -111,14 +100,18 @@ const stopTyping=()=>socket.emit('typing',{emp_id:''})
           </div>
           <div className="inbox_chat">
    {
-     Messages.contactedUsers().length?
-    Messages.contactedUsers().map(m=>{
+     state.contacted.length?
+     state.contacted.map(m=>{
       return (
         <Link to={'/message/'+m} key={m}>
         <div className="chat_list active_chat" key={m}>
               <div className="chat_people">
                 <div className="chat_img">
                 <p data-letters={Messages.firstLetters(m)}></p>  
+{
+  Messages.isOnline(m)?<FontAwesomeIcon icon={faCircle} className='text-success'/>:
+          <FontAwesomeIcon icon={faCircle} className='text-secondary'/>
+}
   </div>
                 <div className="chat_ib">
                   <h5>{Messages.messageName(m)} <span className="chat_date">
@@ -133,10 +126,10 @@ const stopTyping=()=>socket.emit('typing',{emp_id:''})
          {
         Messages.newMessages(m).length?
         <div className="float-right rounded-circle">
-            <p className="text-small">
-        <FontAwesomeIcon icon={faPlusCircle} className='text-success' />
+            <h4 className="text-small">
+        <FontAwesomeIcon icon={faPlusCircle} className='text-info fa-1x' />
        { Messages.newMessages(m).length}
-              </p>    
+              </h4>    
                 </div>:
                 <p></p>   
          }       
@@ -153,7 +146,17 @@ const stopTyping=()=>socket.emit('typing',{emp_id:''})
         </div>
         {
           !emp_id?
-          <p></p>:
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-12 mt-5">
+                <h2 className="text-white font-weight-bold text-center">
+              Please Select chat... <br/>
+           <FontAwesomeIcon icon={faEnvelopeOpen} className='text-white fa-3x' />      
+                </h2>
+              </div>
+            </div>
+          </div>
+          :
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
@@ -207,11 +210,13 @@ const stopTyping=()=>socket.emit('typing',{emp_id:''})
                    {localTime(m.created_date)} | {simpleDate(m.created_date)} 
               | 
               {
-                m.seen?
-                <FontAwesomeIcon icon={faCheckDouble} className='text-info'/>
-                :<FontAwesomeIcon icon={faCheck} className='text-info' />
+                m.seen?' seen' :' Delivered'
               }
-                  
+              {
+                m.seen?
+                <FontAwesomeIcon icon={faCheckDouble} className='text-info mx-2'/> 
+                :<FontAwesomeIcon icon={faCheck} className='text-info mx-2' />
+              }
                   </span> </div>
             </div>
         ):
@@ -236,9 +241,10 @@ const stopTyping=()=>socket.emit('typing',{emp_id:''})
         ):
         <p key={m._id}></p>
           ) })
-       :<p className="text-center mt-2 font-itlaic font-weight-bold">
+       :<h4 className="text-center text-white  mt-2 font-itlaic font-weight-bold ">
+      <FontAwesomeIcon icon={faCommentDots} className='text-white fa-2x mx-2' />   
          No messages yet...
-       </p>
+       </h4>
        }     
   
             </div>
@@ -246,8 +252,8 @@ const stopTyping=()=>socket.emit('typing',{emp_id:''})
               <div className="incoming_msg_img"> 
      </div>
      {
-       state.typing?
-       <div className="received_msg">
+       typing===emp_id?
+       <div className="received_msg bg-light">
                 <div className="received_withd_msg">
                   <p>{Messages.messageName(emp_id)+ ' '} is typing ...</p>
                  </div>

@@ -16,11 +16,10 @@ import ClimatePlacesFetcher from '../../fetchers/ClimatePlacesFetcher'
 import DeductionFetcher from '../../fetchers/DeductionFetcher'
 import { webSocket } from '../../../socket'
 import { Donothing } from '../../../controllers/saveProcess'
+import MessageFetchers from '../../fetchers/MessageFetchers'
 const SideNav=()=> {
   
     const {setSocket,users,employees,socket}=useContext(StoreContext)
-setSocket(webSocket)
-socket?socket.emit('onConnect',{emp_id:localStorage.emp_id}):Donothing()   
 const setToggler=useContext(LayoutContext)
   const {sidetheme}=setToggler.uiContents
   
@@ -39,6 +38,7 @@ const setToggler=useContext(LayoutContext)
             <LettersFetcher/>
             <ClimatePlacesFetcher/>
             <DeductionFetcher/>
+            <MessageFetchers/>
         <div className="header__pane ml-auto">
             <div>
                 <button type="button" className="hamburger close-sidebar-btn hamburger--elastic" data-classname="closed-sidebar">

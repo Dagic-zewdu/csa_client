@@ -157,8 +157,10 @@ collapse===''?'closed-sidebar':''
                                 <div className="widget-content-left">
                                     <div className="btn-group">
   <div data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" className="p-0 btn">
+   
    <h4 className="font-weight-bold">
-   [M] <i className="fa fa-angle-down ml-2 opacity-8"></i>
+   [M] 
+   <i className="fa fa-angle-down ml-2 opacity-8"></i>
    </h4>
                                         </div>
 <div tabIndex="-1" role="menu" aria-hidden="true" className="dropdown-menu dropdown-menu-right">
@@ -168,7 +170,7 @@ collapse===''?'closed-sidebar':''
                                     </div>
                                 </div>
                                 <div className="widget-content-left  ml-3 header-user-info">
-                                    <div className="widget-heading">
+                                    <div className="widget-heading">     
                         {allowance.Name(allowance.getEmp_id())}
                                     </div>
                                     <div className="widget-subheading">
@@ -176,8 +178,8 @@ collapse===''?'closed-sidebar':''
                                     </div>
                                 </div>
    <div className="widget-content-right header-user-info ml-3">
-      <button type="button" className="btn-shadow p-1 btn btn-primary btn-sm show-toastr-example">
- <i className="fa text-white fa-calendar pr-1 pl-1"> </i>
+      <button type="button" className="btn-shadow p-1 btn  btn-sm show-toastr-example">
+<p data-letters={allowance.firstLetters(allowance.getEmp_id())}></p>
                                     </button>
                                 </div>
                             </div>

@@ -3,11 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { LettersClass } from '../../controllers/Letters'
 import { Message } from '../../controllers/Message'
 import { removeDuplicates } from '../../controllers/removeRedudant'
 import { Donothing } from '../../controllers/saveProcess'
-import { StoreContext } from '../contexts/contexts'
+import { Notification, StoreContext } from '../contexts/contexts'
 
 const Contacts=()=> {
     const [state,setState]=useState({
@@ -20,37 +19,36 @@ const Contacts=()=> {
         commisioner:[], 
         users:[] // connected or discconnected users
     })
-    const {users,employees,socket}=useContext(StoreContext)
+    const {users,employees,messages,connections}=useContext(StoreContext)
+
     const {state:Users,loading:userLoading,error:userError}=users
     const {state:Employees,loading:empLoading,error:empError}=employees
-    const Letter=new LettersClass([],Employees,Users)
-    const emp=removeDuplicates([...Letter.Type('employee'),...Letter.Type('f_employee')],'_id')
-    const directors=Letter.Type('director')
-    const f_director=Letter.Type('f_director')
-    const team_leaders=removeDuplicates([...Letter.Type('f_team_leader'),...Letter.Type('team_leader')],'_id')
-    const sector_leaders=Letter.Type('sector_leader')
-    const f_sector_leader=Letter.Type('f_sector_leader')
-    const commisioner=Letter.Type('senior_officer')
+    const Messages=new Message(messages.state,connections.state,[],Users,Employees)
+   const emp=removeDuplicates([...Messages.Type('employee'),...Messages.Type('f_employee')],'_id')
+    const directors=Messages.Type('director')
+    const f_director=Messages.Type('f_director')
+    const team_leaders=removeDuplicates([...Messages.Type('f_team_leader'),...Messages.Type('team_leader')],'_id')
+    const sector_leaders=Messages.Type('sector_leader')
+    const f_sector_leader=Messages.Type('f_sector_leader')
+    const commisioner=Messages.Type('senior_officer')
     useEffect(()=>{
-     setState({...state,directors,employees:emp,f_sector_leader,f_director,team_leaders,sector_leaders,commisioner})
-   socket?socket.emit('users',''):Donothing() 
-  socket? socket.on('users',data=>setState(s=>({...s,users:data}))):Donothing()
-    },[userLoading,empLoading,socket])
-    const handleSearch=index=>setState(s=>({...s,
-        f_director:index!==''?Letter.ContactSearch(index).f_director:f_director,
-        f_sector_leader:index!==''?Letter.ContactSearch(index).f_sector_leader:f_sector_leader,
-        directors:index!==''?Letter.ContactSearch(index).directors:directors,
-        team_leaders:index!==''?Letter.ContactSearch(index).team_leaders:team_leaders,
-        sector_leaders:index!==''?Letter.ContactSearch(index).sector_leaders:sector_leaders,
-        employees:index!==''?Letter.ContactSearch(index).employees:emp,
-        commisioner:index!==''?Letter.ContactSearch(index).commisioner:commisioner,
+ setState({...state,directors,employees:emp,f_sector_leader,f_director,team_leaders,sector_leaders,commisioner})
+ },[userLoading,empLoading])
+ /**search name elements with search index provide */
+ const handleSearch=index=>setState(s=>({...s,
+        f_director:index!==''?Messages.ContactSearch(index).f_director:f_director,
+        f_sector_leader:index!==''?Messages.ContactSearch(index).f_sector_leader:f_sector_leader,
+        directors:index!==''?Messages.ContactSearch(index).directors:directors,
+        team_leaders:index!==''?Messages.ContactSearch(index).team_leaders:team_leaders,
+        sector_leaders:index!==''?Messages.ContactSearch(index).sector_leaders:sector_leaders,
+        employees:index!==''?Messages.ContactSearch(index).employees:emp,
+        commisioner:index!==''?Messages.ContactSearch(index).commisioner:commisioner,
     }))
     /***online users */
-   const Messages=new Message([],state.users,[],Employees,Users)
-
+ 
     return (
-   <div className="col-lg-12 my-3">
-   <div className="container my-3">
+   <div className="col-lg-12">
+   <div className="container">
        <div className="row">
            <div className="col-lg-6">
       
@@ -114,7 +112,7 @@ const Contacts=()=> {
         {f.emp_id}   
           </td>  
            <td className="text-center">
-    {Letter.Name(f.emp_id)}
+    {Messages.Name(f.emp_id)}
           </td>
           <td  className="text-center">
               {f.department}
@@ -197,7 +195,7 @@ const Contacts=()=> {
         {f.emp_id}   
           </td>  
            <td className="text-center">
-    {Letter.Name(f.emp_id)}
+    {Messages.Name(f.emp_id)}
           </td>
           <td  className="text-center">
               {f.department}
@@ -280,7 +278,7 @@ const Contacts=()=> {
         {f.emp_id}   
           </td>  
            <td className="text-center">
-    {Letter.Name(f.emp_id)}
+    {Messages.Name(f.emp_id)}
           </td>
           <td  className="text-center">
               {f.department}
@@ -363,7 +361,7 @@ const Contacts=()=> {
         {f.emp_id}   
           </td>  
            <td className="text-center">
-    {Letter.Name(f.emp_id)}
+    {Messages.Name(f.emp_id)}
           </td>
           <td  className="text-center">
               {f.department}
@@ -444,7 +442,7 @@ const Contacts=()=> {
         {f.emp_id}   
           </td>  
            <td className="text-center">
-    {Letter.Name(f.emp_id)}
+    {Messages.Name(f.emp_id)}
           </td>
           <td  className="text-center">
               {f.department}

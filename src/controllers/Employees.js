@@ -83,5 +83,14 @@ export class EmployeeClass{
        * employee.... returns empty string if the user is not found and
        * not official employee
        */
-     officialPosition=(id)=>this.isOfficial(id)?this.Find(id).position:''      
+     officialPosition=(id)=>this.isOfficial(id)?this.Find(id).position:'' 
+      /** returns first name and last Name only
+     @param {*} emp_id =>string of emp_id
+     */
+    messageName=emp_id=>this.Name(emp_id).split(' ')[0]+' '+this.Name(emp_id).split(' ')[1]
+    /**return's two letter string of one letter from first name one letter from last name
+     * @param {*} emp_id =>emp_id of the user 
+     */   
+    firstLetters=emp_id=>(this.messageName(emp_id).split(' ')[0].slice(0,1)+
+                 this.messageName(emp_id).split(' ')[1].slice(0,1)).toUpperCase()     
     }

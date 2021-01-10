@@ -19,7 +19,7 @@ function ModalLetter(props) {
         onMouseEnter={() => sethover(true)} onMouseLeave={() => sethover(false)} 
         >
         <FontAwesomeIcon icon={faEnvelope} className='text-danger fa-2x' />
-<p style={{display:hover?'':'none'}} className='font-italic font-weight-bold'>
+<p style={{display:hover?'':'none'}} className='font-italic font-weight-bold text-white'>
             Create a letter
         </p>
            </div>

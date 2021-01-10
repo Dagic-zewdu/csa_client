@@ -8,8 +8,8 @@ export class Message extends LettersClass{
      * @param {*} users=>list of users in the system
      * @param {*} Users => array of objects connected and disconnected users
      */
-    constructor(message,Users,letters,employees,users){
-        super(letters,employees,users)
+    constructor(message,Users,letters,users,employees){
+        super(letters,users,employees)
         this.message=message
         this.Users=Users     
          }
@@ -23,15 +23,6 @@ export class Message extends LettersClass{
       @param {*} emp_id =>emp_id of the user
      */
     isOnline=emp_id=>this.onlineUsers().find(a=> a.emp_id === emp_id)?true:false
-    /** returns first name and last Name only
-     @param {*} emp_id =>string of emp_id
-     */
-    messageName=emp_id=>this.Name(emp_id).split(' ')[0]+' '+this.Name(emp_id).split(' ')[1]
-  /**return's two letter string of one letter from first name one letter from last name
-   * @param {*} emp_id =>emp_id of the user 
-   */   
-  firstLetters=emp_id=>(this.messageName(emp_id).split(' ')[0].slice(0,1)+
-               this.messageName(emp_id).split(' ')[1].slice(0,1)).toUpperCase()
   /**retuns time of disconnected user if the user is new don't use the system before returns
    * empty string
    * @param {*} emp_id => employee id of the user
@@ -41,14 +32,23 @@ export class Message extends LettersClass{
   myMessage=()=>this.message.filter(m=> m.sender === this.getEmp_id() || m.reciever === this.getEmp_id() )
  /* return's array of employee contacted recently*/ 
   contactedUsers=()=>{
-    var users=[]
+    var u=[]
     this.myMessage().map(m=>{
-      m.sender!==this.getEmp_id()?users.push(m.sender):
-      m.reciever!==this.getEmp_id()?users.push(m.reciever):
+      m.sender!==this.getEmp_id()?u.push(m.sender):
+      m.reciever!==this.getEmp_id()?u.push(m.reciever):
       Donothing()
     })
-    let contact=new Set(users)
-    return [...contact]
+   let contact=new Set(u)
+   return [...contact]
+  }
+  /**retun's array of contacted user emp_id that is searched using search string 
+   * @param {*} index string - String to search
+   */
+  searchContacted=Index=>{
+    let index=Index.toString().toLowerCase()
+  return ( this.contactedUsers().filter(c=> this.messageName(c).toString().
+    toLowerCase().includes(index,0) ))
+  
   }
   /**return's array of messages of the current user and provided emp_id
   * @param {*} emp_id => emp_id of the the user that contact the current user
@@ -62,4 +62,12 @@ export class Message extends LettersClass{
    * @param {*} emp_id => emp_id of the the user that contact the current user
    */
   last_message=emp_id=>this.chatRoom(emp_id)[0]
+/* return's number of all new messages recieved */
+  notifiaction=()=>{
+    var i=0
+    this.contactedUsers().map(m=>{
+     i=i+this.newMessages(m).length  
+      })
+    return i
+ }
 }

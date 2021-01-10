@@ -3,7 +3,7 @@ import './css/Main.css'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Admin from './components/system Admin/admin'
 import Employee from './components/system Admin/employee/employee'
-import { StoreContext } from './components/contexts/contexts'
+import { Notification, StoreContext } from './components/contexts/contexts'
 import { empState, employeeReducer } from './store/Reducers/employeeReducers'
 import DepartmentDashboard from './components/system Admin/Department/Dashboard'
 import { departmentReducer, depState } from './store/Reducers/departmentReducer'
@@ -37,8 +37,16 @@ import DoDeduction from './components/Deduction/Finance_Employee/DeductionCalcul
 import Edit from './components/Deduction/Finance_Employee/DeductionCalculation.js/Edit'
 import ContactEmployee from './components/routes/ContactEmployee'
 import ChatRoom from './components/routes/ChatRoom'
+import { messageReducer, messageState } from './store/Reducers/MessageReducer'
+import { connReducer, connState } from './store/Reducers/connectionReducer'
 
 const App = () => {
+  const [notification,setNotification]=useState({
+      message:0,
+      inbox:0,
+      outbox:0
+  })
+  const [typing,setTyping]=useState('')
   const [socket,setSocket]=useState('')
   const [employees, dispatchEmployees] = useReducer(employeeReducer, empState)
   const [department, dispatchDepartment] = useReducer(departmentReducer, depState)
@@ -51,11 +59,16 @@ const App = () => {
   const [allowances,dispatchAllowances]=useReducer(allowanceReducer,allowanceState)
   const [climatePlaces,dispatchClimatePlaces]=useReducer(climatePlacesReducer,climatePlaceState)
   const [deductions,dispatchDeductions]=useReducer(deductionReducer,deductionState)
+  const [messages,dispatchMessages]=useReducer(messageReducer,messageState)
+  const  [connections,dispatchConnections]=useReducer(connReducer,connState)
   return (
     
     <StoreContext.Provider
       value={{
         socket,setSocket,
+        messages,dispatchMessages,
+        typing,setTyping,
+        connections,dispatchConnections,
         allowances,dispatchAllowances,employees, dispatchEmployees,
         department, dispatchDepartment,place, dispatchPlaces,
         users,dispatchUsers,
@@ -66,6 +79,7 @@ const App = () => {
         climatePlaces,dispatchClimatePlaces,
         deductions,dispatchDeductions,
      }}>
+    <Notification.Provider value={{setNotification,notification}}> 
       <ScripTag isHydrating={true} type='text/javascript'
        src='./css/assets/scripts/main.js' />
       <BrowserRouter>
@@ -99,6 +113,7 @@ const App = () => {
          <Route path='/test' ><Test/></Route> 
           </Switch>
       </BrowserRouter>
+      </Notification.Provider>
     </StoreContext.Provider>
   )
 }
