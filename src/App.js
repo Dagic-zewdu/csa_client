@@ -3,7 +3,7 @@ import './css/Main.css'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Admin from './components/system Admin/admin'
 import Employee from './components/system Admin/employee/employee'
-import { Notification, StoreContext } from './components/contexts/contexts'
+import { StoreContext } from './components/contexts/contexts'
 import { empState, employeeReducer } from './store/Reducers/employeeReducers'
 import DepartmentDashboard from './components/system Admin/Department/Dashboard'
 import { departmentReducer, depState } from './store/Reducers/departmentReducer'
@@ -41,11 +41,7 @@ import { messageReducer, messageState } from './store/Reducers/MessageReducer'
 import { connReducer, connState } from './store/Reducers/connectionReducer'
 
 const App = () => {
-  const [notification,setNotification]=useState({
-      message:0,
-      inbox:0,
-      outbox:0
-  })
+ 
   const [typing,setTyping]=useState('')
   const [socket,setSocket]=useState('')
   const [employees, dispatchEmployees] = useReducer(employeeReducer, empState)
@@ -79,8 +75,7 @@ const App = () => {
         climatePlaces,dispatchClimatePlaces,
         deductions,dispatchDeductions,
      }}>
-    <Notification.Provider value={{setNotification,notification}}> 
-      <ScripTag isHydrating={true} type='text/javascript'
+   <ScripTag isHydrating={true} type='text/javascript'
        src='./css/assets/scripts/main.js' />
       <BrowserRouter>
       <Switch>
@@ -113,7 +108,6 @@ const App = () => {
          <Route path='/test' ><Test/></Route> 
           </Switch>
       </BrowserRouter>
-      </Notification.Provider>
     </StoreContext.Provider>
   )
 }
