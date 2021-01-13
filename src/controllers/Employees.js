@@ -1,13 +1,11 @@
+import { removeDuplicates } from "./removeRedudant"
+
 export class EmployeeClass{
      constructor(employees){
          this.employees=employees
      }
-     Filter=(id)=>{
-        let employee=this.employees.filter(e=>{
-            return  e.emp_id === id
-        })
-        return employee  
-     }
+     Filter=id=>this.employees.filter(e=>e.emp_id === id)
+     
      UnFilter=(id)=>{
         let employee=this.employees.filter(e=>{
             return  e.emp_id !== id
@@ -88,9 +86,22 @@ export class EmployeeClass{
      @param {*} emp_id =>string of emp_id
      */
     messageName=emp_id=>this.Name(emp_id).split(' ')[0]+' '+this.Name(emp_id).split(' ')[1]
-    /**return's two letter string of one letter from first name one letter from last name
+    /**return's two first letter string of one letter from first name one letter from last name
      * @param {*} emp_id =>emp_id of the user 
      */   
     firstLetters=emp_id=>(this.messageName(emp_id).split(' ')[0].slice(0,1)+
-                 this.messageName(emp_id).split(' ')[1].slice(0,1)).toUpperCase()     
+                 this.messageName(emp_id).split(' ')[1].slice(0,1)).toUpperCase()  
+      /**return's an array of user resulted from searched
+       * @param {*} Index - String to search
+       */           
+  searchEmployee=Index=>{
+  let index=Index.toString().toLowerCase()
+//search by name
+let name=this.employees.filter(n=> this.Name(n.emp_id).toString().toLowerCase().includes(index,0))
+//search department
+let department=this.employees.filter(e=> e.department.toString().toLowerCase().includes(index,0))  
+//user role
+let role=this.employees.filter(e=> e.type.toString().toLowerCase().includes(index,0) )
+  return removeDuplicates([...name,...department,...role],'_id') 
+}      
     }
