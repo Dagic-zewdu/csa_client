@@ -1,4 +1,4 @@
-import { faBackward, faEnvelopeOpen, faEnvelopeSquare, faForward, faHandPaper } from '@fortawesome/free-solid-svg-icons'
+import {  faEnvelopeOpen, faForward } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useContext} from 'react'
 import { withRouter } from 'react-router'
@@ -16,7 +16,8 @@ const LetterTypes=()=> {
        </h2>
        <hr/>
    </div>
- <div className="col-lg-12 text-center my-2" onClick={()=>setValues({...values,type:'allowance'})}>
+ <div className="col-lg-12 text-center my-2"
+  onClick={()=>setValues({...values,type:'allowance'})}>
    {
        type==='allowance'?
        <button className="btn btn-info">
@@ -62,8 +63,8 @@ const LetterTypes=()=> {
          type?
          <button className="btn btn-info float-right text-white"
      onClick={()=>setValues({...values,
-     step:step<=2?2:values.step,
-     tab:step<=2?'create':step===3?'approval':step===4?'parcticpant':''
+     step: values.type==='allowance'?2:step<=2?2:values.step,
+     tab: values.type ==='allowance'?'create':step<=2?'create':step===3?'approval':step===4?'parcticpant':''
      })}    
          >
              <FontAwesomeIcon icon={faForward} className='mx-2' />

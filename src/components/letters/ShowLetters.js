@@ -55,7 +55,7 @@ import { MDBTable, MDBTableHead, MDBTableBody } from 'mdbreact'
             </td>
             <td>
             <p className="text-info">{letter.Name(l.creater)} 
-                ({letter.UserRole(l.creater)})
+                .({letter.UserRole(l.creater)})
                 </p>     
             </td>
           </tr>

@@ -35,7 +35,7 @@ export class UsersClass extends EmployeeClass {
        true:false
        return approve    
      }
-     /**check if the user is Finance Director */
+     /**check if the current user is Finance Director */
      isFinanceDirector=()=>{
         let emp_id=this.getEmp_id()
       let userType=this.UserRole(emp_id)
@@ -56,7 +56,17 @@ export class UsersClass extends EmployeeClass {
         let check=userType==='f_employee'?true:false
            return check
      }  
-     /**return's array of employee with filtered employee type
+     /**Boolean that return's true when the employee is finance director or false if not
+      * @param {*} emp_id String of employee id 
+      */
+isF_director=emp_id=>this.Find(emp_id)?this.Find(emp_id).type === 'f_director'?true:false:false
+/**retun's boolean if the user can not employee which means it it somewhere Manager 
+ * @param {*} emp_id String of employee id
+*/
+canApprove=emp_id=>this.Find(emp_id)?this.Find(emp_id).type !== 'employee'?true:false:false
+/**return's an array of object availiable finance director's  */  
+getF_director=()=>this.employees.filter(e=> e.type === 'f_director')     
+/**return's array of employee with filtered employee type
        @param {*} type =>String which used filter 'director' ,'sector leader'...
       */
     Type=type=>this.employees.filter(e=> e.type === type && this.getEmp_id() !== e.emp_id)

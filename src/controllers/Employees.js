@@ -13,18 +13,12 @@ export class EmployeeClass{
         return employee
      }
      /**accepts emp_id and return employee object */
-     Find=(id)=>{
-        let employee=this.employees.find(e=>{
-            return  e.emp_id === id
-        })
-        return employee  
-     }
-     getUserInfo=(id)=>{
-        let employee=this.employees.find(e=>{
-            return  e._id === id
-        })
-        return employee
-     }
+     Find=(id)=>this.employees.find(e=>e.emp_id === id)
+    /**return's object of employee info
+     * @param {*} id -employee _id not emp_id
+     */
+     getUserInfo=id=>this.employees.find(e=> e._id === id)
+       
     Name=(id)=>{
       let first_name=this.Find(id)?this.Find(id).first_name:''
       let middle_name=this.Find(id)?this.Find(id).middle_name:''
@@ -96,12 +90,14 @@ export class EmployeeClass{
        */           
   searchEmployee=Index=>{
   let index=Index.toString().toLowerCase()
-//search by name
+//search by emp_id
+let emp_id=this.employees.filter(e=> e.emp_id.toString().toLowerCase().includes(index,0))
+  //search by name
 let name=this.employees.filter(n=> this.Name(n.emp_id).toString().toLowerCase().includes(index,0))
 //search department
 let department=this.employees.filter(e=> e.department.toString().toLowerCase().includes(index,0))  
 //user role
 let role=this.employees.filter(e=> e.type.toString().toLowerCase().includes(index,0) )
-  return removeDuplicates([...name,...department,...role],'_id') 
+  return removeDuplicates([...name,...department,...role,...emp_id],'_id') 
 }      
     }

@@ -51,7 +51,6 @@ export const checkDate=(initial_date,destination_date)=>
      let Hr=hr?hr:1
      let Min=min?min:0
      let Sec=sec?sec:0
-     console.log(dd,mm,yyyy,Hr,Min,Sec)
     const eth=new ethDateTime(dd,mm,yyyy,Hr,Min,Sec)
     const gr=new Date( converterDateTime.toEuropean(eth))
     return gr.toISOString()

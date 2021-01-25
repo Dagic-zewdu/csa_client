@@ -43,7 +43,7 @@ const CreateAllowance=()=> {
        const empDepartment=User.Department(id)
        const empManagers=User.avaliableManager(empDepartment)
        const Dateinput=useRef(null)
-       const DoNothing=()=>{}
+     
        
        /**Handle Submit */
        const handleSubmit=async (e)=>{

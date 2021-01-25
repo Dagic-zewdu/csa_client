@@ -70,4 +70,5 @@ export class Message extends LettersClass{
       })
     return i
  }
+
 }

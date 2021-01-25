@@ -1,4 +1,4 @@
-import { faCheck, faCheckDouble, faCircle, faCommentDots, faEnvelope, faEnvelopeOpen, faPaperPlane, faPlus, faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faCheckDouble, faCircle, faCommentDots, faEnvelope, faEnvelopeOpen, faEye, faPaperPlane, faPlus, faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { createRef, useContext, useEffect, useRef, useState } from 'react'
 import { withRouter } from 'react-router'
@@ -11,9 +11,11 @@ import ErrorLoading from '../layout/ErrorLoading'
 import ModalLetter from '../layout/ModalLetter'
 import {Link} from 'react-router-dom'
 import { localTime, simpleDate } from '../../controllers/Date'
+import ViewLetters from './ViewLetters'
 const Chat=({match})=> {
       const emp_id=match.params.id?match.params.id:''
-    const {socket,users,employees,messages,connections,typing}=useContext(StoreContext)
+    const {socket,users,employees,messages,letters,
+           connections,typing,Ltyping}=useContext(StoreContext)
     const {loading:empLoading,error:empError}=employees
     const {loading:userLoading,error:userError}=users
     const [state,setState]=useState({
@@ -21,7 +23,7 @@ const Chat=({match})=> {
       contacted:[]
    })
    const box=useRef(null)
-   const Messages=new Message(messages.state,connections.state,[],users.state,employees.state)  //importing message class
+   const Messages=new Message(messages.state,connections.state,letters.state,users.state,employees.state)  //importing message class
   
   /** */
   useEffect(()=>{
@@ -57,9 +59,14 @@ catch(err){
 
   /**emiiting message is typing*/
 const typingFocus=()=>socket.emit('typing',{emp_id:Messages.getEmp_id()})
- 
-const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),2000)
-   /**handling submit */
+ /**creating letter emit message that user is creating letter */
+const typing_letter=()=>socket.emit('typing_letter',{emp_id:Messages.getEmp_id()}) 
+
+/**stop typing */
+const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),1800) //for chat
+const stop_typing=()=>socket.emit('typing_letter',{emp_id:''}) //for creating letter
+
+/**handling submit */
    const handleSubmit=e=>{
     e.preventDefault()   
    state.message!==''? socket.emit('submit',{
@@ -70,8 +77,10 @@ const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),2000)
     setState({...state,message:''})
     Scroller()
   }
+  
   const handleSearch=index=>setState({...state,contacted:Messages.searchContacted(index)})
-   return (
+ 
+  return (
       empLoading||userLoading?
       <DataLoading/>:
       empError||userError?
@@ -119,7 +128,7 @@ const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),2000)
                     </span></h5>
                   <p>{
                     (Messages.last_message(m).message).length>100?
-                    (Messages.last_message(m).message).slice(0,95)+'  ...':
+                    (Messages.last_message(m).message).slice(0,120)+'  ...':
                     Messages.last_message(m).message
                     }</p>
                 </div>
@@ -205,18 +214,37 @@ const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),2000)
         (
           <div className="outgoing_msg" key={m._id} id={m._id}>
               <div className="sent_msg">
-                <p>{m.message}</p>
+              {
+                m.letter_id?
+            <div className="card" style={{minHeight:200}}>
+              <div className="card-header text-center font-weight-bold">
+                  {Messages.title(m.letter_id)}
+              </div>
+             <div className="card-body font-italic">
+          
+     { 
+       Messages.description_text(m.letter_id).length > 100?
+     Messages.description_text(m.letter_id).slice(0,120) + ' ...':
+     Messages.description_text(m.letter_id)       
+     }
+              
+               {} {/*letter class*/}
+               </div> 
+        <div className="card-footer text-muted">
+     <ModalLetter type='view_letter' l_id={m.letter_id}/>
+     <ModalLetter type='edit_letter' l_id={m.letter_id} />
+          </div>  
+              </div>:
+              <p>{m.message}</p>
+              }  
                 <span className="time_date">
-                   {localTime(m.created_date)} | {simpleDate(m.created_date)} 
-              | 
+   {localTime(m.created_date)} | {simpleDate(m.created_date)} | 
+              {m.seen?' seen' :' Delivered'}
               {
-                m.seen?' seen' :' Delivered'
-              }
-              {
-                m.seen?
-                <FontAwesomeIcon icon={faCheckDouble} className='text-info mx-2'/> 
-                :<FontAwesomeIcon icon={faCheck} className='text-info mx-2' />
-              }
+    m.seen?
+    <FontAwesomeIcon icon={faCheckDouble} className='text-info mx-2'/> 
+    :<FontAwesomeIcon icon={faCheck} className='text-info mx-2' />
+             }
                   </span> </div>
             </div>
         ):
@@ -231,7 +259,29 @@ const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),2000)
      </div>
               <div className="received_msg">
                 <div className="received_withd_msg">
-                  <p>{m.message}</p>
+                {
+                m.letter_id?
+            <div className="card" style={{minHeight:200}}>
+              <div className="card-header text-center font-weight-bold">
+                  {Messages.title(m.letter_id)}
+              </div>
+             <div className="card-body font-italic">
+          
+     { 
+       Messages.description_text(m.letter_id).length > 100?
+     Messages.description_text(m.letter_id).slice(0,100) + ' ...':
+     Messages.description_text(m.letter_id)       
+     }
+              
+               {} {/*letter class*/}
+               </div> 
+        <div className="card-footer text-muted">
+     <ModalLetter type='view_letter' l_id={m.letter_id}/>
+    
+          </div>  
+              </div>:
+              <p>{m.message}</p>
+              } 
                   <span className="time_date"> {localTime(m.created_date)}   |   
                   {simpleDate(m.created_date)}
                     </span></div>
@@ -260,17 +310,26 @@ const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),2000)
               </div>:
               <p></p>
      }
+     {
+   Ltyping===emp_id?
+   <div className="received_msg bg-light">
+                <div className="received_withd_msg">
+     <p>{Messages.messageName(emp_id)+ ' '} is creating letter ...</p>
+                 </div>
+              </div>:
+              <p></p>
+     }
               </div>   
           <form onSubmit={e=>handleSubmit(e)}>        
           <div className="input-container">
 <input  className="input-field form-control my-auto" id='message' type="text" 
-placeholder="type message"  
+placeholder="type message"  autoComplete='off'
 onKeyUp={()=>stopTyping()}
   onChange={e=>{setState({...state,message:e.target.value}); typingFocus()}}
  ref={box} value={state.message}
    />
 
-<ModalLetter type='create_letter' />
+<ModalLetter type='create_letter' typing={typing_letter} stop_typing={stop_typing}/>
      </div>
      </form>
  

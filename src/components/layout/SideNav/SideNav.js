@@ -35,7 +35,6 @@ const setToggler=useContext(LayoutContext)
             <CompanyFetcher/>
             <DepartmentFetch/>
             <UsersFetcher/>
-            <LettersFetcher/>
             <ClimatePlacesFetcher/>
             <DeductionFetcher/>
             <MessageFetchers/>

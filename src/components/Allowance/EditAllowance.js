@@ -56,9 +56,7 @@ const {date:rdate,month:rmonth,year:ryear}=toEthiopianDate(props.allowance.desti
      const Allowance=new AllowanceClass(allowances.state,Employees,Users)  
     /**Handle Submit */
     const Dateinput=useRef(null)
-    console.log(state.idate,state.imonth,state.iyear)
-    console.log(state.rdate,state.rmonth,state.ryear)
-    
+   
        const handleSubmit=async (e)=>{
          e.preventDefault()
     try{

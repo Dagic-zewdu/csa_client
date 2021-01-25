@@ -42,7 +42,8 @@ import { connReducer, connState } from './store/Reducers/connectionReducer'
 
 const App = () => {
  
-  const [typing,setTyping]=useState('')
+  const [typing,setTyping]=useState('') //chat typing
+  const [Ltyping,setLTyping]=useState('') //letter creating typing
   const [socket,setSocket]=useState('')
   const [employees, dispatchEmployees] = useReducer(employeeReducer, empState)
   const [department, dispatchDepartment] = useReducer(departmentReducer, depState)
@@ -63,7 +64,7 @@ const App = () => {
       value={{
         socket,setSocket,
         messages,dispatchMessages,
-        typing,setTyping,
+        typing,setTyping,Ltyping,setLTyping,  //user interaction when typing
         connections,dispatchConnections,
         allowances,dispatchAllowances,employees, dispatchEmployees,
         department, dispatchDepartment,place, dispatchPlaces,

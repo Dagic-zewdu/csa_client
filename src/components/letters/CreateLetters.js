@@ -1,4 +1,4 @@
-import { faLayerGroup, faUserCheck, faUserEdit, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faLayerGroup, faUserCheck, faUserEdit, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router'
@@ -7,12 +7,18 @@ import {Progress} from 'reactstrap'
 import LetterTypes from './LetterTypes'
 import WriteLetter from './WriteLetter'
 import Approval from './Approval'
+import AddParticipants from './AddParticipants'
 const CreateLetters=({match,setSize})=> {
     const emp_id=match.params.id
     const [values,setValues]=useState({
         step:1,
         type:'',
-        tab:'type'
+        tab:'type',
+        employees:[],
+        approval_manager:[],
+        f_director:[],
+        participants:[],
+        usage:'create' 
     })
     useEffect(()=>{
    setSize('xl')
@@ -48,7 +54,7 @@ return values.step>=2?'create':'type'
             <div className="col-lg-3" 
     onClick={()=>setValues({...values,tab:setTab('create')})}>
             <h4 className="text-center">
-      <FontAwesomeIcon icon={faUserEdit} className={values.step>=2?'text-info mx-2':''} />   
+      <FontAwesomeIcon icon={faEdit} className={values.step>=2?'text-info mx-2':''} />   
        Write aletter
          </h4>  
             </div>
@@ -81,6 +87,7 @@ return values.step>=2?'create':'type'
    values.tab==='type'?<LetterTypes/>:
    values.tab==='create'?<WriteLetter/>:
    values.tab==='approval'?<Approval/>:
+   values.tab==='participant'?<AddParticipants/>:
    <p></p>
    }
     </div>
