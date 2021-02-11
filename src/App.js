@@ -39,6 +39,8 @@ import ContactEmployee from './components/routes/ContactEmployee'
 import ChatRoom from './components/routes/ChatRoom'
 import { messageReducer, messageState } from './store/Reducers/MessageReducer'
 import { connReducer, connState } from './store/Reducers/connectionReducer'
+import OutBoxLetters from './components/routes/OutBoxLetters'
+import InBoxLetters from './components/routes/InBoxLetters'
 
 const App = () => {
  
@@ -88,6 +90,8 @@ const App = () => {
       <Route path='/deduction/:id'><DoDeduction/> </Route>
       <Route path='/deduction'><Deduction/></Route>
       <Route path='/contact'><ContactEmployee/></Route>
+      <Route path='/outbox'><OutBoxLetters/></Route>
+      <Route path='/inbox'><InBoxLetters/></Route>
       {/**user routes */}
       <Route path='/login'><Login/></Route>
       <Route path='/signup'><Signup/></Route>

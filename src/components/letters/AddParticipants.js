@@ -1,18 +1,24 @@
 import { faInfo, faObjectGroup, faPlus, faTrash, faUser, faUserAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import axios from 'axios'
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact'
 import React, { useContext, useEffect, useState } from 'react'
 import { convertToEuropean } from '../../controllers/Date'
 import { LettersClass } from '../../controllers/Letters'
 import { Donothing, randomId, saveProcess } from '../../controllers/saveProcess'
+import { addMessages } from '../../store/Actions/messageActions'
+import { decrptObject, encryptObject } from '../auth/encrypt'
+import { host } from '../config/config'
 import { LetterContext, StoreContext } from '../contexts/contexts'
 import { DotLoading } from '../layout/Loading'
-
+import { userInfo } from '../users/userInfo'
+import { emitter } from '../fetchers/Emmitters'
 const AddParticipants=()=> {
     const {emp_id,setValues,values,id:_id}=useContext(LetterContext)
     const {approval_manager,f_director}=values    
-    const managers=[...approval_manager,...f_director]
-    const {employees,users,socket,letters}=useContext(StoreContext)
+    const managers=[...approval_manager?approval_manager:[],
+         ...f_director?f_director:[]]
+    const {employees,users,socket,letters,dispatchMessages}=useContext(StoreContext)
     const {state:Employees}=employees
     const {state:Users}=users
     const user=new LettersClass(letters.state,Users,Employees)
@@ -22,8 +28,8 @@ const AddParticipants=()=> {
   
     useEffect(()=>{
 //if the user is not on approval manager list add to partcipants list *
-managers.find(m=> m.emp_id === emp_id)?Donothing():
-setValues(s=>({...s,participants:[...s.participants,{emp_id}]}))
+values.usage==='create'&&emp_id?managers.find(m=> m.emp_id === emp_id)?Donothing():
+setValues(s=>({...s,participants:[...s.participants,{emp_id}]})):Donothing()
 
    },[]) 
   
@@ -44,7 +50,7 @@ const handleSearch=index=>setValues({...values,
      participants:s.participants.filter(p=> p.emp_id !== emp_id)
   }))
   /**complete all process and send to the server */ 
-  const saveLetter=()=>{
+  const saveLetter=async ()=>{
  
     try{
     const {type,title,objective,initial_place,
@@ -90,56 +96,72 @@ socket.emit('update_letter',{
   return_date,participants,
   approval_manager:managers,rid
 })
-
-socket.on('update_letter',(data,i=0)=>{
-  if(data._id === _id) {
-   socket.emit('delete_letter_message',{_id})
-   console.log(data)
-   socket.on('delete_letter_message',data=>data._id === _id?
-  createMessage({_doc:{title,_id}}):Donothing())
+const req=await axios.put(host+'/delMessages',{data:encryptObject({_id,...userInfo()})})
+  const res=decrptObject(req.data)
+  if(res.deleted){
+    createMessage({_doc:{title,_id}})
   }
-  else{
-    setState(s=>({...s,...saveProcess('error','updating error please try again letter')}))  
-  }
-})
+}
+else{
+  setState(s=>({...s,...saveProcess('error',
+  'unable to update message of the letter please try again letter'
+   )}))
 }
   }
   catch(err){
-console.log(err)
+    setState(s=>({...s,...saveProcess('error',
+    'unable to update letter please try again letter'
+     )}))
   }
+  
   }
-
-  const createMessage=data=>{
+  
+  const createMessage=async data=>{
+  const L=await axios.get(host+'/letters')
+  const l=decrptObject(L.data)
 /**after saving create message that says about the letter */
-socket.on('letters',l=>{
   let Letter=new LettersClass(l,Users,Employees)
-  Letter.first_manager(data._doc._id).map(m=>{
-    socket.emit('submit',{
+ 
+  const Data=Letter.first_manager(data._doc._id).map(m=>{
+    return {
       message:data._doc.title,
       letter_id:data._doc._id,
       sender:user.getEmp_id(),
       reciever:m.emp_id
-    })
+    }
   })
- 
+  
  /*if their is no approval manager give it to particiapants */
-  Letter.first_manager(data._doc._id).length?Donothing():
-  Letter.participants(data._doc._id).map(p=>
-   socket.emit('submit',{
+ const part= Letter.first_manager(data._doc._id).length?[]:
+  Letter.participants(data._doc._id).map(p=>{
+   return{
     message:data._doc.title,
     letter_id:data._doc._id,
     sender:user.getEmp_id(),
     reciever:p.emp_id
-   })
+   }}
   )
-  /**saved sucessfully*/
-  setState(s=>({...s,
-    ...values.usage==='create'?saveProcess('success','saving letter success'):
-    saveProcess('success','updating letter success'),
-    i:1   
-  }))  
-})
+  
+let req=await axios.post(host+'/messages',{ data:
+  encryptObject({messages:[...part,...Data],...userInfo()})})
+let res=decrptObject(req.data)  
+if(res.created){
+
+ /**saved sucessfully*/
+ setState(s=>({...s,
+  ...values.usage==='create'?
+  saveProcess('success','saving letter success'):
+  saveProcess('success','updating letter success')
+}))
+}
+else{
+   setState(s=>({...s,
+  ...saveProcess('error','Error in creating message please try again later...')}))
+}
+emitter(socket)
   }
+   
+   
    return (
        <div className="container">
            <div className="row">

@@ -19,7 +19,7 @@ import { host } from '../config/config'
          * telling the user the allowance is being deleted process
          * Disabling the delete button is useful not add task when deleting
         */
-        setState({...state,progress:'Deleting',disable:true,loading:true}) 
+        setState({...state,progress:'Deleting..',disable:true,loading:true}) 
    let {_id}=props.allowance
    //encrypting request
    let req=encryptObject({_id,...userInfo()})

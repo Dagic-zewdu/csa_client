@@ -10,6 +10,7 @@ import Approval from '../Approval'
 import LetterTypes from '../LetterTypes'
 import WriteLetter from '../WriteLetter'
 import AddParticipants from '../AddParticipants'
+import { Donothing } from '../../../controllers/saveProcess'
 
 
 const EditLetter=({match,l_id:id})=> {
@@ -30,10 +31,13 @@ const EditLetter=({match,l_id:id})=> {
     })
 
     useEffect(()=>{
-      setValues(s=>({...s,
-        approval_manager:Letter.approval_managers(id).filter(e=> Letter.UserRole(e.emp_id) !== 'f_director'),
-        f_director:Letter.approval_managers(id).filter(e=> Letter.UserRole(e.emp_id) === 'f_director'),
-        participants:Letter.participants(id),
+
+let apm=Letter.approval_managers(id).filter(e=> Letter.UserRole(e.emp_id) !== 'f_director')
+let fdirector=Letter.approval_managers(id).filter(e=> Letter.UserRole(e.emp_id) === 'f_director')
+setValues(s=>({...s,
+        approval_manager:apm.map(m=>{ return { emp_id:m.emp_id,step:m.step}}),
+        f_director:fdirector.map(fd=>{ return {emp_id:fd.emp_id,step:fd.step}}),
+        participants:Letter.participants(id).map(p=>{return p?{emp_id:p.emp_id}:Donothing()}),
         type:letter.type,
         editorState:Letter.editorState(id),
         description:JSON.stringify(Letter.description(id)),
@@ -42,7 +46,7 @@ const EditLetter=({match,l_id:id})=> {
         objective:letter.objective,
         project_name:letter.project_name,
         program:letter.program,
-        initial_place:letter.initial_palce,
+        initial_place:letter.initial_place,
         destination_place:letter.destination_place,
         idate:letter.type==='allowance'?toEthiopianDate(letter.initial_date).date:'',
         imonth:letter.type==='allowance'?toEthiopianDate(letter.initial_date).month:'',

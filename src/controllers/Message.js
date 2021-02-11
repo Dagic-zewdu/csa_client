@@ -61,7 +61,9 @@ export class Message extends LettersClass{
   /**return's object of last chat contacted with the current user
    * @param {*} emp_id => emp_id of the the user that contact the current user
    */
-  last_message=emp_id=>this.chatRoom(emp_id)[0]
+  last_message=emp_id=>this.chatRoom(emp_id).length?
+  this.chatRoom(emp_id)[0]:
+  {message:'',file_name:'',letter_id:'',created_date:''}
 /* return's number of all new messages recieved */
   notifiaction=()=>{
     var i=0
@@ -70,5 +72,38 @@ export class Message extends LettersClass{
       })
     return i
  }
-
+ /** return's an array of inbox letters that the user recieves*/
+InboxLetters=()=>{
+   //inbox messages with letter
+  let inbox=this.message.filter(m=>( m.reciever === this.getEmp_id())&&m.letter_id !== '')
+  return inbox.map(m=> this.find_letter(m.letter_id))
+}
+/**return's array of objects that included on the index search string
+ * for Inbox letters
+ * @param {*} Index-search string
+ */
+SearchLetters=Index=>{
+  let index=Index.toString().toLowerCase()
+  let id=this.InboxLetters().filter(l=> l.id.toString().toLowerCase().includes(index,0))
+  let title=this.InboxLetters().filter(l=> l.title.toString().toLowerCase().includes(index,0)) 
+  let type=this.InboxLetters().filter(l=> l.type.toString().toLowerCase().includes(index,0))
+  let letters=removeDuplicates([...id,...title,...type],'_id')
+  return{
+ newLetters:letters.filter(m=>
+ this.manager_info(m?m._id:'')?!this.manager_info(m._id).seen:false ||
+ this.particpant_info(m?m._id:'')?!this.particpant_info(m._id).seen:false),
+ seenLetters: letters.filter(m=>
+  this.manager_info(m?m._id:'')?this.manager_info(m._id).seen:false ||
+  this.particpant_info(m?m._id:'')?this.particpant_info(m._id).seen:false
+  )   
+  } 
+}
+ newInboxLetters=()=>this.InboxLetters().filter(m=>
+  this.manager_info(m?m._id:'')?!this.manager_info(m?m._id:'').seen:false ||
+  this.particpant_info(m?m._id:'')?!this.particpant_info(m?m._id:'').seen:false
+  )
+seenInboxLetters=()=>this.InboxLetters().filter(m=>
+   this.manager_info(m?m._id:'')?this.manager_info(m?m._id:'').seen:false ||
+   this.particpant_info(m?m._id:'')?this.particpant_info(m?m._id:'').seen:false
+   )   
 }

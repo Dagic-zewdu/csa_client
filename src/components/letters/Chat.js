@@ -1,17 +1,17 @@
-import { faCheck, faCheckDouble, faCircle, faCommentDots, faEnvelope, faEnvelopeOpen, faEye, faPaperPlane, faPlus, faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faCheckDouble, faCircle, faCommentDots,  faEnvelopeOpen, faEye, faPaperPlane, faPlus, faPlusCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { createRef, useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { withRouter } from 'react-router'
 import ReactTimeAgo from 'react-time-ago/commonjs/ReactTimeAgo'
 import { Message } from '../../controllers/Message'
 import { Donothing } from '../../controllers/saveProcess'
-import { Notification, StoreContext } from '../contexts/contexts'
+import {StoreContext } from '../contexts/contexts'
 import DataLoading from '../layout/DataLoading'
 import ErrorLoading from '../layout/ErrorLoading'
 import ModalLetter from '../layout/ModalLetter'
 import {Link} from 'react-router-dom'
 import { localTime, simpleDate } from '../../controllers/Date'
-import ViewLetters from './ViewLetters'
+
 const Chat=({match})=> {
       const emp_id=match.params.id?match.params.id:''
     const {socket,users,employees,messages,letters,
@@ -28,8 +28,11 @@ const Chat=({match})=> {
   /** */
   useEffect(()=>{
  Messages.newMessages(emp_id).map(m=>{ socket.emit('update',{...m,seen:true})})
- setState(s=>({...s,contacted:Messages.contactedUsers()}))  
-  },[messages.state,emp_id])
+ setState(s=>({...s,contacted:Messages.contactedUsers()}))
+   Scroller()
+   box.current&&emp_id?box.current.focus():Donothing()  
+},[messages.state,emp_id,box])
+
 /**scroll */
 const Scroller=()=>{
   try{
@@ -41,21 +44,7 @@ const Scroller=()=>{
       console.log(err)
     }
 }
-    useEffect(()=>{
-      setState(s=>({...s,contacted:Messages.contactedUsers()}))
-   Scroller()
-   box.current&&emp_id?box.current.focus():Donothing()
-   },[messages.state,emp_id,box])
   
-  /**scroll */
-const Scroll=()=>{
-  try{
-  document.getElementById('type').scrollIntoView({behavior:'auto'})
-}
-catch(err){
- console.log(err)
-  }
-}
 
   /**emiiting message is typing*/
 const typingFocus=()=>socket.emit('typing',{emp_id:Messages.getEmp_id()})
@@ -65,6 +54,8 @@ const typing_letter=()=>socket.emit('typing_letter',{emp_id:Messages.getEmp_id()
 /**stop typing */
 const stopTyping=()=>setTimeout(()=>socket.emit('typing',{emp_id:''}),1800) //for chat
 const stop_typing=()=>socket.emit('typing_letter',{emp_id:''}) //for creating letter
+
+/**emmitter */
 
 /**handling submit */
    const handleSubmit=e=>{
@@ -79,7 +70,14 @@ const stop_typing=()=>socket.emit('typing_letter',{emp_id:''}) //for creating le
   }
   
   const handleSearch=index=>setState({...state,contacted:Messages.searchContacted(index)})
- 
+ const emitter=()=>{
+   socket.emit('chat','')
+   socket.emit('letters','')
+   socket.on('chat',data=>{
+let Mess=new Message(data,connections.state,letters.state,users.state,employees.state)
+  setState(s=>({...s,contacted:Mess.contactedUsers()}))
+ })
+ }
   return (
       empLoading||userLoading?
       <DataLoading/>:
@@ -186,7 +184,8 @@ const stop_typing=()=>socket.emit('typing_letter',{emp_id:''}) //for creating le
      Messages.lastSeen(emp_id)?
      <p className='float-left'>
       last seen at {' '}
-     <ReactTimeAgo date={Messages.lastSeen(emp_id)}/> 
+     <ReactTimeAgo date={Messages.lastSeen(emp_id)}/> {' '}
+      {localTime(Messages.lastSeen(emp_id))} 
      </p>:
    <p></p>
   }  
@@ -232,7 +231,6 @@ const stop_typing=()=>socket.emit('typing_letter',{emp_id:''}) //for creating le
                </div> 
         <div className="card-footer text-muted">
      <ModalLetter type='view_letter' l_id={m.letter_id}/>
-     <ModalLetter type='edit_letter' l_id={m.letter_id} />
           </div>  
               </div>:
               <p>{m.message}</p>
