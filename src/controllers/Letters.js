@@ -222,4 +222,9 @@ export class LettersClass extends UsersClass {
       : this.participants(id).find((l) => l.seen)
       ? false
       : true;
+  /** return's array of object about unApproved managers list
+   * @param {*} id- String letter id
+   */
+  unApproved = (id) =>
+    this.approval_managers(id).filter((m) => m.status === "unApproved");
 }
