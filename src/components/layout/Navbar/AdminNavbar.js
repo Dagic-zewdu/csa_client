@@ -65,7 +65,7 @@ const AdminNavbar = (props) => {
     setState({ ...state, toggleButton });
   };
   /**profiler */
-  const { allowances, employees, users } = useContext(StoreContext);
+  const { socket, allowances, employees, users } = useContext(StoreContext);
   const { state: Allowances } = allowances;
   const { state: Employees } = employees;
   const { state: Users } = users;
@@ -180,7 +180,7 @@ const AdminNavbar = (props) => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => Logout(props)}
+                        onClick={() => Logout(props, socket)}
                         tabIndex="0"
                         className="dropdown-item"
                       >

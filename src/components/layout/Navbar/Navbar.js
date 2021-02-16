@@ -27,7 +27,7 @@ const Navbar = (props) => {
   const { user_type, token } = localStorage;
 
   /**profiler */
-  const { allowances, employees, users } = useContext(StoreContext);
+  const { socket, allowances, employees, users } = useContext(StoreContext);
   const { state: Allowances, loading } = allowances;
   const { state: Employees, loading: empLoading } = employees;
   const { state: Users, loading: userLoading } = users;
@@ -154,12 +154,7 @@ const Navbar = (props) => {
                 Send Feed Back
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink to="/briefs" className="nav-link">
-                <FontAwesomeIcon icon={faInfo} className="nav-link-icon" />
-                Briefs and support
-              </NavLink>
-            </li>
+
             <li className="nav-item">
               <NavLink to="/contacts" className="nav-link">
                 <FontAwesomeIcon icon={faPhone} className="nav-link-icon" />
@@ -200,7 +195,7 @@ const Navbar = (props) => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => Logout(props)}
+                        onClick={() => Logout(props, socket)}
                         tabIndex="0"
                         className="dropdown-item"
                       >
