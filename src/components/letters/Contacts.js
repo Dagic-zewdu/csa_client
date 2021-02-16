@@ -204,6 +204,189 @@ const Contacts = () => {
               ) : (
                 <p></p>
               )}
+              {/* commissioner */}
+              {state.sector_leaders.length ? (
+                <div className="col-lg-12">
+                  <h4 className="contact-header text-center">sector leaders</h4>
+                  <MDBTable bordered striped>
+                    <MDBTableHead>
+                      <tr>
+                        <th className="text-center"># employee id</th>
+                        <th className="text-center">
+                          <FontAwesomeIcon
+                            icon={faUser}
+                            className="fa-1x text-danger mx-2"
+                          />
+                          name
+                        </th>
+                        <th className="text-center">
+                          <FontAwesomeIcon
+                            icon={faObjectGroup}
+                            className="fa-1x text-danger mx-2"
+                          />
+                          Department
+                        </th>
+                        <th className="text-center">
+                          <FontAwesomeIcon
+                            icon={faComment}
+                            className="fa-1x text-danger mx-2"
+                          />
+                        </th>
+                        <th className="text-center">status</th>
+                      </tr>
+                    </MDBTableHead>
+                    <MDBTableBody>
+                      {state.sector_leaders.map((f) => {
+                        return (
+                          <tr key={f._id}>
+                            <td className="text-center">{f.emp_id}</td>
+                            <td className="text-center">
+                              {Messages.Name(f.emp_id)}
+                            </td>
+                            <td className="text-center">{f.department}</td>
+                            <td className="text-center">
+                              <Link to={"/message/" + f.emp_id}>
+                                {Messages.isOnline(f.emp_id) ? (
+                                  <button className="btn btn-success">
+                                    <FontAwesomeIcon
+                                      icon={faComment}
+                                      className="fa-1x mx-2"
+                                    />
+                                    contact
+                                  </button>
+                                ) : (
+                                  <button className="btn">
+                                    <FontAwesomeIcon
+                                      icon={faComment}
+                                      className="fa-1x mx-2"
+                                    />
+                                    contact
+                                  </button>
+                                )}
+                              </Link>
+                            </td>
+                            <td className="text-center">
+                              <Link to={"message/" + f.emp_id}>
+                                {Messages.isOnline(f.emp_id) ? (
+                                  <p>
+                                    <FontAwesomeIcon
+                                      icon={faCircle}
+                                      className="fa-1x text-success mx-2"
+                                    />
+                                    online
+                                  </p>
+                                ) : (
+                                  <p>
+                                    <FontAwesomeIcon
+                                      icon={faCircle}
+                                      className="fa-1x mx-2"
+                                    />
+                                    offline
+                                  </p>
+                                )}
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </MDBTableBody>
+                  </MDBTable>
+                </div>
+              ) : (
+                <p></p>
+              )}
+              {/*sector leaders  */}
+              {state.commisioner.length ? (
+                <div className="col-lg-12">
+                  <h4 className="contact-header text-center">Commisioner</h4>
+                  <MDBTable bordered striped>
+                    <MDBTableHead>
+                      <tr>
+                        <th className="text-center"># employee id</th>
+                        <th className="text-center">
+                          <FontAwesomeIcon
+                            icon={faUser}
+                            className="fa-1x text-danger mx-2"
+                          />
+                          name
+                        </th>
+                        <th className="text-center">
+                          <FontAwesomeIcon
+                            icon={faObjectGroup}
+                            className="fa-1x text-danger mx-2"
+                          />
+                          Department
+                        </th>
+                        <th className="text-center">
+                          <FontAwesomeIcon
+                            icon={faComment}
+                            className="fa-1x text-danger mx-2"
+                          />
+                        </th>
+                        <th className="text-center">status</th>
+                      </tr>
+                    </MDBTableHead>
+                    <MDBTableBody>
+                      {state.commisioner.map((f) => {
+                        return (
+                          <tr key={f._id}>
+                            <td className="text-center">{f.emp_id}</td>
+                            <td className="text-center">
+                              {Messages.Name(f.emp_id)}
+                            </td>
+                            <td className="text-center">{f.department}</td>
+                            <td className="text-center">
+                              <Link to={"/message/" + f.emp_id}>
+                                {Messages.isOnline(f.emp_id) ? (
+                                  <button className="btn btn-success">
+                                    <FontAwesomeIcon
+                                      icon={faComment}
+                                      className="fa-1x mx-2"
+                                    />
+                                    contact
+                                  </button>
+                                ) : (
+                                  <button className="btn">
+                                    <FontAwesomeIcon
+                                      icon={faComment}
+                                      className="fa-1x mx-2"
+                                    />
+                                    contact
+                                  </button>
+                                )}
+                              </Link>
+                            </td>
+                            <td className="text-center">
+                              <Link to={"message/" + f.emp_id}>
+                                {Messages.isOnline(f.emp_id) ? (
+                                  <p>
+                                    <FontAwesomeIcon
+                                      icon={faCircle}
+                                      className="fa-1x text-success mx-2"
+                                    />
+                                    online
+                                  </p>
+                                ) : (
+                                  <p>
+                                    <FontAwesomeIcon
+                                      icon={faCircle}
+                                      className="fa-1x mx-2"
+                                    />
+                                    offline
+                                  </p>
+                                )}
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </MDBTableBody>
+                  </MDBTable>
+                </div>
+              ) : (
+                <p></p>
+              )}
+              {/** */}
               {state.f_sector_leader.length ? (
                 <div className="col-lg-12">
                   <h4 className="contact-header text-center">

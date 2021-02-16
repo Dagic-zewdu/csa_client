@@ -173,18 +173,11 @@ const AdminNavbar = (props) => {
                     >
                       <button
                         type="button"
-                        tabIndex="0"
-                        className="dropdown-item"
-                      >
-                        Admin Account
-                      </button>
-                      <button
-                        type="button"
                         onClick={() => Logout(props, socket)}
                         tabIndex="0"
                         className="dropdown-item"
                       >
-                        Settings
+                        Logout
                       </button>
                     </div>
                   </div>

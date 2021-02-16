@@ -134,19 +134,6 @@ const Navbar = (props) => {
       </div>
       <div className={"app-header__content " + state.profileOpener}>
         <div className="app-header-left">
-          <div className={"search-wrapper " + state.search}>
-            <div className="input-holder">
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Type to search"
-              />
-              <button className="search-icon" onClick={() => openSearch()}>
-                <span></span>
-              </button>
-            </div>
-            <button className="close" onClick={() => closeSearch()}></button>
-          </div>
           <ul className="header-menu nav">
             <li className="nav-item">
               <NavLink to="/feedBack" className="nav-link">
@@ -186,13 +173,6 @@ const Navbar = (props) => {
                       aria-hidden="true"
                       className="dropdown-menu dropdown-menu-right"
                     >
-                      <button
-                        type="button"
-                        tabIndex="0"
-                        className="dropdown-item"
-                      >
-                        My Account
-                      </button>
                       <button
                         type="button"
                         onClick={() => Logout(props, socket)}
