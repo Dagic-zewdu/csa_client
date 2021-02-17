@@ -136,13 +136,6 @@ const Navbar = (props) => {
         <div className="app-header-left">
           <ul className="header-menu nav">
             <li className="nav-item">
-              <NavLink to="/feedBack" className="nav-link">
-                <FontAwesomeIcon icon={faEnvelope} className="nav-link-icon" />
-                Send Feed Back
-              </NavLink>
-            </li>
-
-            <li className="nav-item">
               <NavLink to="/contacts" className="nav-link">
                 <FontAwesomeIcon icon={faPhone} className="nav-link-icon" />
                 Contact

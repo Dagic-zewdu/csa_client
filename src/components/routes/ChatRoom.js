@@ -44,76 +44,7 @@ function ChatRoom() {
           <div className="app-main__outer">
             <div className="app-main__inner">
               {/**Navigation */}
-              <div className="container">
-                <div className="row">
-                  <div className="col-lg-3 row">
-                    <h4 className="text-center">
-                      <NavLink to="/message">
-                        <FontAwesomeIcon
-                          icon={faComment}
-                          className="fa-1x mx-2 text-danger"
-                        />
-                        Messages
-                      </NavLink>
-                    </h4>
-                    {Messages.notifiaction() ? (
-                      <h4 className="mx-1 text-info font-weight-bold">
-                        <FontAwesomeIcon
-                          icon={faBell}
-                          className="text-info mx-1"
-                        />
-                        {Messages.notifiaction()}
-                      </h4>
-                    ) : (
-                      <p></p>
-                    )}
-                  </div>
-                  <div className="col-lg-3">
-                    <h4 className="text-center">
-                      <NavLink to="/inbox">
-                        <FontAwesomeIcon
-                          icon={faEnvelopeOpen}
-                          className="fa-1x mx-2 text-danger"
-                        />
-                        Inbox letters
-                        {notify ? (
-                          <h4 className="mx-1 text-info font-weight-bold">
-                            <FontAwesomeIcon
-                              icon={faBell}
-                              className="text-info mx-1"
-                            />
-                            {notify}
-                          </h4>
-                        ) : (
-                          <p></p>
-                        )}
-                      </NavLink>
-                    </h4>
-                  </div>
-                  <div className="col-lg-3">
-                    <h4 className="text-center">
-                      <NavLink to="/outbox">
-                        <FontAwesomeIcon
-                          icon={faEnvelopeOpenText}
-                          className="fa-1x mx-2 text-danger"
-                        />
-                        outbox letters
-                      </NavLink>
-                    </h4>
-                  </div>
-                  <div className="col-lg-3">
-                    <h4 className="text-center">
-                      <NavLink to="/contact">
-                        <FontAwesomeIcon
-                          icon={faUser}
-                          className="fa-1x mx-2 text-danger"
-                        />
-                        Employees to contact
-                      </NavLink>
-                    </h4>
-                  </div>
-                </div>
-              </div>
+
               {/** */}
               <Chat />
             </div>

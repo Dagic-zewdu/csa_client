@@ -9,6 +9,8 @@ import {
   faMapMarker,
   faChartBar,
   faInfo,
+  faUsers,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import DepartmentFetch from "../../fetchers/departmentFetch";
 import PlaceFetchers from "../../fetchers/placeFetchers";
@@ -128,12 +130,41 @@ const SideNav = () => {
             </li>
 
             <li>
-              <NavLink to="/message">
+              <NavLink to="/inbox">
                 <i className="metismenu-icon pe-7s-display2"></i>
                 <p className="font-weight-bold">Letter</p>
               </NavLink>
             </li>
-
+            <li>
+              <NavLink to="/message">
+                <i className="metismenu-icon pe-7s-display2"></i>
+                <p className="font-weight-bold">message</p>
+              </NavLink>
+            </li>
+            <li className="app-sidebar__heading">
+              <FontAwesomeIcon
+                icon={faUsers}
+                className="metismenu-icon pe-7s-diamond fa-2x text-info mx-2"
+              />
+              Employess
+            </li>
+            <li>
+              <NavLink to="/contact">
+                <i className="metismenu-icon pe-7s-display2"></i>
+                <p className="font-weight-bold">contact</p>
+              </NavLink>
+            </li>
+            {isTL || isFe || isFd ? (
+              <li className="app-sidebar__heading">
+                <FontAwesomeIcon
+                  icon={faEdit}
+                  className="metismenu-icon pe-7s-diamond fa-2x text-info mx-2"
+                />
+                Summary
+              </li>
+            ) : (
+              <p></p>
+            )}
             {isTL || isFe || isFd ? (
               <li>
                 <NavLink to="/reports">
