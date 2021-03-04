@@ -155,7 +155,7 @@ const TakeActions = ({ l_id: id }) => {
       users.state,
       employees.state
     );
-    let progress = M.progress(id) === 100 ? true : false;
+    let progress = M.totallProgress(id) === 100 ? true : false;
     let Participants = M.participants(id).length ? true : false;
     if (progress && Participants) {
       //if no approval manager are found send to participant

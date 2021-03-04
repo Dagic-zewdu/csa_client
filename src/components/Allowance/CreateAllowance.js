@@ -218,7 +218,7 @@ const CreateAllowance = () => {
 
     setState((s) => ({
       ...s,
-      letter_id: Letter ? Letter._id : "",
+      letter_id: Letter ? Letter.id : "",
       objective: Letter ? Letter.objective : "",
       program: Letter ? Letter.program : "",
       project_name: Letter ? Letter.project_name : "",

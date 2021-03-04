@@ -154,9 +154,9 @@ const OutboxLetters = () => {
                           {message.approval_managers(l._id).length ? (
                             <td>
                               {message.totallProgress(l._id) === 100 ? (
-                                <h4 className="text-center text-success font-italic">
+                                <p className="font-weight-bold text-center text-success font-italic">
                                   Approval stage is completed
-                                </h4>
+                                </p>
                               ) : (
                                 <div className="">
                                   <Progress

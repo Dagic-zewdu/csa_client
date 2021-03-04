@@ -20,27 +20,27 @@ class PrintLetter extends Component {
               {Letter
                 ? Letter.creater === Mess.getEmp_id()
                   ? ""
-                  : "to - " + Mess.Name(Mess.getEmp_id())
+                  : "ለ- " + Mess.Name(Mess.getEmp_id())
                 : ""}
             </h6>
             <h6 className="text-center font-weight-bold">
               {Letter
                 ? Letter.creater === Mess.getEmp_id()
                   ? ""
-                  : "from - " + Mess.Name(Letter.creater)
+                  : "ከ - " + Mess.Name(Letter.creater)
                 : ""}{" "}
               <br />
               {Letter
                 ? Letter.creater === Mess.getEmp_id()
                   ? ""
-                  : "Department - " + Mess.Department(Letter.creater)
+                  : "ዲፓርትመንት - " + Mess.Department(Letter.creater)
                 : ""}
             </h6>
           </div>
           <div className="col-lg-6 my-2">
             <h6 className="text-center font-italic float-right">
-              Letter id- {Letter.id} <br />
-              Date -{Letter ? ToEthiopianDateSting(Letter.created_date) : ""}
+              ደብዳቤ መለያ- {Letter.id} <br />
+              ቀን -{Letter ? ToEthiopianDateSting(Letter.created_date) : ""}
             </h6>
           </div>
           {Letter ? (
@@ -66,11 +66,10 @@ class PrintLetter extends Component {
             Letter.type === "allowance" ? (
               <div className="col-lg-6">
                 <p className="text-center font-italic font-weight-bold">
-                  Initial date - {ToEthiopianDateSting(Letter.initial_date)}{" "}
-                  <br />
-                  return date-{ToEthiopianDateSting(Letter.return_date)} <br />
-                  Initial place- {Letter.initial_place} <br />
-                  Destination place-{Letter.destination_place} <br />
+                  መነሻ ቀን - {ToEthiopianDateSting(Letter.initial_date)} <br />
+                  መመለሻ ቀን-{ToEthiopianDateSting(Letter.return_date)} <br />
+                  መነሻ ቦታ- {Letter.initial_place} <br />
+                  መድረሻ ቦታ-{Letter.destination_place} <br />
                 </p>
               </div>
             ) : (
@@ -82,7 +81,7 @@ class PrintLetter extends Component {
 
           <div className="col-lg-12 my-2">
             <h4 className="text-center font-weight-bold">
-              {Letter ? Letter.title : ""}
+              ጉዳዩ-{Letter ? Letter.title : ""}
             </h4>
           </div>
           <div className="col-lg-12 my-2">
