@@ -72,7 +72,7 @@ const InboxLetters = () => {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Type deduction id, allowance id"
+                placeholder="Type letter id,title and type"
                 onChange={(e) => handleSearch(e.target.value)}
               />
               <button className="search-icon">
@@ -333,7 +333,7 @@ const InboxLetters = () => {
                           </td>
                           <td>
                             <ModalLetter type="view_letter" l_id={l._id} />
-                            <ModalLetter type="progress" l_id={l._id} />
+
                             {message.isApprovable(l._id) ? (
                               <ModalLetter type="approve" l_id={l._id} />
                             ) : (

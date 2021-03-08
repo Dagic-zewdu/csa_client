@@ -158,45 +158,49 @@ const LetterProgress = ({ l_id: id }) => {
             <p></p>
           )}
         </div>
-        <div className="col-lg-12">
-          <div
-            className={
-              "mb-3 widget-chart widget-chart2 text-left card card-shadow-" +
-              color
-            }
-          >
-            <div className="widget-content">
-              <div className="widget-content-outer">
-                <div className="widget-content-wrapper">
-                  <div className="widget-content-left pr-2 fsize-1">
-                    <div
-                      className={"widget-numbers mt-0 fsize-3 text-" + color}
-                    >
-                      {message.totallProgress(id)}%
-                    </div>
-                  </div>
-                  <div className="widget-content-right w-100">
-                    <div className="progress-bar-xs progress">
+        {message.totallProgress(id) ? (
+          <div className="col-lg-12">
+            <div
+              className={
+                "mb-3 widget-chart widget-chart2 text-left card card-shadow-" +
+                color
+              }
+            >
+              <div className="widget-content">
+                <div className="widget-content-outer">
+                  <div className="widget-content-wrapper">
+                    <div className="widget-content-left pr-2 fsize-1">
                       <div
-                        className={"progress-bar bg-" + color}
-                        role="progressbar"
-                        aria-valuenow={message.totallProgress(id)}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        style={{ width: message.totallProgress(id) + "%" }}
-                      ></div>
+                        className={"widget-numbers mt-0 fsize-3 text-" + color}
+                      >
+                        {message.totallProgress(id)}%
+                      </div>
+                    </div>
+                    <div className="widget-content-right w-100">
+                      <div className="progress-bar-xs progress">
+                        <div
+                          className={"progress-bar bg-" + color}
+                          role="progressbar"
+                          aria-valuenow={message.totallProgress(id)}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          style={{ width: message.totallProgress(id) + "%" }}
+                        ></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="widget-content-left fsize-1">
-                  <div className="text-muted opacity-6">
-                    Approval Totall progress made
+                  <div className="widget-content-left fsize-1">
+                    <div className="text-muted opacity-6">
+                      Approval Totall progress made
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <p></p>
+        )}
         {message.unApproved(id).length ? (
           <div className="col-lg-12">
             <h4 className="text-center font-weight-bold text-danger">

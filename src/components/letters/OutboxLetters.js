@@ -79,7 +79,7 @@ const OutboxLetters = () => {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Type deduction id, allowance id"
+                placeholder="Type letter id,title and type"
                 onChange={(e) => handleSearch(e.target.value)}
               />
               <button className="search-icon">
