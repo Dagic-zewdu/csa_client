@@ -546,13 +546,13 @@ const CreateAllowance = () => {
                 onChange={(e) =>
                   setState({
                     ...state,
-                    imonth: parseInt(e.target.value),
+                    rmonth: parseInt(e.target.value),
                     process: "",
                     error: "",
                     success: "",
                   })
                 }
-                value={state.imonth}
+                value={state.rmonth}
                 required={true}
               >
                 <option value="">mm</option>
